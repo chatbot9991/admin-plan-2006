@@ -1,0 +1,201 @@
+/* src/index.css */
+
+@font-face {
+  font-family: "MyCustomFont";
+  src: url("./assets/fonts/IRANYekanX-Regular.woff2") format("woff2");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "MyCustomFont2";
+  src: url("./assets/fonts/IRANYekanX-Regular.woff2") format("woff2");
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+body {
+  font-family: "MyCustomFont", sans-serif;
+  background-color: #ffffff;
+  margin: 0;
+  padding: 0;
+}
+
+* {
+  box-sizing: border-box;
+  font-family: "MyCustomFont", sans-serif !important;
+  font-size: 16px;
+}
+
+h1 {
+  font-family: "MyCustomFont2", sans-serif !important;
+  font-size: 38px;
+  font-weight: 700;
+  background-color: #ffffff;
+}
+
+input::placeholder {
+  font-family: "MyCustomFont", sans-serif;
+  font-size: 14px;
+  font-weight: 300 !important;
+}
+
+
+/* رنگ بنفش اصلی طبق عکس */
+:root {
+  --primary-purple: #a855f7;
+  --primary-purple-hover: #9333ea;
+  --input-bg: #f8f9fa;
+}
+
+.login-container {
+  min-height: 100vh;
+}
+
+/* استایل عکس سمت چپ */
+.login-image-section {
+  background-size: cover;
+  background-position: center;
+  min-height: 100vh;
+}
+
+/* استایل ورودی‌ها */
+.custom-input-group {
+  position: relative;
+}
+
+.custom-input {
+  background-color: var(--input-bg) !important;
+  border: 1px solid transparent !important;
+  border-radius: 12px !important;
+  padding: 12px 45px 12px 15px !important; /* فضای خالی سمت راست برای آیکون */
+  height: 60px;
+  font-size: 0.9rem;
+  transition: all 0.3s;
+}
+
+.custom-input:focus {
+  background-color: #fff !important;
+  border-color: var(--primary-purple) !important;
+  box-shadow: 0 0 0 2px rgba(168, 85, 247, 0.1) !important;
+}
+
+/* آیکون‌های داخل اینپوت */
+.input-icon {
+  position: absolute;
+  top: 50%;
+  right: 15px;
+  transform: translateY(-50%);
+  width: 20px;
+  height: 20px;
+  opacity: 0.5;
+  pointer-events: none;
+}
+
+/* دکمه ورود */
+.btn-primary-custom {
+  background-color: var(--primary-purple);
+  border: none;
+  border-radius: 12px;
+  height: 50px;
+  font-weight: bold;
+  font-size: 1rem;
+  transition: background-color 0.3s;
+}
+
+.btn-primary-custom:hover {
+  background-color: var(--primary-purple-hover);
+}
+
+.custom-input-wrapper {
+  background-color: #ffffff;
+  border: 1px solid #e5e7eb; /* حاشیه خاکستری خیلی کمرنگ */
+  border-radius: 18px; /* گردی گوشه‌ها طبق عکس */
+  height: 60px; /* ارتفاع زیاد طبق عکس */
+  padding: 0 20px; /* فاصله از چپ و راست */
+  display: flex;
+  align-items: center; /* وسط‌چین کردن عمودی آیتم‌ها */
+  transition: all 0.3s ease;
+  position: relative;
+  width: 100%;
+}
+
+.custom-input-wrapper:focus-within {
+  border-color: #a855f7; /* رنگ بنفش */
+  box-shadow: 0 4px 20px rgba(168, 85, 247, 0.15); /* سایه نرم بنفش */
+  transform: translateY(-2px);
+}
+
+.custom-input-icon {
+  width: 24px;
+  height: 24px;
+  opacity: 0.7;
+  color: #374151;
+}
+
+.custom-input-divider {
+  width: 1px;
+  height: 24px; /* ارتفاع خط */
+  background-color: #e5e7eb; /* رنگ خط خاکستری */
+  margin: 0 15px; /* فاصله خط از آیکون و متن */
+}
+
+.custom-input-field {
+  flex-grow: 1; /* پر کردن فضای باقی‌مانده */
+  border: none;
+  background: transparent;
+  outline: none;
+  font-family: "Vazirmatn", sans-serif; /* اطمینان از فونت فارسی */
+  font-size: 1rem;
+  color: #4b5563;
+  height: 100%;
+}
+
+.custom-input-field::placeholder {
+  color: #9ca3af; /* رنگ متن پیش‌فرض */
+  font-weight: 300;
+}
+
+/*************************       BTN *****************/
+
+.custom-btn {
+  width: 100%; /* عرض کامل */
+  height: 65px; /* ارتفاع برابر با اینپوت */
+  border-radius: 18px; /* گردی گوشه‌ها */
+  border: none; /* حذف بوردر پیش‌فرض زشت */
+  font-family: "Vazirmatn", sans-serif; /* فونت فارسی */
+  font-weight: 700; /* ضخامت متن */
+  font-size: 1.2rem; /* اندازه متن */
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease;
+  outline: none !important; /* حذف خط آبی دور دکمه */
+}
+
+/* رنگ اصلی دکمه (بنفش) */
+.custom-btn-primary {
+  background-color: #a855f7; /* رنگ پس‌زمینه */
+  color: #ffffff; /* رنگ متن سفید */
+  box-shadow: 0 4px 15px rgba(168, 85, 247, 0.3); /* سایه */
+}
+
+.custom-btn-primary:hover {
+  background-color: #9333ea; /* تغییر رنگ در هاور */
+  box-shadow: 0 8px 25px rgba(168, 85, 247, 0.5);
+  transform: translateY(-2px);
+}
+
+.custom-btn-primary:active {
+  transform: translateY(0);
+}
+
+/* حالت غیرفعال (زمانی که اسپینر می‌چرخد) */
+.custom-btn:disabled {
+  background-color: #c4b5fd; /* بنفش کمرنگ */
+  cursor: not-allowed;
+  transform: none;
+}
