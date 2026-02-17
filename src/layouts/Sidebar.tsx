@@ -28,7 +28,7 @@ interface MenuItem {
 }
 
 const menuItems: MenuItem[] = [
-  { title: "داشبورد", icon: LayoutGrid, path: "/" },
+  { title: "داشبورد", icon: LayoutGrid, path: "/dashboard" },
   {
     title: "بلاگ‌ها",
     icon: Rss,
