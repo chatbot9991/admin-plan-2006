@@ -1,9 +1,9 @@
 // src/pages/blog/CategoryEdit.tsx
 
-import React, { useEffect, useState } from "react";
-import { Link, useNavigate, useParams } from "react-router-dom";
-import { api } from "../../services/api";
-import { toast } from "react-toastify";
+import React, { useEffect, useState } from 'react';
+import { Link, useNavigate, useParams } from 'react-router-dom';
+import { api } from '../../services/api';
+import { toast } from 'react-toastify';
 
 const CategoryEdit: React.FC = () => {
   const navigate = useNavigate();
@@ -14,14 +14,14 @@ const CategoryEdit: React.FC = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const [formData, setFormData] = useState({
-    title: "",
-    description: "",
+    title: '',
+    description: '',
   });
 
   // --- Fetch Data ---
   useEffect(() => {
     if (!id) {
-      toast.error("شناسه دسته‌بندی یافت نشد.");
+      toast.error('شناسه دسته‌بندی یافت نشد.');
       console.log(id);
       // navigate("/blog-category/list");
       return;
@@ -37,12 +37,12 @@ const CategoryEdit: React.FC = () => {
         const data = res.data.category || res.data;
 
         setFormData({
-          title: data.title || "",
-          description: data.description || "",
+          title: data.title || '',
+          description: data.description || '',
         });
       } catch (error) {
-        console.error("Error fetching category details:", error);
-        toast.error("خطا در دریافت اطلاعات دسته‌بندی.");
+        console.error('Error fetching category details:', error);
+        toast.error('خطا در دریافت اطلاعات دسته‌بندی.');
       } finally {
         setIsLoading(false);
       }
@@ -52,9 +52,7 @@ const CategoryEdit: React.FC = () => {
   }, [id, navigate]);
 
   // --- Handlers ---
-  const handleInputChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
-  ) => {
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
@@ -63,7 +61,7 @@ const CategoryEdit: React.FC = () => {
     e.preventDefault();
 
     if (!formData.title.trim()) {
-      toast.warning("وارد کردن عنوان الزامی است");
+      toast.warning('وارد کردن عنوان الزامی است');
       return;
     }
 
@@ -76,13 +74,13 @@ const CategoryEdit: React.FC = () => {
         ...formData,
       };
 
-      await api.put("/blog-category/update", payload);
+      await api.put('/blog-category/update', payload);
 
-      toast.success("دسته‌بندی با موفقیت ویرایش شد");
-      navigate("/blog-category/list");
+      toast.success('دسته‌بندی با موفقیت ویرایش شد');
+      navigate('/blog-category/list');
     } catch (error) {
-      console.error("Error updating category:", error);
-      toast.error("خطا در ویرایش دسته‌بندی.");
+      console.error('Error updating category:', error);
+      toast.error('خطا در ویرایش دسته‌بندی.');
     } finally {
       setIsSubmitting(false);
     }
@@ -100,17 +98,14 @@ const CategoryEdit: React.FC = () => {
   }
 
   return (
-    <div className="container-fluid p-4 fade-in" style={{ maxWidth: "1400px" }}>
+    <div className="container-fluid p-4 fade-in" style={{ maxWidth: '1400px' }}>
       {/* Header */}
       <div className="d-flex justify-content-between align-items-center mb-4">
         <div>
           <h3 className="fw-bold text-dark mb-1">ویرایش دسته‌بندی</h3>
           <p className="text-muted small">اصلاح اطلاعات دسته‌بندی موجود</p>
         </div>
-        <Link
-          to="/blog-category/list"
-          className="btn btn-outline-secondary rounded-pill px-4"
-        >
+        <Link to="/blog-category/list" className="btn btn-outline-secondary rounded-pill px-4">
           بازگشت
         </Link>
       </div>
@@ -122,9 +117,7 @@ const CategoryEdit: React.FC = () => {
             <div className="card border-0 shadow-sm rounded-4 p-4 mb-4 bg-white">
               {/* ردیف اول: عنوان */}
               <div className="mb-4">
-                <label className="form-label fw-bold text-secondary">
-                  عنوان دسته‌بندی
-                </label>
+                <label className="form-label fw-bold text-secondary">عنوان دسته‌بندی</label>
                 <input
                   type="text"
                   name="title"
@@ -145,9 +138,9 @@ const CategoryEdit: React.FC = () => {
                   name="description"
                   className="form-control bg-light border-0 editor-textarea"
                   style={{
-                    minHeight: "250px",
-                    fontSize: "1rem",
-                    lineHeight: "1.6",
+                    minHeight: '250px',
+                    fontSize: '1rem',
+                    lineHeight: '1.6',
                   }}
                   value={formData.description}
                   onChange={handleInputChange}
@@ -163,12 +156,11 @@ const CategoryEdit: React.FC = () => {
           <div className="col-lg-4">
             <div
               className="card border-0 shadow-sm rounded-4 p-4 sticky-top"
-              style={{ top: "20px" }}
+              style={{ top: '20px' }}
             >
               <h5 className="fw-bold mb-3">ذخیره تغییرات</h5>
               <p className="text-muted small mb-4">
-                تغییرات شما پس از کلیک بر روی دکمه زیر بلافاصله در سیستم اعمال
-                خواهد شد.
+                تغییرات شما پس از کلیک بر روی دکمه زیر بلافاصله در سیستم اعمال خواهد شد.
               </p>
 
               <button
@@ -186,7 +178,7 @@ const CategoryEdit: React.FC = () => {
                     در حال به‌روزرسانی...
                   </>
                 ) : (
-                  "ویرایش دسته‌بندی"
+                  'ویرایش دسته‌بندی'
                 )}
               </button>
             </div>

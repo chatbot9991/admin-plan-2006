@@ -1,7 +1,7 @@
 // src/components/common/Pagination.tsx
 
-import React from "react";
-import { ChevronRight, ChevronLeft } from "lucide-react";
+import React from 'react';
+import { ChevronRight, ChevronLeft } from 'lucide-react';
 
 interface PaginationProps {
   currentPage: number;
@@ -37,8 +37,8 @@ const Pagination: React.FC<PaginationProps> = ({
       {/* بخش متن اطلاعات */}
       {showInfo && (
         <div className="text-muted small order-2 order-md-1">
-          نمایش <span className="fw-bold">{startItem}</span> تا{" "}
-          <span className="fw-bold">{endItem}</span> از{" "}
+          نمایش <span className="fw-bold">{startItem}</span> تا{' '}
+          <span className="fw-bold">{endItem}</span> از{' '}
           <span className="fw-bold">{totalItems}</span> رکورد
         </div>
       )}
@@ -47,7 +47,7 @@ const Pagination: React.FC<PaginationProps> = ({
       <nav aria-label="Page navigation" className="order-1 order-md-2">
         <ul className="pagination pagination-brand mb-0 gap-2">
           {/* دکمه قبلی (در RTL فلش راست به معنی قبلی است) */}
-          <li className={`page-item ${currentPage === 1 ? "disabled" : ""}`}>
+          <li className={`page-item ${currentPage === 1 ? 'disabled' : ''}`}>
             <button
               className="page-link rounded-circle d-flex align-items-center justify-content-center"
               onClick={() => handlePageChange(currentPage - 1)}
@@ -61,20 +61,10 @@ const Pagination: React.FC<PaginationProps> = ({
           {[...Array(totalPages)].map((_, i) => {
             const p = i + 1;
             // منطق نمایش: اولی، آخری، و یکی قبل و بعد از صفحه جاری
-            if (
-              p === 1 ||
-              p === totalPages ||
-              (p >= currentPage - 1 && p <= currentPage + 1)
-            ) {
+            if (p === 1 || p === totalPages || (p >= currentPage - 1 && p <= currentPage + 1)) {
               return (
-                <li
-                  key={p}
-                  className={`page-item ${currentPage === p ? "active" : ""}`}
-                >
-                  <button
-                    className="page-link rounded-circle"
-                    onClick={() => handlePageChange(p)}
-                  >
+                <li key={p} className={`page-item ${currentPage === p ? 'active' : ''}`}>
+                  <button className="page-link rounded-circle" onClick={() => handlePageChange(p)}>
                     {p}
                   </button>
                 </li>
@@ -90,9 +80,7 @@ const Pagination: React.FC<PaginationProps> = ({
           })}
 
           {/* دکمه بعدی (در RTL فلش چپ به معنی بعدی است) */}
-          <li
-            className={`page-item ${currentPage === totalPages ? "disabled" : ""}`}
-          >
+          <li className={`page-item ${currentPage === totalPages ? 'disabled' : ''}`}>
             <button
               className="page-link rounded-circle d-flex align-items-center justify-content-center"
               onClick={() => handlePageChange(currentPage + 1)}

@@ -1,8 +1,8 @@
 // src/pages/discount/DiscountEdit.tsx
 
-import React, { useState, useEffect } from "react";
-import { useNavigate, useParams } from "react-router-dom";
-import { toast } from "react-toastify";
+import React, { useState, useEffect } from 'react';
+import { useNavigate, useParams } from 'react-router-dom';
+import { toast } from 'react-toastify';
 import {
   Calendar as CalendarIcon,
   Save,
@@ -13,28 +13,24 @@ import {
   X,
   Trash2,
   ArrowRight,
-} from "lucide-react";
+} from 'lucide-react';
 
 // Date Picker
-import DatePicker, { DateObject } from "react-multi-date-picker";
-import persian from "react-date-object/calendars/persian";
-import persian_fa from "react-date-object/locales/persian_fa";
-import "react-multi-date-picker/styles/backgrounds/bg-dark.css";
+import DatePicker, { DateObject } from 'react-multi-date-picker';
+import persian from 'react-date-object/calendars/persian';
+import persian_fa from 'react-date-object/locales/persian_fa';
+import 'react-multi-date-picker/styles/backgrounds/bg-dark.css';
 
-import { api } from "../../services/api";
-import PlanSelectorModal, {
-  type Plan,
-} from "../../components/PlanSelectorModal";
-import UserSelectorModal, {
-  type User,
-} from "../../components/UserSelectorModal";
+import { api } from '../../services/api';
+import PlanSelectorModal, { type Plan } from '../../components/PlanSelectorModal';
+import UserSelectorModal, { type User } from '../../components/UserSelectorModal';
 
 // --- Interfaces (Matched with Details/Create) ---
 interface DiscountData {
   _id: string;
   title: string;
   amount: number;
-  type: "percentage" | "fixed" | "amount";
+  type: 'percentage' | 'fixed' | 'amount';
   startDate: string;
   endDate: string;
   plan?: Plan | null;
@@ -50,9 +46,9 @@ const DiscountEdit: React.FC = () => {
   const [submitting, setSubmitting] = useState(false);
 
   // --- Form States ---
-  const [title, setTitle] = useState("");
-  const [amount, setAmount] = useState<string>("");
-  const [type, setType] = useState<"percentage" | "fixed">("percentage");
+  const [title, setTitle] = useState('');
+  const [amount, setAmount] = useState<string>('');
+  const [type, setType] = useState<'percentage' | 'fixed'>('percentage');
 
   // Dates
   const [startDate, setStartDate] = useState<DateObject | null>(null);
@@ -84,7 +80,7 @@ const DiscountEdit: React.FC = () => {
         setAmount(data.amount.toString());
 
         // Handle Type Mapping (API might return 'amount', UI uses 'fixed')
-        setType(data.type === "percentage" ? "percentage" : "fixed");
+        setType(data.type === 'percentage' ? 'percentage' : 'fixed');
 
         // Handle Dates (Convert ISO string to Persian DateObject)
         if (data.startDate) {
@@ -93,7 +89,7 @@ const DiscountEdit: React.FC = () => {
               date: new Date(data.startDate),
               calendar: persian,
               locale: persian_fa,
-            }),
+            })
           );
         }
         if (data.endDate) {
@@ -102,7 +98,7 @@ const DiscountEdit: React.FC = () => {
               date: new Date(data.endDate),
               calendar: persian,
               locale: persian_fa,
-            }),
+            })
           );
         }
 
@@ -118,9 +114,9 @@ const DiscountEdit: React.FC = () => {
           setSelectedUsers(data.users);
         }
       } catch (error) {
-        console.error("Error fetching discount:", error);
-        toast.error("خطا در دریافت اطلاعات تخفیف");
-        navigate("/discount/list");
+        console.error('Error fetching discount:', error);
+        toast.error('خطا در دریافت اطلاعات تخفیف');
+        navigate('/discount/list');
       } finally {
         setFetching(false);
       }
@@ -133,26 +129,25 @@ const DiscountEdit: React.FC = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (!title.trim()) return toast.warning("لطفا عنوان تخفیف را وارد کنید");
-    if (!amount) return toast.warning("لطفا مقدار تخفیف را وارد کنید");
-    if (!startDate || !endDate)
-      return toast.warning("لطفا بازه زمانی را مشخص کنید");
+    if (!title.trim()) return toast.warning('لطفا عنوان تخفیف را وارد کنید');
+    if (!amount) return toast.warning('لطفا مقدار تخفیف را وارد کنید');
+    if (!startDate || !endDate) return toast.warning('لطفا بازه زمانی را مشخص کنید');
 
     if (specificPlanMode && !selectedPlan) {
-      toast.warning("لطفا پلن مورد نظر را انتخاب کنید");
+      toast.warning('لطفا پلن مورد نظر را انتخاب کنید');
       return;
     }
 
     if (specificUserMode && selectedUsers.length === 0) {
-      toast.warning("لطفا کاربران مورد نظر را انتخاب کنید");
+      toast.warning('لطفا کاربران مورد نظر را انتخاب کنید');
       return;
     }
 
     setSubmitting(true);
 
     try {
-      const start = startDate.toDate().toISOString().split("T")[0];
-      const end = endDate.toDate().toISOString().split("T")[0];
+      const start = startDate.toDate().toISOString().split('T')[0];
+      const end = endDate.toDate().toISOString().split('T')[0];
 
       const payload = {
         _id: id, // Send ID for update
@@ -166,12 +161,12 @@ const DiscountEdit: React.FC = () => {
       };
 
       // Assuming PUT /discount/edit or POST /discount/update
-      await api.put("/discount/update", payload);
-      toast.success("تخفیف با موفقیت ویرایش شد");
-      navigate("/discount/list");
+      await api.put('/discount/update', payload);
+      toast.success('تخفیف با موفقیت ویرایش شد');
+      navigate('/discount/list');
     } catch (error) {
-      console.error("Error updating discount:", error);
-      toast.error("خطا در ویرایش تخفیف");
+      console.error('Error updating discount:', error);
+      toast.error('خطا در ویرایش تخفیف');
     } finally {
       setSubmitting(false);
     }
@@ -190,7 +185,7 @@ const DiscountEdit: React.FC = () => {
   }
 
   return (
-    <div className="container-fluid p-4 fade-in" style={{ maxWidth: "1400px" }}>
+    <div className="container-fluid p-4 fade-in" style={{ maxWidth: '1400px' }}>
       {/* --- Modals --- */}
       <PlanSelectorModal
         isOpen={showPlanModal}
@@ -204,7 +199,7 @@ const DiscountEdit: React.FC = () => {
         onClose={() => setShowUserModal(false)}
         onConfirm={(users) => {
           const newUsers = users.filter(
-            (newU) => !selectedUsers.some((existU) => existU._id === newU._id),
+            (newU) => !selectedUsers.some((existU) => existU._id === newU._id)
           );
           setSelectedUsers([...selectedUsers, ...newUsers]);
         }}
@@ -231,7 +226,7 @@ const DiscountEdit: React.FC = () => {
           <div className="col-lg-4 order-lg-last">
             <div
               className="preview-card p-4 rounded-4 shadow-lg sticky-top position-relative overflow-hidden"
-              style={{ top: "20px", minHeight: "420px" }}
+              style={{ top: '20px', minHeight: '420px' }}
             >
               {/* Background Circles */}
               <div className="bg-circle-1"></div>
@@ -240,39 +235,35 @@ const DiscountEdit: React.FC = () => {
               <div className="position-relative z-index-2 text-center text-white mb-4 mt-3">
                 <div
                   className="icon-box bg-white text-primary rounded-circle mx-auto d-flex align-items-center justify-content-center mb-3 shadow-sm"
-                  style={{ width: "70px", height: "70px" }}
+                  style={{ width: '70px', height: '70px' }}
                 >
                   <Tag size={32} />
                 </div>
-                <h3 className="fw-bolder mb-2 text-shadow">
-                  {title || "عنوان تخفیف"}
-                </h3>
+                <h3 className="fw-bolder mb-2 text-shadow">{title || 'عنوان تخفیف'}</h3>
                 <p className="text-white small opacity-75">پیش‌نمایش تغییرات</p>
               </div>
 
               {/* Details Box */}
               <div className="position-relative z-index-2 details-box bg-white bg-opacity-10 rounded-4 p-4 mb-4 backdrop-blur border border-white border-opacity-25">
                 <div className="d-flex justify-content-between mb-3 border-bottom border-white border-opacity-25 pb-2">
-                  <span className="text-white fw-light small">
-                    مقدار تخفیف:
-                  </span>
+                  <span className="text-white fw-light small">مقدار تخفیف:</span>
                   <span className="fw-bolder fs-4 text-white text-shadow">
-                    {amount ? Number(amount).toLocaleString() : "---"}
+                    {amount ? Number(amount).toLocaleString() : '---'}
                     <small className="fs-6 ms-1 fw-light">
-                      {type === "percentage" ? "%" : "تومان"}
+                      {type === 'percentage' ? '%' : 'تومان'}
                     </small>
                   </span>
                 </div>
                 <div className="d-flex justify-content-between mb-2">
                   <span className="text-white fw-light small">شروع:</span>
                   <span className="fw-bold dir-rtl small text-white">
-                    {startDate?.format("YYYY/MM/DD") || "---"}
+                    {startDate?.format('YYYY/MM/DD') || '---'}
                   </span>
                 </div>
                 <div className="d-flex justify-content-between">
                   <span className="text-white fw-light small">پایان:</span>
                   <span className="fw-bold dir-rtl small text-white">
-                    {endDate?.format("YYYY/MM/DD") || "---"}
+                    {endDate?.format('YYYY/MM/DD') || '---'}
                   </span>
                 </div>
               </div>
@@ -325,21 +316,21 @@ const DiscountEdit: React.FC = () => {
                     />
                     <div
                       className="d-flex bg-light rounded-3 p-1 border border-light"
-                      style={{ height: "48px" }}
+                      style={{ height: '48px' }}
                     >
                       <button
                         type="button"
-                        className={`btn rounded-3 fw-bold px-3 transition-all d-flex align-items-center gap-1 ${type === "percentage" ? "btn-percent-active" : "text-muted"}`}
-                        onClick={() => setType("percentage")}
-                        style={{ minWidth: "90px", justifyContent: "center" }}
+                        className={`btn rounded-3 fw-bold px-3 transition-all d-flex align-items-center gap-1 ${type === 'percentage' ? 'btn-percent-active' : 'text-muted'}`}
+                        onClick={() => setType('percentage')}
+                        style={{ minWidth: '90px', justifyContent: 'center' }}
                       >
                         <span>%</span> درصد
                       </button>
                       <button
                         type="button"
-                        className={`btn rounded-3 fw-bold px-3 transition-all d-flex align-items-center gap-1 ${type === "fixed" ? "btn-amount-active" : "text-muted"}`}
-                        onClick={() => setType("fixed")}
-                        style={{ minWidth: "90px", justifyContent: "center" }}
+                        className={`btn rounded-3 fw-bold px-3 transition-all d-flex align-items-center gap-1 ${type === 'fixed' ? 'btn-amount-active' : 'text-muted'}`}
+                        onClick={() => setType('fixed')}
+                        style={{ minWidth: '90px', justifyContent: 'center' }}
                       >
                         <span>$</span> مبلغ
                       </button>
@@ -351,13 +342,8 @@ const DiscountEdit: React.FC = () => {
               {/* --- Date Picker --- */}
               <div className="row g-4 mb-5 position-relative">
                 {/* Start Date */}
-                <div
-                  className="col-md-6"
-                  style={{ zIndex: 1002, position: "relative" }}
-                >
-                  <label className="form-label text-secondary fw-bold small ms-1">
-                    تاریخ شروع
-                  </label>
+                <div className="col-md-6" style={{ zIndex: 1002, position: 'relative' }}>
+                  <label className="form-label text-secondary fw-bold small ms-1">تاریخ شروع</label>
                   <div className="custom-input-group d-flex align-items-center rounded-3 px-3">
                     <CalendarIcon size={18} className="text-muted ms-2" />
                     <div className="flex-grow-1 h-100">
@@ -368,17 +354,14 @@ const DiscountEdit: React.FC = () => {
                         onChange={setStartDate}
                         inputClass="custom-date-input"
                         placeholder="انتخاب تاریخ"
-                        containerStyle={{ width: "100%", height: "100%" }}
+                        containerStyle={{ width: '100%', height: '100%' }}
                       />
                     </div>
                   </div>
                 </div>
 
                 {/* End Date */}
-                <div
-                  className="col-md-6"
-                  style={{ zIndex: 1001, position: "relative" }}
-                >
+                <div className="col-md-6" style={{ zIndex: 1001, position: 'relative' }}>
                   <label className="form-label text-secondary fw-bold small ms-1">
                     تاریخ پایان
                   </label>
@@ -399,7 +382,7 @@ const DiscountEdit: React.FC = () => {
                         }
                         inputClass="custom-date-input"
                         placeholder="انتخاب تاریخ"
-                        containerStyle={{ width: "100%", height: "100%" }}
+                        containerStyle={{ width: '100%', height: '100%' }}
                       />
                     </div>
                   </div>
@@ -434,13 +417,13 @@ const DiscountEdit: React.FC = () => {
                         setSpecificPlanMode(e.target.checked);
                         if (!e.target.checked) setSelectedPlan(null);
                       }}
-                      style={{ width: "3.2em", height: "1.6em" }}
+                      style={{ width: '3.2em', height: '1.6em' }}
                     />
                   </div>
                 </div>
 
                 <div
-                  className={`p-4 rounded-4 transition-all ${specificPlanMode ? "bg-cyan-soft border border-info border-opacity-25" : "bg-light opacity-50"}`}
+                  className={`p-4 rounded-4 transition-all ${specificPlanMode ? 'bg-cyan-soft border border-info border-opacity-25' : 'bg-light opacity-50'}`}
                 >
                   {specificPlanMode ? (
                     selectedPlan ? (
@@ -450,9 +433,7 @@ const DiscountEdit: React.FC = () => {
                             <Layers size={24} />
                           </div>
                           <div>
-                            <h6 className="fw-bold text-dark mb-0">
-                              {selectedPlan.name}
-                            </h6>
+                            <h6 className="fw-bold text-dark mb-0">{selectedPlan.name}</h6>
                             <small className="text-muted">پلن انتخابی</small>
                           </div>
                         </div>
@@ -510,13 +491,13 @@ const DiscountEdit: React.FC = () => {
                         setSpecificUserMode(e.target.checked);
                         if (!e.target.checked) setSelectedUsers([]);
                       }}
-                      style={{ width: "3.2em", height: "1.6em" }}
+                      style={{ width: '3.2em', height: '1.6em' }}
                     />
                   </div>
                 </div>
 
                 <div
-                  className={`p-4 rounded-4 transition-all ${specificUserMode ? "bg-primary-soft border border-primary border-opacity-25" : "bg-light opacity-50"}`}
+                  className={`p-4 rounded-4 transition-all ${specificUserMode ? 'bg-primary-soft border border-primary border-opacity-25' : 'bg-light opacity-50'}`}
                 >
                   {specificUserMode ? (
                     <div className="animate-fade-in">
@@ -529,9 +510,7 @@ const DiscountEdit: React.FC = () => {
                             >
                               <div className="d-flex align-items-center gap-2 border-end pe-2 me-2">
                                 <Users size={14} className="text-primary" />
-                                <span className="small fw-bold">
-                                  {user.username}
-                                </span>
+                                <span className="small fw-bold">{user.username}</span>
                               </div>
                               <button
                                 type="button"
@@ -553,9 +532,7 @@ const DiscountEdit: React.FC = () => {
                         <div className="icon-circle bg-primary bg-opacity-10 mb-1">
                           <Check size={24} />
                         </div>
-                        {selectedUsers.length > 0
-                          ? "مدیریت کاربران"
-                          : "انتخاب کاربران"}
+                        {selectedUsers.length > 0 ? 'مدیریت کاربران' : 'انتخاب کاربران'}
                       </button>
                     </div>
                   ) : (

@@ -1,10 +1,10 @@
 // src/components/common/Filter.tsx
 
-import React from "react";
-import { Search, Calendar as CalendarIcon, ChevronDown } from "lucide-react";
-import DatePicker from "react-multi-date-picker";
-import persian from "react-date-object/calendars/persian";
-import persian_fa from "react-date-object/locales/persian_fa";
+import React from 'react';
+import { Search, Calendar as CalendarIcon, ChevronDown } from 'lucide-react';
+import DatePicker from 'react-multi-date-picker';
+import persian from 'react-date-object/calendars/persian';
+import persian_fa from 'react-date-object/locales/persian_fa';
 
 export interface FilterOption {
   id: string | number;
@@ -12,10 +12,10 @@ export interface FilterOption {
 }
 
 interface FilterProps {
-  type: "text" | "dropdown" | "date-range";
+  type: 'text' | 'dropdown' | 'date-range';
   label?: string;
   placeholder?: string;
-  value?: any; 
+  value?: any;
   onChange?: (value: any) => void;
   options?: FilterOption[];
   className?: string;
@@ -28,47 +28,43 @@ const Filter: React.FC<FilterProps> = ({
   value,
   onChange,
   options = [],
-  className = "",
+  className = '',
 }) => {
-
   return (
     <div className={`filter-wrapper ${className}`}>
       {/* Label */}
       {label && (
-        <label className="form-label text-muted small fw-bold mb-2 ms-1 d-block">
-          {label}
-        </label>
+        <label className="form-label text-muted small fw-bold mb-2 ms-1 d-block">{label}</label>
       )}
 
       <div className="position-relative">
-        
         {/* --- Text Filter --- */}
-        {type === "text" && onChange && (
+        {type === 'text' && onChange && (
           <>
             <input
               type="text"
               className="form-control custom-input ps-5"
-              placeholder={placeholder || "جستجو..."}
+              placeholder={placeholder || 'جستجو...'}
               value={value}
               onChange={(e) => onChange(e.target.value)}
             />
             <Search
               size={18}
               className="position-absolute text-muted"
-              style={{ top: "50%", right: "15px", transform: "translateY(-50%)" }}
+              style={{ top: '50%', right: '15px', transform: 'translateY(-50%)' }}
             />
           </>
         )}
 
         {/* --- Dropdown Filter --- */}
-        {type === "dropdown" && onChange && (
+        {type === 'dropdown' && onChange && (
           <>
             <select
               className="form-select custom-input ps-4 cursor-pointer form-select-no-icon"
               value={value}
               onChange={(e) => onChange(e.target.value)}
             >
-              <option value="">{placeholder || "انتخاب کنید"}</option>
+              <option value="">{placeholder || 'انتخاب کنید'}</option>
               {options.map((opt) => (
                 <option key={opt.id} value={opt.id}>
                   {opt.name}
@@ -78,52 +74,52 @@ const Filter: React.FC<FilterProps> = ({
             <ChevronDown
               size={18}
               className="position-absolute text-muted pointer-events-none"
-              style={{ top: "50%", left: "15px", transform: "translateY(-50%)" }}
+              style={{ top: '50%', left: '15px', transform: 'translateY(-50%)' }}
             />
           </>
         )}
 
         {/* --- Date Range Filter (خام) --- */}
-        {type === "date-range" && onChange && (
-           <div className="custom-date-picker-wrapper">
-             <DatePicker
-               range
-               rangeHover
-               dateSeparator=" ~ "
-               // مستقیماً آبجکت‌های DateObject را به والد پاس می‌دهیم
-               onChange={(dateObjects) => onChange(dateObjects)} 
-               value={value || []}
-               calendar={persian}
-               locale={persian_fa}
-               calendarPosition="bottom-right"
-               format="YYYY/MM/DD"
-               portal
-               zIndex={9999}
-               render={(value: string, openCalendar: () => void) => (
-                 <div onClick={openCalendar} className="cursor-pointer w-100 position-relative">
-                    <input
-                      readOnly
-                      className="form-control custom-input ps-5 text-start cursor-pointer bg-white ltr-placeholder"
-                      value={value}
-                      placeholder={placeholder || "تاریخ شروع ~ تاریخ پایان"}
-                      style={{ direction: "ltr", textAlign: "right" }}
-                    />
-                     <CalendarIcon
-                      size={18}
-                      className="position-absolute text-muted pointer-events-none"
-                      style={{ top: "50%", right: "15px", transform: "translateY(-50%)" }}
-                    />
-                  </div>
-               )}
-             >
-                <button 
-                  style={{ margin: "5px", padding: "5px 10px", fontSize: "12px" }}
-                  className="btn btn-sm btn-light w-100 text-primary fw-bold"
-                >
-                  تایید تاریخ
-                </button>
-             </DatePicker>
-           </div>
+        {type === 'date-range' && onChange && (
+          <div className="custom-date-picker-wrapper">
+            <DatePicker
+              range
+              rangeHover
+              dateSeparator=" ~ "
+              // مستقیماً آبجکت‌های DateObject را به والد پاس می‌دهیم
+              onChange={(dateObjects) => onChange(dateObjects)}
+              value={value || []}
+              calendar={persian}
+              locale={persian_fa}
+              calendarPosition="bottom-right"
+              format="YYYY/MM/DD"
+              portal
+              zIndex={9999}
+              render={(value: string, openCalendar: () => void) => (
+                <div onClick={openCalendar} className="cursor-pointer w-100 position-relative">
+                  <input
+                    readOnly
+                    className="form-control custom-input ps-5 text-start cursor-pointer bg-white ltr-placeholder"
+                    value={value}
+                    placeholder={placeholder || 'تاریخ شروع ~ تاریخ پایان'}
+                    style={{ direction: 'ltr', textAlign: 'right' }}
+                  />
+                  <CalendarIcon
+                    size={18}
+                    className="position-absolute text-muted pointer-events-none"
+                    style={{ top: '50%', right: '15px', transform: 'translateY(-50%)' }}
+                  />
+                </div>
+              )}
+            >
+              <button
+                style={{ margin: '5px', padding: '5px 10px', fontSize: '12px' }}
+                className="btn btn-sm btn-light w-100 text-primary fw-bold"
+              >
+                تایید تاریخ
+              </button>
+            </DatePicker>
+          </div>
         )}
       </div>
 

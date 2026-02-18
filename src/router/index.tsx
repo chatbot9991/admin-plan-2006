@@ -1,60 +1,48 @@
 // src/router/index.tsx
-import { createBrowserRouter, Navigate } from "react-router-dom";
-import { lazy, Suspense } from "react";
+import { createBrowserRouter, Navigate } from 'react-router-dom';
+import { lazy, Suspense } from 'react';
 
 // ایمپورت‌های اصلی
-import RequireAuth from "../auth/RequireAuth";
-import MainLayout from "../layouts/MainLayout";
-import RouteError from "./RouteError";
+import RequireAuth from '../auth/RequireAuth';
+import MainLayout from '../layouts/MainLayout';
+import RouteError from './RouteError';
 
 // لیزی لود صفحات (Lazy Loading)
-const Dashboard = lazy(() => import("../pages/Dashboard"));
-const Users = lazy(() => import("../pages/Users"));
-const Settings = lazy(() => import("../pages/Settings"));
-const Login = lazy(() => import("../pages/login/Login"));
-const NotFound = lazy(() => import("../pages/NotFound"));
+const Dashboard = lazy(() => import('../pages/Dashboard'));
+const Users = lazy(() => import('../pages/Users'));
+const Settings = lazy(() => import('../pages/Settings'));
+const Login = lazy(() => import('../pages/login/Login'));
+const NotFound = lazy(() => import('../pages/NotFound'));
 
-const BlogList = lazy(() => import("../pages/blog/BlogList"));
-const BlogCreate = lazy(() => import("../pages/blog/BlogCreate"));
-const BlogDetails = lazy(() => import("../pages/blog/BlogDetails"));
-const BlogEdit = lazy(() => import("../pages/blog/BlogEdit"));
+const BlogList = lazy(() => import('../pages/blog/BlogList'));
+const BlogCreate = lazy(() => import('../pages/blog/BlogCreate'));
+const BlogDetails = lazy(() => import('../pages/blog/BlogDetails'));
+const BlogEdit = lazy(() => import('../pages/blog/BlogEdit'));
 
-const TransactionList = lazy(
-  () => import("../pages/transaction/TransactionList"),
-);
+const TransactionList = lazy(() => import('../pages/transaction/TransactionList'));
 
-const TransactionDetails = lazy(
-  () => import("../pages/transaction/TransactionDetails"),
-);
+const TransactionDetails = lazy(() => import('../pages/transaction/TransactionDetails'));
 
 // اضافه کردن صفحه بلاگ لیست
-const BlogCategoryList = lazy(
-  () => import("../pages/blogCategory/BlogCategoryList"),
-);
-const BlogCategoryCreate = lazy(
-  () => import("../pages/blogCategory/BlogCategoryCreate"),
-);
-const BlogCategoryDetails = lazy(
-  () => import("../pages/blogCategory/BlogCategoryDetails"),
-);
-const BlogCategoryEdit = lazy(
-  () => import("../pages/blogCategory/BlogCategoryEdit"),
-);
+const BlogCategoryList = lazy(() => import('../pages/blogCategory/BlogCategoryList'));
+const BlogCategoryCreate = lazy(() => import('../pages/blogCategory/BlogCategoryCreate'));
+const BlogCategoryDetails = lazy(() => import('../pages/blogCategory/BlogCategoryDetails'));
+const BlogCategoryEdit = lazy(() => import('../pages/blogCategory/BlogCategoryEdit'));
 
-const NotifyList = lazy(() => import("../pages/notify/NotifyList"));
-const NotifyDetails = lazy(() => import("../pages/notify/NotifyDetails"));
-const NotifyCreate = lazy(() => import("../pages/notify/NotifyCreate"));
+const NotifyList = lazy(() => import('../pages/notify/NotifyList'));
+const NotifyDetails = lazy(() => import('../pages/notify/NotifyDetails'));
+const NotifyCreate = lazy(() => import('../pages/notify/NotifyCreate'));
 
-const DiscountList = lazy(() => import("../pages/discount/DiscountList"));
-const DiscountCreate = lazy(() => import("../pages/discount/DiscountCreate"));
-const DiscountDetails = lazy(() => import("../pages/discount/DiscountDetails"));
-const DiscountEdite = lazy(() => import("../pages/discount/DiscountEdite"));
+const DiscountList = lazy(() => import('../pages/discount/DiscountList'));
+const DiscountCreate = lazy(() => import('../pages/discount/DiscountCreate'));
+const DiscountDetails = lazy(() => import('../pages/discount/DiscountDetails'));
+const DiscountEdite = lazy(() => import('../pages/discount/DiscountEdite'));
 
 // یک لودینگ ساده
 const PageLoader = () => (
   <div
     className="d-flex align-items-center justify-content-center w-100 min-vh-50"
-    style={{ height: "50vh" }}
+    style={{ height: '50vh' }}
   >
     <div className="spinner-border text-primary" role="status">
       <span className="visually-hidden">Loading...</span>
@@ -72,7 +60,7 @@ export const router = createBrowserRouter([
         children: [
           {
             index: true,
-            path: "dashboard",
+            path: 'dashboard',
             element: (
               <Suspense fallback={<PageLoader />}>
                 <Dashboard />
@@ -80,7 +68,15 @@ export const router = createBrowserRouter([
             ),
           },
           {
-            path: "users",
+            path: '*',
+            element: (
+              <Suspense fallback={<PageLoader />}>
+                <NotFound />
+              </Suspense>
+            ),
+          },
+          {
+            path: 'users',
             element: (
               <Suspense fallback={<PageLoader />}>
                 <Users />
@@ -88,7 +84,7 @@ export const router = createBrowserRouter([
             ),
           },
           {
-            path: "settings",
+            path: 'settings',
             element: (
               <Suspense fallback={<PageLoader />}>
                 <Settings />
@@ -97,14 +93,14 @@ export const router = createBrowserRouter([
           },
           // --- بخش بلاگ ---
           {
-            path: "blog",
+            path: 'blog',
             children: [
               {
                 index: true,
                 element: <Navigate to="list" replace />,
               },
               {
-                path: "list",
+                path: 'list',
                 element: (
                   <Suspense fallback={<PageLoader />}>
                     <BlogList />
@@ -113,7 +109,7 @@ export const router = createBrowserRouter([
               },
               {
                 // اصلاح شده: کلمه blog حذف شد
-                path: "details/:id",
+                path: 'details/:id',
                 element: (
                   <Suspense fallback={<PageLoader />}>
                     <BlogDetails />
@@ -122,7 +118,7 @@ export const router = createBrowserRouter([
               },
               {
                 // اصلاح شده: کلمه blog حذف شد
-                path: "edit/:id",
+                path: 'edit/:id',
                 element: (
                   <Suspense fallback={<PageLoader />}>
                     <BlogEdit />
@@ -131,7 +127,7 @@ export const router = createBrowserRouter([
               },
               {
                 // اصلاح شده: کلمه blog حذف شد
-                path: "create",
+                path: 'create',
                 element: (
                   <Suspense fallback={<PageLoader />}>
                     <BlogCreate />
@@ -141,14 +137,14 @@ export const router = createBrowserRouter([
             ],
           },
           {
-            path: "blog",
+            path: 'blog',
             children: [
               {
                 index: true,
                 element: <Navigate to="list" replace />,
               },
               {
-                path: "list",
+                path: 'list',
                 element: (
                   <Suspense fallback={<PageLoader />}>
                     <BlogList />
@@ -157,7 +153,7 @@ export const router = createBrowserRouter([
               },
               {
                 // اصلاح شده: کلمه blog حذف شد
-                path: "details/:id",
+                path: 'details/:id',
                 element: (
                   <Suspense fallback={<PageLoader />}>
                     <BlogDetails />
@@ -166,7 +162,7 @@ export const router = createBrowserRouter([
               },
               {
                 // اصلاح شده: کلمه blog حذف شد
-                path: "edit/:id",
+                path: 'edit/:id',
                 element: (
                   <Suspense fallback={<PageLoader />}>
                     <BlogEdit />
@@ -175,7 +171,7 @@ export const router = createBrowserRouter([
               },
               {
                 // اصلاح شده: کلمه blog حذف شد
-                path: "create",
+                path: 'create',
                 element: (
                   <Suspense fallback={<PageLoader />}>
                     <BlogCreate />
@@ -185,14 +181,14 @@ export const router = createBrowserRouter([
             ],
           },
           {
-            path: "blog-category",
+            path: 'blog-category',
             children: [
               {
                 index: true,
                 element: <Navigate to="list" replace />,
               },
               {
-                path: "list",
+                path: 'list',
                 element: (
                   <Suspense fallback={<PageLoader />}>
                     <BlogCategoryList />
@@ -201,7 +197,7 @@ export const router = createBrowserRouter([
               },
               {
                 // اصلاح شده: کلمه blog حذف شد
-                path: "details/:id",
+                path: 'details/:id',
                 element: (
                   <Suspense fallback={<PageLoader />}>
                     <BlogCategoryDetails />
@@ -210,7 +206,7 @@ export const router = createBrowserRouter([
               },
               {
                 // اصلاح شده: کلمه blog حذف شد
-                path: "edit/:id",
+                path: 'edit/:id',
                 element: (
                   <Suspense fallback={<PageLoader />}>
                     <BlogCategoryEdit />
@@ -219,7 +215,7 @@ export const router = createBrowserRouter([
               },
               {
                 // اصلاح شده: کلمه blog حذف شد
-                path: "create",
+                path: 'create',
                 element: (
                   <Suspense fallback={<PageLoader />}>
                     <BlogCategoryCreate />
@@ -230,14 +226,14 @@ export const router = createBrowserRouter([
           },
 
           {
-            path: "transactions",
+            path: 'transactions',
             children: [
               {
                 index: true,
                 element: <Navigate to="list" replace />,
               },
               {
-                path: "list",
+                path: 'list',
                 element: (
                   <Suspense fallback={<PageLoader />}>
                     <TransactionList />
@@ -246,7 +242,7 @@ export const router = createBrowserRouter([
               },
               {
                 // اصلاح شده: کلمه blog حذف شد
-                path: "details/:id",
+                path: 'details/:id',
                 element: (
                   <Suspense fallback={<PageLoader />}>
                     <TransactionDetails />
@@ -255,7 +251,7 @@ export const router = createBrowserRouter([
               },
 
               {
-                path: "details/:id",
+                path: 'details/:id',
                 element: (
                   <Suspense fallback={<PageLoader />}>
                     <TransactionDetails />
@@ -265,14 +261,14 @@ export const router = createBrowserRouter([
             ],
           },
           {
-            path: "notifications",
+            path: 'notifications',
             children: [
               {
                 index: true,
                 element: <Navigate to="list" replace />,
               },
               {
-                path: "list",
+                path: 'list',
                 element: (
                   <Suspense fallback={<PageLoader />}>
                     <NotifyList />
@@ -281,7 +277,7 @@ export const router = createBrowserRouter([
               },
               {
                 // اصلاح شده: کلمه blog حذف شد
-                path: "details/:id",
+                path: 'details/:id',
                 element: (
                   <Suspense fallback={<PageLoader />}>
                     <NotifyDetails />
@@ -289,7 +285,7 @@ export const router = createBrowserRouter([
                 ),
               },
               {
-                path: "create",
+                path: 'create',
                 element: (
                   <Suspense fallback={<PageLoader />}>
                     <NotifyCreate />
@@ -300,14 +296,14 @@ export const router = createBrowserRouter([
           },
 
           {
-            path: "discount",
+            path: 'discount',
             children: [
               {
                 index: true,
                 element: <Navigate to="list" replace />,
               },
               {
-                path: "list",
+                path: 'list',
                 element: (
                   <Suspense fallback={<PageLoader />}>
                     <DiscountList />
@@ -315,7 +311,7 @@ export const router = createBrowserRouter([
                 ),
               },
               {
-                path: "create",
+                path: 'create',
                 element: (
                   <Suspense fallback={<PageLoader />}>
                     <DiscountCreate />
@@ -323,7 +319,7 @@ export const router = createBrowserRouter([
                 ),
               },
               {
-                path: "details/:id",
+                path: 'details/:id',
                 element: (
                   <Suspense fallback={<PageLoader />}>
                     <DiscountDetails />
@@ -331,7 +327,7 @@ export const router = createBrowserRouter([
                 ),
               },
               {
-                path: "edit/:id",
+                path: 'edit/:id',
                 element: (
                   <Suspense fallback={<PageLoader />}>
                     <DiscountEdite />
@@ -347,18 +343,10 @@ export const router = createBrowserRouter([
 
   // روت‌های عمومی
   {
-    path: "/login",
+    path: '/login',
     element: (
       <Suspense fallback={<PageLoader />}>
         <Login />
-      </Suspense>
-    ),
-  },
-  {
-    path: "*",
-    element: (
-      <Suspense fallback={<PageLoader />}>
-        <NotFound />
       </Suspense>
     ),
   },

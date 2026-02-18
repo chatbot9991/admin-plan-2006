@@ -1,23 +1,23 @@
 /* src/index.css */
 
 @font-face {
-  font-family: "MyCustomFont";
-  src: url("./assets/fonts/IRANYekanX-Regular.woff2") format("woff2");
+  font-family: 'MyCustomFont';
+  src: url('./assets/fonts/IRANYekanX-Regular.woff2') format('woff2');
   font-weight: 400;
   font-style: normal;
   font-display: swap;
 }
 
 @font-face {
-  font-family: "MyCustomFont2";
-  src: url("./assets/fonts/IRANYekanX-Regular.woff2") format("woff2");
+  font-family: 'MyCustomFont2';
+  src: url('./assets/fonts/IRANYekanX-Regular.woff2') format('woff2');
   font-weight: 700;
   font-style: normal;
   font-display: swap;
 }
 
 body {
-  font-family: "MyCustomFont", sans-serif;
+  font-family: 'MyCustomFont', sans-serif;
   background-color: #ffffff;
   margin: 0;
   padding: 0;
@@ -25,23 +25,22 @@ body {
 
 * {
   box-sizing: border-box;
-  font-family: "MyCustomFont", sans-serif !important;
+  font-family: 'MyCustomFont', sans-serif !important;
   font-size: 16px;
 }
 
 h1 {
-  font-family: "MyCustomFont2", sans-serif !important;
+  font-family: 'MyCustomFont2', sans-serif !important;
   font-size: 38px;
   font-weight: 700;
   background-color: #ffffff;
 }
 
 input::placeholder {
-  font-family: "MyCustomFont", sans-serif;
+  font-family: 'MyCustomFont', sans-serif;
   font-size: 14px;
   font-weight: 300 !important;
 }
-
 
 /* رنگ بنفش اصلی طبق عکس */
 :root {
@@ -147,7 +146,7 @@ input::placeholder {
   border: none;
   background: transparent;
   outline: none;
-  font-family: "Vazirmatn", sans-serif; /* اطمینان از فونت فارسی */
+  font-family: 'Vazirmatn', sans-serif; /* اطمینان از فونت فارسی */
   font-size: 1rem;
   color: #4b5563;
   height: 100%;
@@ -165,7 +164,7 @@ input::placeholder {
   height: 65px; /* ارتفاع برابر با اینپوت */
   border-radius: 18px; /* گردی گوشه‌ها */
   border: none; /* حذف بوردر پیش‌فرض زشت */
-  font-family: "Vazirmatn", sans-serif; /* فونت فارسی */
+  font-family: 'Vazirmatn', sans-serif; /* فونت فارسی */
   font-weight: 700; /* ضخامت متن */
   font-size: 1.2rem; /* اندازه متن */
   cursor: pointer;

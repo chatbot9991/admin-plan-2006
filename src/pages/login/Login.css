@@ -1,12 +1,12 @@
 .logo {
-    position: absolute;
-    top: 10%;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    width: 100%;
+  position: absolute;
+  top: 10%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
 }
 
-p{
-    font-size: 24px;
+p {
+  font-size: 24px;
 }

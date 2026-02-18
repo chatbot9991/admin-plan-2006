@@ -1,9 +1,9 @@
-import React, { useEffect, useState } from "react";
-import { useParams, useNavigate, Link } from "react-router-dom";
-import { api } from "../../services/api";
+import React, { useEffect, useState } from 'react';
+import { useParams, useNavigate, Link } from 'react-router-dom';
+import { api } from '../../services/api';
 
 // --- تنظیمات پایه ---
-const BASE_URL = "https://dev.backend.mobo.land/api/v1/portal/blog/image/download?imageFile=";
+const BASE_URL = 'https://dev.backend.mobo.land/api/v1/portal/blog/image/download?imageFile=';
 
 interface Category {
   _id: string;
@@ -38,13 +38,13 @@ const BlogDetails: React.FC = () => {
 
   // فرمت تاریخ
   const formatDate = (isoString: string) => {
-    if (!isoString) return "-";
-    return new Date(isoString).toLocaleDateString("fa-IR", {
-      year: "numeric",
-      month: "long",
-      day: "numeric",
-      hour: "2-digit",
-      minute: "2-digit",
+    if (!isoString) return '-';
+    return new Date(isoString).toLocaleDateString('fa-IR', {
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit',
     });
   };
 
@@ -57,7 +57,7 @@ const BlogDetails: React.FC = () => {
           setBlog(response.data.blog);
         }
       } catch (error) {
-        console.error("Error fetching blog details:", error);
+        console.error('Error fetching blog details:', error);
       } finally {
         setLoading(false);
       }
@@ -80,25 +80,22 @@ const BlogDetails: React.FC = () => {
     return (
       <div className="text-center mt-5">
         <h3>بلاگ یافت نشد!</h3>
-        <button
-          className="btn btn-secondary mt-3"
-          onClick={() => navigate("/blog/list")}
-        >
+        <button className="btn btn-secondary mt-3" onClick={() => navigate('/blog/list')}>
           بازگشت به لیست
         </button>
       </div>
     );
   }
 
-  const mainImageSrc = blog.mainPic.startsWith("http")
+  const mainImageSrc = blog.mainPic.startsWith('http')
     ? blog.mainPic
     : `${BASE_URL}${blog.mainPic}`;
-  const isActive = blog.status === "active";
+  const isActive = blog.status === 'active';
 
   return (
     <div
       className="container-fluid p-4 fade-in"
-      style={{ backgroundColor: "#f8f9fc", minHeight: "100vh" }}
+      style={{ backgroundColor: '#f8f9fc', minHeight: '100vh' }}
     >
       {/* --- دکمه‌های هدر --- */}
       <div className="card border-0 shadow-sm rounded-4 mb-4">
@@ -159,25 +156,21 @@ const BlogDetails: React.FC = () => {
         <div className="col-lg-8">
           <div className="card border-0 shadow-sm rounded-4 overflow-hidden mb-4">
             {/* تصویر شاخص */}
-            <div
-              className="position-relative bg-light"
-              style={{ minHeight: "300px" }}
-            >
+            <div className="position-relative bg-light" style={{ minHeight: '300px' }}>
               <img
                 src={mainImageSrc}
                 alt={blog.alt}
                 className="w-100 h-100 object-fit-cover"
-                style={{ maxHeight: "450px" }}
+                style={{ maxHeight: '450px' }}
                 onError={(e) => {
-                  (e.target as HTMLImageElement).src =
-                    "https://placehold.co/800x400?text=No+Image";
+                  (e.target as HTMLImageElement).src = 'https://placehold.co/800x400?text=No+Image';
                 }}
               />
               <div className="position-absolute top-0 start-0 m-3">
                 <span
-                  className={`badge rounded-pill px-3 py-2 shadow-sm ${isActive ? "bg-success" : "bg-warning text-dark"}`}
+                  className={`badge rounded-pill px-3 py-2 shadow-sm ${isActive ? 'bg-success' : 'bg-warning text-dark'}`}
                 >
-                  {isActive ? "منتشر شده" : "پیش‌نویس"}
+                  {isActive ? 'منتشر شده' : 'پیش‌نویس'}
                 </span>
               </div>
             </div>
@@ -186,9 +179,7 @@ const BlogDetails: React.FC = () => {
               <h1 className="fw-bold text-dark mb-4">{blog.title}</h1>
 
               <div className="bg-light p-3 rounded-3 border-start border-4 border-primary mb-4">
-                <p className="text-secondary fs-5 mb-0">
-                  {blog.shortDescription}
-                </p>
+                <p className="text-secondary fs-5 mb-0">{blog.shortDescription}</p>
               </div>
 
               <div className="blog-content mt-5">
@@ -203,9 +194,7 @@ const BlogDetails: React.FC = () => {
                     {blog.anotherPics.map((pic, idx) => (
                       <div key={idx} className="col-4 col-md-3">
                         <img
-                          src={
-                            pic.startsWith("http") ? pic : `${BASE_URL}${pic}`
-                          }
+                          src={pic.startsWith('http') ? pic : `${BASE_URL}${pic}`}
                           className="img-thumbnail rounded-3 w-100"
                           alt={`gallery-${idx}`}
                         />
@@ -243,9 +232,7 @@ const BlogDetails: React.FC = () => {
                 </div>
                 <div>
                   <h6 className="fw-bold mb-1">{blog.categoryId?.title}</h6>
-                  <small className="text-muted">
-                    {blog.categoryId?.description}
-                  </small>
+                  <small className="text-muted">{blog.categoryId?.description}</small>
                 </div>
               </div>
             </div>
@@ -258,30 +245,21 @@ const BlogDetails: React.FC = () => {
               <ul className="list-group list-group-flush">
                 <li className="list-group-item px-0 d-flex justify-content-between">
                   <span className="text-muted">تاریخ انتشار</span>
-                  <span className="fw-medium">
-                    {formatDate(blog.publishDate)}
-                  </span>
+                  <span className="fw-medium">{formatDate(blog.publishDate)}</span>
                 </li>
                 <li className="list-group-item px-0 d-flex justify-content-between">
                   <span className="text-muted">آخرین بروزرسانی</span>
-                  <span className="fw-medium">
-                    {formatDate(blog.updatedAt)}
-                  </span>
+                  <span className="fw-medium">{formatDate(blog.updatedAt)}</span>
                 </li>
                 <li className="list-group-item px-0 d-flex justify-content-between">
                   <span className="text-muted">نسخه</span>
-                  <span
-                    className="badge bg-secondary"
-                    style={{ margin: "4px" }}
-                  >
+                  <span className="badge bg-secondary" style={{ margin: '4px' }}>
                     {blog.version}
                   </span>
                 </li>
                 <li className="list-group-item px-0 pt-3">
                   <span className="text-muted d-block mb-1">تگ Alt تصویر</span>
-                  <div className="bg-light p-2 rounded text-muted small">
-                    {blog.alt}
-                  </div>
+                  <div className="bg-light p-2 rounded text-muted small">{blog.alt}</div>
                 </li>
               </ul>
             </div>

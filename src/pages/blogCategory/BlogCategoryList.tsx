@@ -1,25 +1,25 @@
 // src/pages/blog/CategoryList.tsx
 
-import React, { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
-import { toast } from "react-toastify";
-import { 
-  Eye, 
-  Filter as FilterIcon, 
-  ChevronDown, 
-  ChevronUp, 
+import React, { useEffect, useState } from 'react';
+import { Link } from 'react-router-dom';
+import { toast } from 'react-toastify';
+import {
+  Eye,
+  Filter as FilterIcon,
+  ChevronDown,
+  ChevronUp,
   RefreshCcw,
   Search,
   Edit,
-  RotateCw 
-} from "lucide-react";
-import { DateObject } from "react-multi-date-picker";
-import gregorian from "react-date-object/calendars/gregorian";
-import gregorian_en from "react-date-object/locales/gregorian_en";
+  RotateCw,
+} from 'lucide-react';
+import { DateObject } from 'react-multi-date-picker';
+import gregorian from 'react-date-object/calendars/gregorian';
+import gregorian_en from 'react-date-object/locales/gregorian_en';
 
-import { api } from "../../services/api";
-import Filter from "../../components/common/Filter";
-import Pagination from "../../components/common/Pagination"; 
+import { api } from '../../services/api';
+import Filter from '../../components/common/Filter';
+import Pagination from '../../components/common/Pagination';
 
 // --- Interfaces ---
 interface BlogCategory {
@@ -48,34 +48,38 @@ const CategoryList: React.FC = () => {
 
   // --- UI Filters States (Inputs) ---
   const [showFilters, setShowFilters] = useState(true);
-  
+
   // مقادیر موقت (آنچه کاربر تایپ می‌کند)
-  const [tempSearch, setTempSearch] = useState("");
-  const [tempStatus, setTempStatus] = useState("");
+  const [tempSearch, setTempSearch] = useState('');
+  const [tempStatus, setTempStatus] = useState('');
   const [tempDateRange, setTempDateRange] = useState<DateObject[]>([]);
 
   // مقادیر نهایی (آنچه به API ارسال می‌شود)
   const [appliedFilters, setAppliedFilters] = useState({
-    search: "",
-    status: "",
+    search: '',
+    status: '',
     dateRange: [] as DateObject[],
   });
 
   // --- Modal State ---
-  const [targetCategory, setTargetCategory] = useState<{ id: string; status: string; title: string } | null>(null);
+  const [targetCategory, setTargetCategory] = useState<{
+    id: string;
+    status: string;
+    title: string;
+  } | null>(null);
   const [isProcessing, setIsProcessing] = useState<boolean>(false);
 
   // --- Helpers ---
   const formatDate = (isoString: string) => {
-    if (!isoString) return { date: "-", time: "-" };
+    if (!isoString) return { date: '-', time: '-' };
     try {
       const dateObj = new Date(isoString);
       return {
-        date: dateObj.toLocaleDateString("fa-IR"),
-        time: dateObj.toLocaleTimeString("fa-IR", { hour: "2-digit", minute: "2-digit" }),
+        date: dateObj.toLocaleDateString('fa-IR'),
+        time: dateObj.toLocaleTimeString('fa-IR', { hour: '2-digit', minute: '2-digit' }),
       };
     } catch (e) {
-      return { date: "-", time: "-" };
+      return { date: '-', time: '-' };
     }
   };
 
@@ -85,8 +89,8 @@ const CategoryList: React.FC = () => {
       setLoading(true);
 
       const params = new URLSearchParams();
-      params.append("page", currentPage.toString());
-      params.append("limit", limit.toString());
+      params.append('page', currentPage.toString());
+      params.append('limit', limit.toString());
 
       // ساخت آبجکت where برای فیلتر
       const where: any = {};
@@ -115,14 +119,14 @@ const CategoryList: React.FC = () => {
 
         where.createdAt = {
           from: fromDate.toDate().toISOString(),
-          to: toDate.toDate().toISOString()
+          to: toDate.toDate().toISOString(),
         };
       }
 
       // تبدیل به JSON String برای پارامتر filter
       if (Object.keys(where).length > 0) {
         const filterJson = JSON.stringify({ where });
-        params.append("filter", filterJson);
+        params.append('filter', filterJson);
       }
 
       const response = await api.get<ApiResponse>(`/blog-category/list?${params.toString()}`);
@@ -133,23 +137,22 @@ const CategoryList: React.FC = () => {
           setCategories(response.data.blogCategories);
           setTotal(response.data.total || response.data.blogCategories.length);
         } else if (Array.isArray((response.data as any).data)) {
-           // پشتیبانی از ساختار جدید تودرتو اگر بکند تغییر کرده باشد
-           setCategories((response.data as any).data);
-           setTotal((response.data as any).total?.[0]?.count || 0);
+          // پشتیبانی از ساختار جدید تودرتو اگر بکند تغییر کرده باشد
+          setCategories((response.data as any).data);
+          setTotal((response.data as any).total?.[0]?.count || 0);
         } else if (Array.isArray(response.data)) {
-           // پشتیبانی از آرایه ساده
-           // @ts-ignore
-           setCategories(response.data);
-           setTotal(response.data.length);
+          // پشتیبانی از آرایه ساده
+          // @ts-ignore
+          setCategories(response.data);
+          setTotal(response.data.length);
         } else {
           setCategories([]);
           setTotal(0);
         }
       }
-
     } catch (error) {
-      console.error("Error fetching categories:", error);
-      toast.error("خطا در دریافت لیست دسته‌بندی‌ها");
+      console.error('Error fetching categories:', error);
+      toast.error('خطا در دریافت لیست دسته‌بندی‌ها');
       setCategories([]);
     } finally {
       setLoading(false);
@@ -167,11 +170,11 @@ const CategoryList: React.FC = () => {
   };
 
   const handleResetFilters = () => {
-    setTempSearch("");
-    setTempStatus("");
+    setTempSearch('');
+    setTempStatus('');
     setTempDateRange([]);
     setCurrentPage(1);
-    setAppliedFilters({ search: "", status: "", dateRange: [] });
+    setAppliedFilters({ search: '', status: '', dateRange: [] });
   };
 
   // Modal Logic
@@ -187,17 +190,19 @@ const CategoryList: React.FC = () => {
     if (!targetCategory) return;
     setIsProcessing(true);
     try {
-      const newStatus = targetCategory.status === "active" ? "deactive" : "active";
+      const newStatus = targetCategory.status === 'active' ? 'deactive' : 'active';
       await api.put(`/blog-category/changeStatus`, { id: targetCategory.id, status: newStatus });
-      
+
       // Optimistic Update
-      setCategories(prev => prev.map(c => c._id === targetCategory.id ? { ...c, status: newStatus } : c));
-      
-      toast.success("وضعیت تغییر کرد");
+      setCategories((prev) =>
+        prev.map((c) => (c._id === targetCategory.id ? { ...c, status: newStatus } : c))
+      );
+
+      toast.success('وضعیت تغییر کرد');
       closeStatusModal();
     } catch (error) {
       console.error(error);
-      toast.error("خطا در تغییر وضعیت");
+      toast.error('خطا در تغییر وضعیت');
     } finally {
       setIsProcessing(false);
     }
@@ -211,8 +216,7 @@ const CategoryList: React.FC = () => {
 
   // --- Render ---
   return (
-    <div className="container-fluid p-4 fade-in position-relative" style={{ minHeight: "100vh" }}>
-      
+    <div className="container-fluid p-4 fade-in position-relative" style={{ minHeight: '100vh' }}>
       {/* Status Modal */}
       {targetCategory && (
         <div className="custom-modal-overlay">
@@ -222,18 +226,28 @@ const CategoryList: React.FC = () => {
             </div>
             <h4 className="fw-bold text-dark mt-3">تغییر وضعیت دسته‌بندی</h4>
             <p className="text-muted text-center mt-2 mb-4 px-3">
-              وضعیت دسته‌بندی <strong>"{targetCategory.title}"</strong> به 
-              <span className={`fw-bold mx-1 ${targetCategory.status === "active" ? "text-danger" : "text-success"}`}>
-                {targetCategory.status === "active" ? "غیرفعال" : "فعال"}
+              وضعیت دسته‌بندی <strong>"{targetCategory.title}"</strong> به
+              <span
+                className={`fw-bold mx-1 ${targetCategory.status === 'active' ? 'text-danger' : 'text-success'}`}
+              >
+                {targetCategory.status === 'active' ? 'غیرفعال' : 'فعال'}
               </span>
               تغییر کند؟
             </p>
             <div className="d-flex gap-2 w-100 justify-content-center">
-              <button className="btn btn-light flex-grow-1 py-2 rounded-pill fw-bold" onClick={closeStatusModal} disabled={isProcessing}>
+              <button
+                className="btn btn-light flex-grow-1 py-2 rounded-pill fw-bold"
+                onClick={closeStatusModal}
+                disabled={isProcessing}
+              >
                 انصراف
               </button>
-              <button className="btn btn-warning text-white flex-grow-1 py-2 rounded-pill fw-bold" onClick={confirmStatusChange} disabled={isProcessing}>
-                {isProcessing ? "..." : "بله، تغییر بده"}
+              <button
+                className="btn btn-warning text-white flex-grow-1 py-2 rounded-pill fw-bold"
+                onClick={confirmStatusChange}
+                disabled={isProcessing}
+              >
+                {isProcessing ? '...' : 'بله، تغییر بده'}
               </button>
             </div>
           </div>
@@ -247,22 +261,22 @@ const CategoryList: React.FC = () => {
           <p className="text-muted small mb-0">لیست دسته‌بندی‌های بلاگ</p>
         </div>
         <div className="d-flex gap-2">
-            <Link to="/blog-category/create" className="btn-shine-effect">
-                <span className="mx-2 fs-5">+</span> دسته‌بندی جدید
-            </Link>
-            <button 
-                onClick={fetchCategories} 
-                className="btn btn-light rounded-pill p-2 shadow-sm border"
-                title="بروزرسانی لیست"
-            >
-                <RefreshCcw size={20} className={loading ? "spin-anim" : ""} />
-            </button>
+          <Link to="/blog-category/create" className="btn-shine-effect">
+            <span className="mx-2 fs-5">+</span> دسته‌بندی جدید
+          </Link>
+          <button
+            onClick={fetchCategories}
+            className="btn btn-light rounded-pill p-2 shadow-sm border"
+            title="بروزرسانی لیست"
+          >
+            <RefreshCcw size={20} className={loading ? 'spin-anim' : ''} />
+          </button>
         </div>
       </div>
 
       {/* Filters Section */}
       <div className="card border-0 shadow-sm rounded-4 mb-4 overflow-hidden">
-        <div 
+        <div
           className="card-header bg-white border-0 p-3 d-flex justify-content-between align-items-center cursor-pointer user-select-none"
           onClick={() => setShowFilters(!showFilters)}
         >
@@ -273,7 +287,7 @@ const CategoryList: React.FC = () => {
           {showFilters ? <ChevronUp size={20} /> : <ChevronDown size={20} />}
         </div>
 
-        <div className={`collapse ${showFilters ? "show" : ""}`}>
+        <div className={`collapse ${showFilters ? 'show' : ''}`}>
           <div className="card-body bg-light border-top p-4">
             <div className="row g-3 align-items-end">
               <div className="col-12 col-md-3">
@@ -291,8 +305,8 @@ const CategoryList: React.FC = () => {
                   label="وضعیت"
                   placeholder="همه"
                   options={[
-                    { id: "active", name: "فعال" },
-                    { id: "deactive", name: "غیرفعال" },
+                    { id: 'active', name: 'فعال' },
+                    { id: 'deactive', name: 'غیرفعال' },
                   ]}
                   value={tempStatus}
                   onChange={setTempStatus}
@@ -308,23 +322,23 @@ const CategoryList: React.FC = () => {
                 />
               </div>
               <div className="col-12 col-md-3 d-flex gap-2">
-                <button 
+                <button
                   className="btn btn-primary w-100 d-flex align-items-center justify-content-center gap-2"
                   onClick={handleApplyFilters}
-                  style={{ height: "48px", borderRadius: "12px" }}
+                  style={{ height: '48px', borderRadius: '12px' }}
                 >
                   <Search size={18} />
                   <span>اعمال فیلتر</span>
                 </button>
                 {(tempSearch || tempStatus || tempDateRange.length > 0) && (
-                   <button 
-                   className="btn btn-danger-soft px-3"
-                   onClick={handleResetFilters}
-                   title="حذف فیلترها"
-                   style={{ height: "48px", borderRadius: "12px" }}
-                 >
-                   ×
-                 </button>
+                  <button
+                    className="btn btn-danger-soft px-3"
+                    onClick={handleResetFilters}
+                    title="حذف فیلترها"
+                    style={{ height: '48px', borderRadius: '12px' }}
+                  >
+                    ×
+                  </button>
                 )}
               </div>
             </div>
@@ -333,16 +347,22 @@ const CategoryList: React.FC = () => {
       </div>
 
       {/* Table Section */}
-      <div className="table-responsive" style={{ overflowX: "visible" }}>
+      <div className="table-responsive" style={{ overflowX: 'visible' }}>
         <table className="table modern-table">
           <thead>
             <tr>
-              <th style={{ width: "5%", borderRadius: "0 15px 15px 0" }}>#</th>
-              <th style={{ width: "20%" }}>عنوان دسته‌بندی</th>
-              <th style={{ width: "35%" }}>توضیحات</th>
-              <th className="text-center" style={{ width: "15%" }}>تاریخ ایجاد</th>
-              <th className="text-center" style={{ width: "10%" }}>وضعیت</th>
-              <th className="text-center" style={{ width: "15%", borderRadius: "15px 0 0 15px" }}>عملیات</th>
+              <th style={{ width: '5%', borderRadius: '0 15px 15px 0' }}>#</th>
+              <th style={{ width: '20%' }}>عنوان دسته‌بندی</th>
+              <th style={{ width: '35%' }}>توضیحات</th>
+              <th className="text-center" style={{ width: '15%' }}>
+                تاریخ ایجاد
+              </th>
+              <th className="text-center" style={{ width: '10%' }}>
+                وضعیت
+              </th>
+              <th className="text-center" style={{ width: '15%', borderRadius: '15px 0 0 15px' }}>
+                عملیات
+              </th>
             </tr>
           </thead>
           <tbody>
@@ -362,23 +382,30 @@ const CategoryList: React.FC = () => {
             ) : (
               categories.map((cat, index) => {
                 const { date, time } = formatDate(cat.createdAt);
-                const isActive = cat.status === "active";
+                const isActive = cat.status === 'active';
 
                 return (
                   <tr key={cat._id} className="align-middle">
                     <td className="fw-bold text-secondary ps-3">
-                        {(currentPage - 1) * limit + index + 1}
+                      {(currentPage - 1) * limit + index + 1}
                     </td>
 
                     <td>
-                      <span className="fw-bold text-dark mb-1 text-truncate d-block" style={{maxWidth: '200px'}} title={cat.title}>
+                      <span
+                        className="fw-bold text-dark mb-1 text-truncate d-block"
+                        style={{ maxWidth: '200px' }}
+                        title={cat.title}
+                      >
                         {cat.title}
                       </span>
                     </td>
 
                     <td>
-                      <p className="text-muted small mb-0 description-truncate" style={{maxWidth: '300px'}}>
-                        {cat.description || "-"}
+                      <p
+                        className="text-muted small mb-0 description-truncate"
+                        style={{ maxWidth: '300px' }}
+                      >
+                        {cat.description || '-'}
                       </p>
                     </td>
 
@@ -390,22 +417,30 @@ const CategoryList: React.FC = () => {
                     </td>
 
                     <td className="text-center">
-                      <div className={`status-pill ${isActive ? "active" : "inactive"}`}>
+                      <div className={`status-pill ${isActive ? 'active' : 'inactive'}`}>
                         <span className="dot"></span>
-                        {isActive ? "فعال" : "غیرفعال"}
+                        {isActive ? 'فعال' : 'غیرفعال'}
                       </div>
                     </td>
 
                     <td>
                       <div className="d-flex gap-2 justify-content-center">
-                        <Link to={`/blog-category/details/${cat._id}`} className="btn-action btn-soft-info" title="مشاهده">
+                        <Link
+                          to={`/blog-category/details/${cat._id}`}
+                          className="btn-action btn-soft-info"
+                          title="مشاهده"
+                        >
                           <Eye size={18} />
                         </Link>
-                        <Link to={`/blog-category/edit/${cat._id}`} className="btn-action btn-soft-primary" title="ویرایش">
+                        <Link
+                          to={`/blog-category/edit/${cat._id}`}
+                          className="btn-action btn-soft-primary"
+                          title="ویرایش"
+                        >
                           <Edit size={18} />
                         </Link>
-                        <button 
-                          className="btn-action btn-soft-warning" 
+                        <button
+                          className="btn-action btn-soft-warning"
                           title="تغییر وضعیت"
                           onClick={() => openStatusModal(cat)}
                         >

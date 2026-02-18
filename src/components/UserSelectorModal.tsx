@@ -1,9 +1,9 @@
 // src/components/UserSelectorModal.tsx
 
-import React, { useState, useEffect } from "react";
-import { api } from "../services/api";
-import { Search, Users, Check, Loader2, ChevronDown, X } from "lucide-react";
-import { toast } from "react-toastify";
+import React, { useState, useEffect } from 'react';
+import { api } from '../services/api';
+import { Search, Users, Check, Loader2, ChevronDown, X } from 'lucide-react';
+import { toast } from 'react-toastify';
 
 export interface User {
   _id: string;
@@ -27,14 +27,14 @@ const UserSelectorModal: React.FC<UserSelectorModalProps> = ({
   onClose,
   onConfirm,
   initialSelectedUsers = [],
-  title = "انتخاب کاربران",
+  title = 'انتخاب کاربران',
   multiSelect = true,
 }) => {
   const [users, setUsers] = useState<User[]>([]);
   const [localSelected, setLocalSelected] = useState<User[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [isLoadingMore, setIsLoadingMore] = useState(false);
-  const [searchTerm, setSearchTerm] = useState("");
+  const [searchTerm, setSearchTerm] = useState('');
   const [page, setPage] = useState(1);
   const [totalDocs, setTotalDocs] = useState(0);
   const LIMIT = 20;
@@ -42,9 +42,9 @@ const UserSelectorModal: React.FC<UserSelectorModalProps> = ({
   useEffect(() => {
     if (isOpen) {
       setLocalSelected(initialSelectedUsers);
-      setSearchTerm("");
+      setSearchTerm('');
       setPage(1);
-      fetchUsers(1, "", false);
+      fetchUsers(1, '', false);
     }
   }, [isOpen]);
 
@@ -59,11 +59,12 @@ const UserSelectorModal: React.FC<UserSelectorModalProps> = ({
 
   const fetchUsers = async (pageNum: number, search: string, isLoadMore: boolean) => {
     try {
-      if (isLoadMore) setIsLoadingMore(true); else setIsLoading(true);
+      if (isLoadMore) setIsLoadingMore(true);
+      else setIsLoading(true);
       const params: any = { limit: LIMIT, page: pageNum };
       if (search) params.search = search;
 
-      const response = await api.get<any>("/user/menu", { params });
+      const response = await api.get<any>('/user/menu', { params });
       const fetchedList = response.data.users || response.data.list || [];
       const total = response.data.total || 0;
 
@@ -72,7 +73,7 @@ const UserSelectorModal: React.FC<UserSelectorModalProps> = ({
       setTotalDocs(total);
     } catch (error) {
       console.error(error);
-      toast.error("خطا در دریافت کاربران");
+      toast.error('خطا در دریافت کاربران');
     } finally {
       setIsLoading(false);
       setIsLoadingMore(false);
@@ -113,13 +114,27 @@ const UserSelectorModal: React.FC<UserSelectorModalProps> = ({
           </div>
 
           <div className="position-relative mb-3">
-            <Search className="position-absolute text-muted" size={18} style={{ top: "12px", right: "12px" }} />
-            <input type="text" className="form-control bg-light border-0 pe-5 py-2" placeholder="جستجو (نام، ایمیل)..." value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} autoFocus />
+            <Search
+              className="position-absolute text-muted"
+              size={18}
+              style={{ top: '12px', right: '12px' }}
+            />
+            <input
+              type="text"
+              className="form-control bg-light border-0 pe-5 py-2"
+              placeholder="جستجو (نام، ایمیل)..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              autoFocus
+            />
           </div>
 
           <div className="usm-list custom-scrollbar mb-3">
             {isLoading ? (
-              <div className="text-center py-5"><Loader2 size={30} className="animate-spin text-primary" /><p className="mt-2 text-muted small">در حال بارگذاری...</p></div>
+              <div className="text-center py-5">
+                <Loader2 size={30} className="animate-spin text-primary" />
+                <p className="mt-2 text-muted small">در حال بارگذاری...</p>
+              </div>
             ) : users.length === 0 ? (
               <div className="text-center py-5 text-muted">یافت نشد.</div>
             ) : (
@@ -127,32 +142,71 @@ const UserSelectorModal: React.FC<UserSelectorModalProps> = ({
                 {users.map((user) => {
                   const isSelected = localSelected.some((u) => u._id === user._id);
                   return (
-                    <div key={user._id} onClick={() => toggleUser(user)} className={`d-flex align-items-center justify-content-between p-3 rounded-3 mb-2 cursor-pointer transition-all border ${isSelected ? "bg-primary-subtle border-primary shadow-sm" : "bg-white border-light hover-bg-light"}`}>
+                    <div
+                      key={user._id}
+                      onClick={() => toggleUser(user)}
+                      className={`d-flex align-items-center justify-content-between p-3 rounded-3 mb-2 cursor-pointer transition-all border ${isSelected ? 'bg-primary-subtle border-primary shadow-sm' : 'bg-white border-light hover-bg-light'}`}
+                    >
                       <div className="d-flex align-items-center gap-3 w-100 overflow-hidden">
-                        <div className={`rounded-circle p-2 flex-shrink-0 ${isSelected ? 'bg-primary text-white' : 'bg-light text-secondary'}`} style={{ width: "40px", height: "40px", display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                        <div
+                          className={`rounded-circle p-2 flex-shrink-0 ${isSelected ? 'bg-primary text-white' : 'bg-light text-secondary'}`}
+                          style={{
+                            width: '40px',
+                            height: '40px',
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                          }}
+                        >
                           <Users size={20} />
                         </div>
                         <div className="text-truncate">
-                          <p className="fw-bold text-dark mb-0 text-truncate dir-ltr text-end">{user.username}</p>
-                          <small className="text-muted d-block text-truncate">{(user.firstName || user.lastName) ? `${user.firstName || ''} ${user.lastName || ''}` : user.email}</small>
+                          <p className="fw-bold text-dark mb-0 text-truncate dir-ltr text-end">
+                            {user.username}
+                          </p>
+                          <small className="text-muted d-block text-truncate">
+                            {user.firstName || user.lastName
+                              ? `${user.firstName || ''} ${user.lastName || ''}`
+                              : user.email}
+                          </small>
                         </div>
                       </div>
                       <div className="flex-shrink-0 ms-2">
-                        {isSelected ? <div className="bg-primary text-white rounded-circle p-1"><Check size={14} /></div> : <div className="border rounded-circle" style={{ width: "22px", height: "22px", opacity: 0.3 }}></div>}
+                        {isSelected ? (
+                          <div className="bg-primary text-white rounded-circle p-1">
+                            <Check size={14} />
+                          </div>
+                        ) : (
+                          <div
+                            className="border rounded-circle"
+                            style={{ width: '22px', height: '22px', opacity: 0.3 }}
+                          ></div>
+                        )}
                       </div>
                     </div>
                   );
                 })}
                 {users.length < totalDocs && (
-                  <button onClick={() => fetchUsers(page + 1, searchTerm, true)} disabled={isLoadingMore} className="btn btn-light text-primary w-100 py-2 mt-2 d-flex justify-content-center gap-2">
-                    {isLoadingMore ? <Loader2 size={16} className="animate-spin" /> : <ChevronDown size={16} />} نمایش بیشتر
+                  <button
+                    onClick={() => fetchUsers(page + 1, searchTerm, true)}
+                    disabled={isLoadingMore}
+                    className="btn btn-light text-primary w-100 py-2 mt-2 d-flex justify-content-center gap-2"
+                  >
+                    {isLoadingMore ? (
+                      <Loader2 size={16} className="animate-spin" />
+                    ) : (
+                      <ChevronDown size={16} />
+                    )}{' '}
+                    نمایش بیشتر
                   </button>
                 )}
               </>
             )}
           </div>
 
-          <button onClick={handleConfirm} className="btn btn-primary w-100 py-2 fw-bold rounded-3">تایید ({localSelected.length})</button>
+          <button onClick={handleConfirm} className="btn btn-primary w-100 py-2 fw-bold rounded-3">
+            تایید ({localSelected.length})
+          </button>
         </div>
       </div>
       <style>{`

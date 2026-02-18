@@ -1,9 +1,9 @@
-import { useState, useRef, useEffect } from "react";
-import { Bell, ChevronDown, LogOut, User, Settings } from "lucide-react";
-import { Link } from "react-router-dom";
-import { useAuthStore } from "../stores/authStore"; // فرض بر این است که این فایل وجود دارد
-import logoIcon from "../assets/icons/logo.svg";
-import avatarPlaceholder from "../assets/icons/avatar.svg";
+import { useState, useRef, useEffect } from 'react';
+import { Bell, ChevronDown, LogOut, User, Settings } from 'lucide-react';
+import { Link } from 'react-router-dom';
+import { useAuthStore } from '../stores/authStore'; // فرض بر این است که این فایل وجود دارد
+import logoIcon from '../assets/icons/logo.svg';
+import avatarPlaceholder from '../assets/icons/avatar.svg';
 
 const Header = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -14,36 +14,29 @@ const Header = () => {
 
   // ساخت نام کامل برای نمایش
   // از Optional Chaining (?.) استفاده می‌کنیم تا اگر هنوز دیتا لود نشده بود خطا ندهد
-  const fullName = user ? `${user.adminName} ${user.family}` : "کاربر سیستم";
-  const roleTitle = user?.role ? user.role : "-";
+  const fullName = user ? `${user.adminName} ${user.family}` : 'کاربر سیستم';
+  const roleTitle = user?.role ? user.role : '-';
 
   // بستن منو در صورت کلیک بیرون از آن
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
-      if (
-        dropdownRef.current &&
-        !dropdownRef.current.contains(event.target as Node)
-      ) {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
         setIsOpen(false);
       }
     }
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => document.removeEventListener("mousedown", handleClickOutside);
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
   return (
     <>
       <header
         className="w-100 bg-white border-bottom d-flex align-items-center justify-content-between px-4 py-2 position-relative"
-        style={{ height: "80px", zIndex: 1000 }}
+        style={{ height: '80px', zIndex: 1000 }}
       >
         {/* ---------------- سمت راست: لوگو ---------------- */}
         <div className="d-flex align-items-center gap-2">
-          <img
-            src={logoIcon}
-            alt="Moboland Logo"
-            style={{ width: "auto", height: "45px" }}
-          />
+          <img src={logoIcon} alt="Moboland Logo" style={{ width: 'auto', height: '45px' }} />
         </div>
 
         {/* ---------------- سمت چپ: پروفایل و نوتیفیکیشن ---------------- */}
@@ -52,19 +45,19 @@ const Header = () => {
           <button
             className="btn btn-light rounded-circle position-relative d-flex align-items-center justify-content-center p-0 border-0"
             style={{
-              width: "45px",
-              height: "45px",
-              backgroundColor: "#f3f4f6",
+              width: '45px',
+              height: '45px',
+              backgroundColor: '#f3f4f6',
             }}
           >
             <Bell size={24} className="text-secondary" />
             <span
               className="position-absolute bg-success rounded-circle border border-white"
               style={{
-                width: "12px",
-                height: "12px",
-                bottom: "8px",
-                right: "8px",
+                width: '12px',
+                height: '12px',
+                bottom: '8px',
+                right: '8px',
               }}
             ></span>
           </button>
@@ -75,13 +68,13 @@ const Header = () => {
             <div
               onClick={() => setIsOpen(!isOpen)}
               className="d-flex align-items-center gap-3 p-1 ps-3 rounded-pill custom-profile-trigger"
-              style={{ cursor: "pointer", transition: "all 0.2s ease" }}
+              style={{ cursor: 'pointer', transition: 'all 0.2s ease' }}
             >
               <img
                 src={avatarPlaceholder}
                 className="rounded-circle shadow-sm"
                 alt="Admin"
-                style={{ width: "45px", height: "45px", objectFit: "cover" }}
+                style={{ width: '45px', height: '45px', objectFit: 'cover' }}
               />
 
               <div className="d-none d-md-flex align-items-center gap-2">
@@ -91,8 +84,8 @@ const Header = () => {
                   size={20}
                   className="text-muted"
                   style={{
-                    transform: isOpen ? "rotate(180deg)" : "rotate(0deg)",
-                    transition: "transform 0.3s ease",
+                    transform: isOpen ? 'rotate(180deg)' : 'rotate(0deg)',
+                    transition: 'transform 0.3s ease',
                   }}
                 />
               </div>
@@ -103,9 +96,9 @@ const Header = () => {
               <div
                 className="position-absolute bg-white rounded-4 shadow-lg border-0 overflow-hidden custom-dropdown-animation"
                 style={{
-                  top: "120%",
-                  left: "0",
-                  width: "280px",
+                  top: '120%',
+                  left: '0',
+                  width: '280px',
                   zIndex: 1050,
                 }}
               >
@@ -114,10 +107,7 @@ const Header = () => {
                   <p className="mb-0 fw-bold text-dark fs-5">{fullName}</p>
                   <small className="text-muted">{roleTitle}</small>
                   {user?.mobile && (
-                    <div
-                      className="text-muted small mt-1"
-                      style={{ fontSize: "0.8rem" }}
-                    >
+                    <div className="text-muted small mt-1" style={{ fontSize: '0.8rem' }}>
                       {user.mobile}
                     </div>
                   )}
@@ -134,9 +124,7 @@ const Header = () => {
                     <div className="icon-box bg-primary bg-opacity-10 text-primary rounded-circle p-2 d-flex align-items-center justify-content-center">
                       <User size={18} />
                     </div>
-                    <span className="fw-medium text-secondary">
-                      مشاهده پروفایل
-                    </span>
+                    <span className="fw-medium text-secondary">مشاهده پروفایل</span>
                   </Link>
 
                   {/* دکمه تنظیمات */}
@@ -148,9 +136,7 @@ const Header = () => {
                     <div className="icon-box bg-info bg-opacity-10 text-info rounded-circle p-2 d-flex align-items-center justify-content-center">
                       <Settings size={18} />
                     </div>
-                    <span className="fw-medium text-secondary">
-                      تنظیمات اکانت
-                    </span>
+                    <span className="fw-medium text-secondary">تنظیمات اکانت</span>
                   </Link>
 
                   <hr className="my-1 border-secondary opacity-25" />

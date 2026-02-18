@@ -1,9 +1,9 @@
 // src/pages/discount/DiscountList.tsx
 
-import React, { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
-import { api } from "../../services/api";
-import { toast } from "react-toastify";
+import React, { useEffect, useState } from 'react';
+import { Link } from 'react-router-dom';
+import { api } from '../../services/api';
+import { toast } from 'react-toastify';
 import {
   Tag,
   Users,
@@ -15,10 +15,10 @@ import {
   Percent,
   Eye,
   Edit,
-  RotateCw
-} from "lucide-react";
+  RotateCw,
+} from 'lucide-react';
 
-import Pagination from "../../components/common/Pagination";
+import Pagination from '../../components/common/Pagination';
 
 // --- Interfaces ---
 
@@ -34,12 +34,12 @@ interface DiscountUser {
 interface Discount {
   _id: string;
   title: string;
-  type: "percentage" | "fixed" | "amount"; // "amount" added based on JSON
+  type: 'percentage' | 'fixed' | 'amount'; // "amount" added based on JSON
   amount: string;
   code: string;
   startDate: string;
   endDate: string;
-  status: "active" | "deactive" | "expired" | "inactive"; // Added "deactive" based on API response
+  status: 'active' | 'deactive' | 'expired' | 'inactive'; // Added "deactive" based on API response
   users: DiscountUser[];
   createdAt: string;
   updatedAt: string;
@@ -65,29 +65,33 @@ const DiscountList: React.FC = () => {
   const pageSize = 50;
 
   // --- Status Modal State ---
-  const [targetDiscount, setTargetDiscount] = useState<{ id: string; status: string; title: string } | null>(null);
+  const [targetDiscount, setTargetDiscount] = useState<{
+    id: string;
+    status: string;
+    title: string;
+  } | null>(null);
   const [isProcessing, setIsProcessing] = useState<boolean>(false);
 
   // --- Helpers ---
   const formatDate = (isoString: string) => {
-    if (!isoString) return "-";
+    if (!isoString) return '-';
     const date = new Date(isoString);
-    return date.toLocaleDateString("fa-IR", {
-      year: "numeric",
-      month: "2-digit",
-      day: "2-digit",
+    return date.toLocaleDateString('fa-IR', {
+      year: 'numeric',
+      month: '2-digit',
+      day: '2-digit',
     });
   };
 
   const handleCopy = (text: string) => {
     if (!text) return;
     navigator.clipboard.writeText(text);
-    toast.success("کد تخفیف کپی شد", {
-      position: "bottom-center",
+    toast.success('کد تخفیف کپی شد', {
+      position: 'bottom-center',
       autoClose: 1500,
       hideProgressBar: true,
       closeOnClick: true,
-      theme: "colored"
+      theme: 'colored',
     });
   };
 
@@ -100,7 +104,7 @@ const DiscountList: React.FC = () => {
     setTargetDiscount({
       id: discount._id,
       status: discount.status,
-      title: discount.title
+      title: discount.title,
     });
   };
 
@@ -114,18 +118,20 @@ const DiscountList: React.FC = () => {
     try {
       // تعیین وضعیت جدید (توییچ بین فعال و غیرفعال)
       // نکته: طبق دیتای جدید وضعیت غیرفعال "deactive" است
-      const newStatus = targetDiscount.status === "active" ? "deactive" : "active";
-      
+      const newStatus = targetDiscount.status === 'active' ? 'deactive' : 'active';
+
       await api.put(`/discount/changeStatus`, { id: targetDiscount.id, status: newStatus });
 
       // آپدیت لوکال برای UX بهتر
-      setDiscounts(prev => prev.map(d => d._id === targetDiscount.id ? { ...d, status: newStatus as any } : d));
+      setDiscounts((prev) =>
+        prev.map((d) => (d._id === targetDiscount.id ? { ...d, status: newStatus as any } : d))
+      );
 
-      toast.success("وضعیت با موفقیت تغییر کرد");
+      toast.success('وضعیت با موفقیت تغییر کرد');
       closeStatusModal();
     } catch (error) {
       console.error(error);
-      toast.error("خطا در تغییر وضعیت");
+      toast.error('خطا در تغییر وضعیت');
     } finally {
       setIsProcessing(false);
     }
@@ -140,26 +146,26 @@ const DiscountList: React.FC = () => {
         limit: pageSize,
       };
 
-      const response = await api.get<ApiResponse>("/discount/list", { params });
+      const response = await api.get<ApiResponse>('/discount/list', { params });
 
       // استخراج داده‌ها طبق ساختار جدید: result[0].data و result[0].total[0].count
       if (response.data && response.data.result && response.data.result.length > 0) {
         const resultData = response.data.result[0];
         setDiscounts(resultData.data || []);
-        
+
         // استخراج تعداد کل برای صفحه‌بندی
         if (resultData.total && resultData.total.length > 0) {
-            setTotalItems(resultData.total[0].count);
+          setTotalItems(resultData.total[0].count);
         } else {
-            setTotalItems(0);
+          setTotalItems(0);
         }
       } else {
         setDiscounts([]);
         setTotalItems(0);
       }
     } catch (error) {
-      console.error("Error fetching discounts:", error);
-      toast.error("خطا در دریافت لیست تخفیفات");
+      console.error('Error fetching discounts:', error);
+      toast.error('خطا در دریافت لیست تخفیفات');
     } finally {
       setLoading(false);
     }
@@ -173,16 +179,16 @@ const DiscountList: React.FC = () => {
   // --- Render Helpers ---
   const renderStatusBadge = (status: string, endDate: string) => {
     const expired = isExpired(endDate);
-    
+
     if (expired) {
       return (
         <span className="badge bg-secondary-subtle text-secondary border border-secondary-subtle rounded-pill px-3 py-2 d-inline-flex align-items-center justify-content-center gap-1">
-           <Clock size={12} /> منقضی
+          <Clock size={12} /> منقضی
         </span>
       );
     }
 
-    if (status === "active") {
+    if (status === 'active') {
       return (
         <span className="badge bg-success-subtle text-success border border-success-subtle rounded-pill px-3 py-2 d-inline-flex align-items-center justify-content-center gap-1">
           <CheckCircle size={12} /> فعال
@@ -199,8 +205,7 @@ const DiscountList: React.FC = () => {
   };
 
   return (
-    <div className="container-fluid p-4 fade-in" style={{ maxWidth: "1600px", minHeight: "100vh" }}>
-      
+    <div className="container-fluid p-4 fade-in" style={{ maxWidth: '1600px', minHeight: '100vh' }}>
       {/* --- MODAL --- */}
       {targetDiscount && (
         <div className="custom-modal-overlay">
@@ -209,27 +214,29 @@ const DiscountList: React.FC = () => {
               <RotateCw className="text-warning" size={32} />
             </div>
             <h4 className="fw-bold text-dark mt-3">تغییر وضعیت تخفیف</h4>
-            <p className="text-muted text-center mt-2 mb-4 px-3" style={{ lineHeight: "1.8" }}>
+            <p className="text-muted text-center mt-2 mb-4 px-3" style={{ lineHeight: '1.8' }}>
               وضعیت کد تخفیف <strong className="text-dark">"{targetDiscount.title}"</strong> به
-              <span className={`fw-bold mx-1 ${targetDiscount.status === "active" ? "text-danger" : "text-success"}`}>
-                {targetDiscount.status === "active" ? "غیرفعال" : "فعال"}
+              <span
+                className={`fw-bold mx-1 ${targetDiscount.status === 'active' ? 'text-danger' : 'text-success'}`}
+              >
+                {targetDiscount.status === 'active' ? 'غیرفعال' : 'فعال'}
               </span>
               تغییر کند؟
             </p>
             <div className="d-flex gap-2 w-100 justify-content-center">
-              <button 
-                className="btn btn-light flex-grow-1 py-2 rounded-pill fw-bold border" 
-                onClick={closeStatusModal} 
+              <button
+                className="btn btn-light flex-grow-1 py-2 rounded-pill fw-bold border"
+                onClick={closeStatusModal}
                 disabled={isProcessing}
               >
                 انصراف
               </button>
-              <button 
-                className="btn btn-warning text-white flex-grow-1 py-2 rounded-pill fw-bold shadow-sm" 
-                onClick={confirmStatusChange} 
+              <button
+                className="btn btn-warning text-white flex-grow-1 py-2 rounded-pill fw-bold shadow-sm"
+                onClick={confirmStatusChange}
                 disabled={isProcessing}
               >
-                {isProcessing ? "..." : "بله، تغییر بده"}
+                {isProcessing ? '...' : 'بله، تغییر بده'}
               </button>
             </div>
           </div>
@@ -241,41 +248,57 @@ const DiscountList: React.FC = () => {
         {/* Title */}
         <div>
           <h2 className="fw-bolder text-dark mb-1">مدیریت کدهای تخفیف</h2>
-          <p className="text-muted mb-0" style={{ fontSize: "0.95rem" }}>
+          <p className="text-muted mb-0" style={{ fontSize: '0.95rem' }}>
             لیست تمام کدهای تخفیف فعال و منقضی شده
           </p>
         </div>
 
         {/* Actions */}
         <div className="d-flex align-items-center gap-3">
-           <Link to="/discount/create" className="btn-shine-effect">
-              <span className="mx-2 fs-5">+</span> ایجاد کد تخفیف
-           </Link>
+          <Link to="/discount/create" className="btn-shine-effect">
+            <span className="mx-2 fs-5">+</span> ایجاد کد تخفیف
+          </Link>
 
-           <button
-              onClick={fetchDiscounts}
-              className="btn btn-refresh shadow-sm"
-              title="بروزرسانی لیست"
-            >
-              <RefreshCw size={20} className={loading ? "spin-anim" : ""} />
-           </button>
+          <button
+            onClick={fetchDiscounts}
+            className="btn btn-refresh shadow-sm"
+            title="بروزرسانی لیست"
+          >
+            <RefreshCw size={20} className={loading ? 'spin-anim' : ''} />
+          </button>
         </div>
       </div>
 
       {/* --- Table Section --- */}
       <div className="card border-0 shadow-none bg-transparent">
-        <div className="table-responsive" style={{ overflowX: "visible" }}>
+        <div className="table-responsive" style={{ overflowX: 'visible' }}>
           <table className="table modern-table align-middle mb-0">
             <thead>
               <tr>
-                <th className="text-secondary small fw-bold text-center" style={{ width: "50px" }}>#</th>
-                <th className="text-secondary small fw-bold text-center" style={{ width: "15%" }}>عنوان تخفیف</th>
-                <th className="text-secondary small fw-bold text-center" style={{ width: "15%" }}>کد تخفیف</th>
-                <th className="text-secondary small fw-bold text-center" style={{ width: "10%" }}>مقدار</th>
-                <th className="text-secondary small fw-bold text-center" style={{ width: "15%" }}>کاربران</th>
-                <th className="text-secondary small fw-bold text-center" style={{ width: "15%" }}>تاریخ اعتبار</th>
-                <th className="text-secondary small fw-bold text-center" style={{ width: "10%" }}>وضعیت</th>
-                <th className="text-secondary small fw-bold text-center" style={{ width: "15%" }}>عملیات</th>
+                <th className="text-secondary small fw-bold text-center" style={{ width: '50px' }}>
+                  #
+                </th>
+                <th className="text-secondary small fw-bold text-center" style={{ width: '15%' }}>
+                  عنوان تخفیف
+                </th>
+                <th className="text-secondary small fw-bold text-center" style={{ width: '15%' }}>
+                  کد تخفیف
+                </th>
+                <th className="text-secondary small fw-bold text-center" style={{ width: '10%' }}>
+                  مقدار
+                </th>
+                <th className="text-secondary small fw-bold text-center" style={{ width: '15%' }}>
+                  کاربران
+                </th>
+                <th className="text-secondary small fw-bold text-center" style={{ width: '15%' }}>
+                  تاریخ اعتبار
+                </th>
+                <th className="text-secondary small fw-bold text-center" style={{ width: '10%' }}>
+                  وضعیت
+                </th>
+                <th className="text-secondary small fw-bold text-center" style={{ width: '15%' }}>
+                  عملیات
+                </th>
               </tr>
             </thead>
             <tbody>
@@ -289,7 +312,7 @@ const DiscountList: React.FC = () => {
                 <tr>
                   <td colSpan={8} className="text-center py-5">
                     <div className="opacity-50 mb-3">
-                        <Tag size={40} className="text-secondary" />
+                      <Tag size={40} className="text-secondary" />
                     </div>
                     <h6 className="text-muted fw-bold">هیچ کد تخفیفی یافت نشد!</h6>
                   </td>
@@ -298,70 +321,75 @@ const DiscountList: React.FC = () => {
                 discounts.map((item, index) => {
                   return (
                     <tr key={item._id} className="bg-white">
-                      
                       {/* Index */}
                       <td className="text-center text-muted fw-bold">
-                          {(currentPage - 1) * pageSize + (index + 1)}
+                        {(currentPage - 1) * pageSize + (index + 1)}
                       </td>
 
                       {/* Title */}
                       <td className="text-center">
-                        <span className="fw-bold text-dark d-block text-truncate mx-auto" style={{maxWidth: '180px'}} title={item.title}>
-                            {item.title}
+                        <span
+                          className="fw-bold text-dark d-block text-truncate mx-auto"
+                          style={{ maxWidth: '180px' }}
+                          title={item.title}
+                        >
+                          {item.title}
                         </span>
                       </td>
 
                       {/* Code */}
                       <td className="text-center">
-                        <div 
-                            className="d-inline-flex align-items-center justify-content-center gap-2 bg-light px-3 py-2 rounded-3 border border-secondary-subtle dashed-border position-relative group-hover"
-                            style={{ cursor: "pointer", minWidth: "140px" }}
-                            onClick={() => handleCopy(item.code)}
-                            title="کپی کردن کد"
+                        <div
+                          className="d-inline-flex align-items-center justify-content-center gap-2 bg-light px-3 py-2 rounded-3 border border-secondary-subtle dashed-border position-relative group-hover"
+                          style={{ cursor: 'pointer', minWidth: '140px' }}
+                          onClick={() => handleCopy(item.code)}
+                          title="کپی کردن کد"
                         >
-                            <span className="font-monospace fw-bold dir-ltr text-navy">{item.code}</span>
-                            <Copy size={14} className="text-muted" />
+                          <span className="font-monospace fw-bold dir-ltr text-navy">
+                            {item.code}
+                          </span>
+                          <Copy size={14} className="text-muted" />
                         </div>
                       </td>
 
                       {/* Amount */}
                       <td className="text-center">
                         <div className="d-flex align-items-center justify-content-center gap-1 fw-bold text-dark">
-                            {Number(item.amount).toLocaleString()}
-                            {item.type === "percentage" ? (
-                                <Percent size={14} className="text-danger" />
-                            ) : (
-                                <span className="small text-muted">تومان</span>
-                            )}
+                          {Number(item.amount).toLocaleString()}
+                          {item.type === 'percentage' ? (
+                            <Percent size={14} className="text-danger" />
+                          ) : (
+                            <span className="small text-muted">تومان</span>
+                          )}
                         </div>
                       </td>
 
                       {/* Users */}
                       <td className="text-center">
-                         {item.users && item.users.length > 0 ? (
-                             <div className="d-inline-flex align-items-center justify-content-center gap-1 badge bg-info-subtle text-info border border-info-subtle rounded-pill px-3 py-2 fw-normal">
-                                <Users size={14} />
-                                <span>{item.users.length} کاربر</span>
-                             </div>
-                         ) : (
-                             <div className="d-inline-flex align-items-center justify-content-center gap-1 badge bg-light text-muted border rounded-pill px-3 py-2 fw-normal">
-                                <Users size={14} />
-                                <span>عمومی</span>
-                             </div>
-                         )}
+                        {item.users && item.users.length > 0 ? (
+                          <div className="d-inline-flex align-items-center justify-content-center gap-1 badge bg-info-subtle text-info border border-info-subtle rounded-pill px-3 py-2 fw-normal">
+                            <Users size={14} />
+                            <span>{item.users.length} کاربر</span>
+                          </div>
+                        ) : (
+                          <div className="d-inline-flex align-items-center justify-content-center gap-1 badge bg-light text-muted border rounded-pill px-3 py-2 fw-normal">
+                            <Users size={14} />
+                            <span>عمومی</span>
+                          </div>
+                        )}
                       </td>
 
                       {/* Date Range */}
                       <td className="text-center">
                         <div className="d-flex flex-column align-items-center justify-content-center small gap-1">
-                            <div className="d-flex align-items-center gap-1 text-muted">
-                                <span className="text-success small">شروع:</span>
-                                <span className="dir-ltr">{formatDate(item.startDate)}</span>
-                            </div>
-                            <div className="d-flex align-items-center gap-1 text-muted">
-                                <span className="text-danger small">پایان:</span>
-                                <span className="dir-ltr">{formatDate(item.endDate)}</span>
-                            </div>
+                          <div className="d-flex align-items-center gap-1 text-muted">
+                            <span className="text-success small">شروع:</span>
+                            <span className="dir-ltr">{formatDate(item.startDate)}</span>
+                          </div>
+                          <div className="d-flex align-items-center gap-1 text-muted">
+                            <span className="text-danger small">پایان:</span>
+                            <span className="dir-ltr">{formatDate(item.endDate)}</span>
+                          </div>
                         </div>
                       </td>
 
@@ -373,33 +401,31 @@ const DiscountList: React.FC = () => {
                       {/* Actions */}
                       <td className="text-center">
                         <div className="d-flex gap-2 justify-content-center">
-                            
-                            <Link 
-                                to={`/discount/details/${item._id}`} 
-                                className="btn-action btn-soft-info" 
-                                title="مشاهده"
-                            >
-                                <Eye size={18} />
-                            </Link>
+                          <Link
+                            to={`/discount/details/${item._id}`}
+                            className="btn-action btn-soft-info"
+                            title="مشاهده"
+                          >
+                            <Eye size={18} />
+                          </Link>
 
-                            <Link 
-                                to={`/discount/edit/${item._id}`} 
-                                className="btn-action btn-soft-primary" 
-                                title="ویرایش"
-                            >
-                                <Edit size={18} />
-                            </Link>
+                          <Link
+                            to={`/discount/edit/${item._id}`}
+                            className="btn-action btn-soft-primary"
+                            title="ویرایش"
+                          >
+                            <Edit size={18} />
+                          </Link>
 
-                            <button
-                                className="btn-action btn-soft-warning"
-                                title="تغییر وضعیت"
-                                onClick={() => openStatusModal(item)}
-                            >
-                                <RotateCw size={18} />
-                            </button>
+                          <button
+                            className="btn-action btn-soft-warning"
+                            title="تغییر وضعیت"
+                            onClick={() => openStatusModal(item)}
+                          >
+                            <RotateCw size={18} />
+                          </button>
                         </div>
                       </td>
-
                     </tr>
                   );
                 })
@@ -410,13 +436,13 @@ const DiscountList: React.FC = () => {
 
         {/* --- Pagination --- */}
         <div className="py-4">
-             <Pagination
-                currentPage={currentPage}
-                totalItems={totalItems}
-                pageSize={pageSize}
-                onPageChange={(page) => setCurrentPage(page)}
-                showInfo={true}
-             />
+          <Pagination
+            currentPage={currentPage}
+            totalItems={totalItems}
+            pageSize={pageSize}
+            onPageChange={(page) => setCurrentPage(page)}
+            showInfo={true}
+          />
         </div>
       </div>
 

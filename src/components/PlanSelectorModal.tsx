@@ -1,8 +1,8 @@
 // src/components/PlanSelectorModal.tsx
 
-import React, { useState, useEffect } from "react";
-import { X, Search, Check, Layers, Loader2 } from "lucide-react";
-import { api } from "../services/api";
+import React, { useState, useEffect } from 'react';
+import { X, Search, Check, Layers, Loader2 } from 'lucide-react';
+import { api } from '../services/api';
 
 // اصلاح اینترفیس بر اساس خروجی واقعی API
 export interface Plan {
@@ -27,7 +27,7 @@ const PlanSelectorModal: React.FC<PlanSelectorModalProps> = ({
 }) => {
   const [plans, setPlans] = useState<Plan[]>([]);
   const [loading, setLoading] = useState(false);
-  const [searchTerm, setSearchTerm] = useState("");
+  const [searchTerm, setSearchTerm] = useState('');
 
   useEffect(() => {
     if (isOpen) {
@@ -38,7 +38,7 @@ const PlanSelectorModal: React.FC<PlanSelectorModalProps> = ({
   const fetchPlans = async () => {
     setLoading(true);
     try {
-      const response = await api.get("/plan/menu");
+      const response = await api.get('/plan/menu');
       // هندل کردن ساختارهای مختلف احتمالی ریسپانس
       const data = response.data;
       if (Array.isArray(data)) {
@@ -51,7 +51,7 @@ const PlanSelectorModal: React.FC<PlanSelectorModalProps> = ({
         setPlans([]);
       }
     } catch (error) {
-      console.error("Error loading plans", error);
+      console.error('Error loading plans', error);
     } finally {
       setLoading(false);
     }
@@ -59,7 +59,7 @@ const PlanSelectorModal: React.FC<PlanSelectorModalProps> = ({
 
   // فیلتر کردن بر اساس name
   const filteredPlans = plans.filter((p) =>
-    (p.name || "").toLowerCase().includes(searchTerm.toLowerCase())
+    (p.name || '').toLowerCase().includes(searchTerm.toLowerCase())
   );
 
   if (!isOpen) return null;
@@ -77,7 +77,11 @@ const PlanSelectorModal: React.FC<PlanSelectorModalProps> = ({
 
         {/* Search */}
         <div className="position-relative mb-3">
-          <Search className="position-absolute text-muted" size={18} style={{ top: "12px", right: "12px" }} />
+          <Search
+            className="position-absolute text-muted"
+            size={18}
+            style={{ top: '12px', right: '12px' }}
+          />
           <input
             type="text"
             className="form-control pe-5 bg-light border-0"
@@ -108,18 +112,20 @@ const PlanSelectorModal: React.FC<PlanSelectorModalProps> = ({
                   }}
                   className={`d-flex align-items-center justify-content-between p-3 rounded-3 mb-2 cursor-pointer transition-all ${
                     isSelected
-                      ? "bg-primary-subtle border border-primary"
-                      : "bg-white border hover-shadow"
+                      ? 'bg-primary-subtle border border-primary'
+                      : 'bg-white border hover-shadow'
                   }`}
                 >
                   <div className="d-flex align-items-center gap-3">
-                    <div className={`p-2 rounded-circle ${isSelected ? 'bg-primary text-white' : 'bg-light text-secondary'}`}>
-                        <Layers size={20} />
+                    <div
+                      className={`p-2 rounded-circle ${isSelected ? 'bg-primary text-white' : 'bg-light text-secondary'}`}
+                    >
+                      <Layers size={20} />
                     </div>
                     <div>
-                        {/* استفاده از plan.name */}
-                        <h6 className="fw-bold mb-0 text-dark">{plan.name}</h6>
-                        {/* <small className="text-muted">
+                      {/* استفاده از plan.name */}
+                      <h6 className="fw-bold mb-0 text-dark">{plan.name}</h6>
+                      {/* <small className="text-muted">
                             {plan.price 
                                 ? Number(plan.price).toLocaleString() 
                                 : "0"

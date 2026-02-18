@@ -1,6 +1,6 @@
-import { useState } from "react";
-import { NavLink, useLocation } from "react-router-dom";
-import { useAuthStore } from "../stores/authStore";
+import { useState } from 'react';
+import { NavLink, useLocation } from 'react-router-dom';
+import { useAuthStore } from '../stores/authStore';
 import {
   LayoutGrid,
   Rss,
@@ -17,7 +17,7 @@ import {
   ChevronLeft,
   ChevronDown,
   Dot,
-} from "lucide-react";
+} from 'lucide-react';
 
 interface MenuItem {
   title: string;
@@ -28,35 +28,35 @@ interface MenuItem {
 }
 
 const menuItems: MenuItem[] = [
-  { title: "داشبورد", icon: LayoutGrid, path: "/dashboard" },
+  { title: 'داشبورد', icon: LayoutGrid, path: '/dashboard' },
   {
-    title: "بلاگ‌ها",
+    title: 'بلاگ‌ها',
     icon: Rss,
     subItems: [
-      { title: "لیست بلاگ ها", path: "/blog/list" },
-      { title: "ایجاد بلاگ", path: "/blog/create" },
-      { title: "لیست دسته های بلاگ", path: "/blog-category/list" },
-      { title: "ایجاد دسته بلاگ", path: "/blog-category/create" },
+      { title: 'لیست بلاگ ها', path: '/blog/list' },
+      { title: 'ایجاد بلاگ', path: '/blog/create' },
+      { title: 'لیست دسته های بلاگ', path: '/blog-category/list' },
+      { title: 'ایجاد دسته بلاگ', path: '/blog-category/create' },
     ],
   },
   // { title: "پشتیبانی", icon: Headset, path: "/support", badge: 5 },
-  { title: "پشتیبانی", icon: Headset, path: "/support" },
+  { title: 'پشتیبانی', icon: Headset, path: '/support' },
 
-  { title: "ادمین‌ها", icon: ShieldCheck, path: "/admins" },
-  { title: "کاربران", icon: Users, path: "/users" },
+  { title: 'ادمین‌ها', icon: ShieldCheck, path: '/admins' },
+  { title: 'کاربران', icon: Users, path: '/users' },
   {
-    title: "تراکنشات",
+    title: 'تراکنشات',
     icon: CircleDollarSign,
-    path: "/transactions",
+    path: '/transactions',
   },
-  { title: "هوش مصنوعی", icon: BrainCircuit, path: "/ai" },
-  { title: "گزارشات", icon: BarChart3, path: "/reports" },
-  { title: "لیست تخفیف ها ", icon: Tag, path: "/discount/list" },
+  { title: 'هوش مصنوعی', icon: BrainCircuit, path: '/ai' },
+  { title: 'گزارشات', icon: BarChart3, path: '/reports' },
+  { title: 'لیست تخفیف ها ', icon: Tag, path: '/discount/list' },
 
   {
-    title: "تنظیمات",
+    title: 'تنظیمات',
     icon: Settings,
-    subItems: [{ title: "لیست اعلانات", path: "/notifications" }],
+    subItems: [{ title: 'لیست اعلانات', path: '/notifications' }],
   },
 ];
 
@@ -81,9 +81,9 @@ export default function Sidebar() {
       <aside
         className="d-flex flex-column h-100 shadow-sm position-relative border-start bg-white"
         style={{
-          width: isCollapsed ? "90px" : "260px", // کمی عرض را در حالت بسته بیشتر کردم تا مربع‌ها خوش‌فرم باشند
-          transition: "width 0.3s cubic-bezier(0.4, 0, 0.2, 1)",
-          borderRadius: "14px",
+          width: isCollapsed ? '90px' : '260px', // کمی عرض را در حالت بسته بیشتر کردم تا مربع‌ها خوش‌فرم باشند
+          transition: 'width 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+          borderRadius: '14px',
           zIndex: 1000,
         }}
       >
@@ -91,12 +91,12 @@ export default function Sidebar() {
           onClick={() => setIsCollapsed(!isCollapsed)}
           className="btn bg-white shadow-sm rounded-circle d-flex align-items-center justify-content-center p-0 position-absolute toggle-btn"
           style={{
-            width: "28px",
-            height: "28px",
-            top: "24px",
-            left: "-14px",
+            width: '28px',
+            height: '28px',
+            top: '24px',
+            left: '-14px',
             zIndex: 10,
-            border: "1px solid #eee",
+            border: '1px solid #eee',
           }}
         >
           {isCollapsed ? (
@@ -108,9 +108,7 @@ export default function Sidebar() {
 
         <nav className="flex-grow-1 overflow-y-auto overflow-x-hidden py-4 px-2 d-flex flex-column gap-2 custom-scrollbar">
           {menuItems.map((item, index) => {
-            const isParentActive = item.subItems?.some(
-              (sub) => location.pathname === sub.path,
-            );
+            const isParentActive = item.subItems?.some((sub) => location.pathname === sub.path);
             const isSingleActive = item.path === location.pathname;
             const isActive = isParentActive || isSingleActive;
             const isMenuOpen = openSubMenu === item.title;
@@ -118,23 +116,23 @@ export default function Sidebar() {
             // تعیین کلاس‌ها بر اساس باز/بسته بودن سایدبار
             // نکته مهم: در حالت بسته از mx-auto و justify-content-center استفاده می‌کنیم
             const containerClass = isCollapsed
-              ? `d-flex align-items-center justify-content-center mx-auto nav-item-custom ${isActive ? "active" : ""}`
-              : `d-flex align-items-center justify-content-between px-3 nav-item-custom ${isActive ? "active" : ""}`;
+              ? `d-flex align-items-center justify-content-center mx-auto nav-item-custom ${isActive ? 'active' : ''}`
+              : `d-flex align-items-center justify-content-between px-3 nav-item-custom ${isActive ? 'active' : ''}`;
 
             // استایل مربعی در حالت بسته
             const containerStyle = isCollapsed
               ? {
-                  width: "40px",
-                  height: "40px",
-                  borderRadius: "14px",
-                  cursor: "pointer",
-                  transition: "all 0.2s",
+                  width: '40px',
+                  height: '40px',
+                  borderRadius: '14px',
+                  cursor: 'pointer',
+                  transition: 'all 0.2s',
                 }
               : {
-                  borderRadius: "12px",
-                  padding: "10px 0",
-                  cursor: "pointer",
-                  transition: "all 0.2s",
+                  borderRadius: '12px',
+                  padding: '10px 0',
+                  cursor: 'pointer',
+                  transition: 'all 0.2s',
                 };
 
             return (
@@ -153,28 +151,20 @@ export default function Sidebar() {
                       <>
                         <div className="d-flex align-items-center">
                           <div
-                            style={{ minWidth: "24px" }}
+                            style={{ minWidth: '24px' }}
                             className="d-flex justify-content-center"
                           >
-                            <item.icon
-                              size={22}
-                              strokeWidth={isActive ? 2.5 : 2}
-                            />
+                            <item.icon size={22} strokeWidth={isActive ? 2.5 : 2} />
                           </div>
-                          <span
-                            className="me-3 fw-medium"
-                            style={{ fontSize: "0.95rem" }}
-                          >
+                          <span className="me-3 fw-medium" style={{ fontSize: '0.95rem' }}>
                             {item.title}
                           </span>
                         </div>
                         <ChevronDown
                           size={16}
                           style={{
-                            transform: isMenuOpen
-                              ? "rotate(180deg)"
-                              : "rotate(0deg)",
-                            transition: "transform 0.2s ease",
+                            transform: isMenuOpen ? 'rotate(180deg)' : 'rotate(0deg)',
+                            transition: 'transform 0.2s ease',
                             opacity: 0.8,
                           }}
                         />
@@ -187,8 +177,8 @@ export default function Sidebar() {
                     to={item.path!}
                     className={({ isActive }) =>
                       isCollapsed
-                        ? `d-flex align-items-center justify-content-center mx-auto nav-item-custom ${isActive ? "active" : ""}`
-                        : `d-flex align-items-center px-3 nav-item-custom ${isActive ? "active" : ""}`
+                        ? `d-flex align-items-center justify-content-center mx-auto nav-item-custom ${isActive ? 'active' : ''}`
+                        : `d-flex align-items-center px-3 nav-item-custom ${isActive ? 'active' : ''}`
                     }
                     style={containerStyle}
                   >
@@ -196,22 +186,14 @@ export default function Sidebar() {
                       <item.icon size={24} strokeWidth={2} />
                     ) : (
                       <div className="d-flex align-items-center w-100">
-                        <div
-                          style={{ minWidth: "24px" }}
-                          className="d-flex justify-content-center"
-                        >
+                        <div style={{ minWidth: '24px' }} className="d-flex justify-content-center">
                           <item.icon size={22} strokeWidth={2} />
                         </div>
-                        <span
-                          className="me-3 fw-medium"
-                          style={{ fontSize: "0.95rem" }}
-                        >
+                        <span className="me-3 fw-medium" style={{ fontSize: '0.95rem' }}>
                           {item.title}
                         </span>
                         {item.badge && (
-                          <span className="badge-notification ms-auto">
-                            {item.badge}
-                          </span>
+                          <span className="badge-notification ms-auto">{item.badge}</span>
                         )}
                       </div>
                     )}
@@ -227,10 +209,10 @@ export default function Sidebar() {
                         to={sub.path}
                         className={({ isActive }) =>
                           `d-flex align-items-center text-decoration-none rounded-3 px-2 py-2 small submenu-item ${
-                            isActive ? "submenu-active" : ""
+                            isActive ? 'submenu-active' : ''
                           }`
                         }
-                        style={{ fontSize: "0.85rem", transition: "all 0.2s" }}
+                        style={{ fontSize: '0.85rem', transition: 'all 0.2s' }}
                       >
                         <Dot size={18} />
                         <span className="me-1">{sub.title}</span>

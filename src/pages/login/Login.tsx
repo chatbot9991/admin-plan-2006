@@ -1,29 +1,29 @@
 // src/pages/Login.tsx
-import React, { useState } from "react";
-import { Container, Row, Col, Form } from "react-bootstrap";
-import { useNavigate } from "react-router-dom";
-import { toast } from "react-toastify";
+import React, { useState } from 'react';
+import { Container, Row, Col, Form } from 'react-bootstrap';
+import { useNavigate } from 'react-router-dom';
+import { toast } from 'react-toastify';
 
-import { api_auth } from "../../services/api";
-import { useAuthStore } from "../../stores/authStore";
-import CustomButton from "../../components/CustomButton";
+import { api_auth } from '../../services/api';
+import { useAuthStore } from '../../stores/authStore';
+import CustomButton from '../../components/CustomButton';
 
-import loginBg from "../../assets/images/login-bg.png";
-import logoIcon from "../../assets/icons/logo.svg";
-import userIcon from "../../assets/icons/email.svg";
-import lockIcon from "../../assets/icons/key.svg";
-import "./Login.css";
+import loginBg from '../../assets/images/login-bg.png';
+import logoIcon from '../../assets/icons/logo.svg';
+import userIcon from '../../assets/icons/email.svg';
+import lockIcon from '../../assets/icons/key.svg';
+import './Login.css';
 
 const Login: React.FC = () => {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
-  const [formData, setFormData] = useState({ email: "", password: "" });
+  const [formData, setFormData] = useState({ email: '', password: '' });
 
   const loginToStore = useAuthStore((state) => state.login);
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
-    field: string,
+    field: string
   ) => {
     setFormData({ ...formData, [field]: e.target.value });
   };
@@ -37,22 +37,20 @@ const Login: React.FC = () => {
     e.preventDefault();
 
     if (!formData.email || !formData.password) {
-      toast.warning("لطفا نام کاربری و رمز عبور را وارد کنید");
+      toast.warning('لطفا نام کاربری و رمز عبور را وارد کنید');
       return;
     }
 
     setLoading(true);
 
     if (!validateEmail(formData.email)) {
-      toast.error(
-        "فرمت ایمیل وارد شده صحیح نیست! لطفا یک ایمیل معتبر وارد کنید.",
-      );
+      toast.error('فرمت ایمیل وارد شده صحیح نیست! لطفا یک ایمیل معتبر وارد کنید.');
       setLoading(false);
       return;
     }
 
     try {
-      const response = await api_auth.post("/portal/signin_email_pass", {
+      const response = await api_auth.post('/portal/signin_email_pass', {
         email: formData.email,
         password: formData.password,
       });
@@ -62,16 +60,15 @@ const Login: React.FC = () => {
       const token = result.adminJwt;
       if (result) {
         loginToStore(token, user);
-        toast.success("ورود با موفقیت انجام شد");
+        toast.success('ورود با موفقیت انجام شد');
         setTimeout(() => {
-          navigate("/dashboard");
+          navigate('/dashboard');
         }, 2000);
       }
     } catch (error: any) {
-      console.error("Login Failed:", error);
+      console.error('Login Failed:', error);
       setLoading(false);
-      const msg =
-        error.response?.data?.message || "نام کاربری یا رمز عبور اشتباه است";
+      const msg = error.response?.data?.message || 'نام کاربری یا رمز عبور اشتباه است';
 
       toast.error(msg);
     }
@@ -84,19 +81,17 @@ const Login: React.FC = () => {
           md={4}
           lg={5}
           className="d-flex flex-column justify-content-center align-items-center bg-white p-4 p-md-5 order-2 order-md-1 position-relative"
-          style={{ minHeight: "100vh" }}
+          style={{ minHeight: '100vh' }}
         >
           <div className="logo text-center mb-4">
-            <img src={logoIcon} alt="Logo" style={{ height: "75px" }} />
+            <img src={logoIcon} alt="Logo" style={{ height: '75px' }} />
           </div>
           <div className="title text-center mb-2">
             <h1 className="fw-bold mb-3 fs-2">ورود به پنل مدیریت</h1>
-            <p className="text-muted small">
-              لطفا اطلاعات کاربری خود را وارد کنید
-            </p>
+            <p className="text-muted small">لطفا اطلاعات کاربری خود را وارد کنید</p>
           </div>
 
-          <div style={{ width: "100%", maxWidth: "400px" }}>
+          <div style={{ width: '100%', maxWidth: '400px' }}>
             <Form onSubmit={handleLogin}>
               <div className="custom-input-wrapper mb-4">
                 <img src={userIcon} alt="icon" className="custom-input-icon" />
@@ -105,9 +100,9 @@ const Login: React.FC = () => {
                   type="text"
                   placeholder="نام کاربری"
                   className="custom-input-field p-0"
-                  style={{ boxShadow: "none" }}
+                  style={{ boxShadow: 'none' }}
                   value={formData.email}
-                  onChange={(e) => handleChange(e, "email")}
+                  onChange={(e) => handleChange(e, 'email')}
                 />
               </div>
 
@@ -118,18 +113,14 @@ const Login: React.FC = () => {
                   type="password"
                   placeholder="رمز عبور"
                   className="custom-input-field p-0"
-                  style={{ boxShadow: "none" }}
+                  style={{ boxShadow: 'none' }}
                   value={formData.password}
-                  onChange={(e) => handleChange(e, "password")}
+                  onChange={(e) => handleChange(e, 'password')}
                 />
               </div>
 
               <div className="mt-4">
-                <CustomButton
-                  text="ورود به پنل"
-                  type="submit"
-                  isLoading={loading}
-                />
+                <CustomButton text="ورود به پنل" type="submit" isLoading={loading} />
               </div>
             </Form>
           </div>
@@ -140,9 +131,9 @@ const Login: React.FC = () => {
             className="login-image-section"
             style={{
               backgroundImage: `url(${loginBg})`,
-              height: "100vh",
-              backgroundSize: "cover",
-              backgroundPosition: "center",
+              height: '100vh',
+              backgroundSize: 'cover',
+              backgroundPosition: 'center',
             }}
           ></div>
         </Col>

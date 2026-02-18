@@ -1,9 +1,9 @@
 // src/pages/blog/BlogEdit.tsx
 
-import React, { useEffect, useState, useRef } from "react";
-import { Link, useParams, useNavigate } from "react-router-dom";
-import { api } from "../../services/api";
-import { toast } from "react-toastify"; // ⚠️ مسیر ایمپورت تست را طبق پروژه خود تنظیم کنید
+import React, { useEffect, useState, useRef } from 'react';
+import { Link, useParams, useNavigate } from 'react-router-dom';
+import { api } from '../../services/api';
+import { toast } from 'react-toastify'; // ⚠️ مسیر ایمپورت تست را طبق پروژه خود تنظیم کنید
 
 interface Category {
   _id: string;
@@ -21,15 +21,15 @@ const BlogEdit: React.FC = () => {
 
   // داده‌های فرم
   const [formData, setFormData] = useState({
-    title: "",
-    shortDescription: "",
-    description: "",
-    categoryId: "",
-    alt: "", // فیلد متن جایگزین
+    title: '',
+    shortDescription: '',
+    description: '',
+    categoryId: '',
+    alt: '', // فیلد متن جایگزین
   });
 
   // مدیریت تصویر
-  const [currentImage, setCurrentImage] = useState<string>("");
+  const [currentImage, setCurrentImage] = useState<string>('');
   const [previewImage, setPreviewImage] = useState<string | null>(null);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -41,7 +41,7 @@ const BlogEdit: React.FC = () => {
         setIsLoading(true);
 
         // 1. دریافت لیست دسته‌بندی‌ها
-        const catResponse = await api.get("/blog-category/list");
+        const catResponse = await api.get('/blog-category/list');
         const resData = catResponse.data;
 
         let validCategories: Category[] = [];
@@ -68,24 +68,22 @@ const BlogEdit: React.FC = () => {
             // استخراج ID دسته‌بندی
             const catIdRaw = blogData.categoryId;
             const finalCatId =
-              typeof catIdRaw === "object" && catIdRaw !== null
-                ? catIdRaw._id
-                : catIdRaw;
+              typeof catIdRaw === 'object' && catIdRaw !== null ? catIdRaw._id : catIdRaw;
 
             setFormData({
-              title: blogData.title || "",
-              shortDescription: blogData.shortDescription || "",
-              description: blogData.description || "",
-              categoryId: finalCatId || "",
-              alt: blogData.alt || "",
+              title: blogData.title || '',
+              shortDescription: blogData.shortDescription || '',
+              description: blogData.description || '',
+              categoryId: finalCatId || '',
+              alt: blogData.alt || '',
             });
 
-            setCurrentImage(blogData.mainPic || "");
+            setCurrentImage(blogData.mainPic || '');
           }
         }
       } catch (error) {
-        console.error("Error fetching data:", error);
-        toast.error("خطا در دریافت اطلاعات اولیه");
+        console.error('Error fetching data:', error);
+        toast.error('خطا در دریافت اطلاعات اولیه');
       } finally {
         setIsLoading(false);
       }
@@ -97,9 +95,7 @@ const BlogEdit: React.FC = () => {
   // --- هندلرها ---
 
   const handleInputChange = (
-    e: React.ChangeEvent<
-      HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
-    >,
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
   ) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
@@ -123,21 +119,14 @@ const BlogEdit: React.FC = () => {
       // آپلود عکس جدید در صورت وجود
       if (selectedFile) {
         const uploadData = new FormData();
-        uploadData.append("file", selectedFile);
+        uploadData.append('file', selectedFile);
 
-        const uploadResponse = await api.post(
-          "/blog/image/upload",
-          uploadData,
-          {
-            headers: { "Content-Type": "multipart/form-data" },
-          },
-        );
+        const uploadResponse = await api.post('/blog/image/upload', uploadData, {
+          headers: { 'Content-Type': 'multipart/form-data' },
+        });
 
         if (uploadResponse.data) {
-          finalImageId =
-            uploadResponse.data.file ||
-            uploadResponse.data.url ||
-            uploadResponse.data;
+          finalImageId = uploadResponse.data.file || uploadResponse.data.url || uploadResponse.data;
         }
       }
 
@@ -148,16 +137,16 @@ const BlogEdit: React.FC = () => {
         mainPic: finalImageId,
       };
 
-      await api.put("/blog/update", payload);
+      await api.put('/blog/update', payload);
 
       // ✅ استفاده از Toast به جای Alert
-      toast.success("بلاگ با موفقیت ویرایش شد");
+      toast.success('بلاگ با موفقیت ویرایش شد');
 
-      navigate("/blog/list");
+      navigate('/blog/list');
     } catch (error) {
-      console.error("Error updating blog:", error);
+      console.error('Error updating blog:', error);
       // ❌ استفاده از Toast برای خطا
-      toast.error("خطا در ذخیره‌سازی اطلاعات. لطفا مجددا تلاش کنید.");
+      toast.error('خطا در ذخیره‌سازی اطلاعات. لطفا مجددا تلاش کنید.');
     } finally {
       setIsSubmitting(false);
     }
@@ -172,20 +161,16 @@ const BlogEdit: React.FC = () => {
   }
 
   return (
-    <div className="container-fluid p-4 fade-in" style={{ maxWidth: "1400px" }}>
+    <div className="container-fluid p-4 fade-in" style={{ maxWidth: '1400px' }}>
       {/* Header */}
       <div className="d-flex justify-content-between align-items-center mb-4">
         <div>
           <h3 className="fw-bold text-dark mb-1">ویرایش مقاله</h3>
           <p className="text-muted small">
-            ویرایش:{" "}
-            <span className="text-primary fw-bold">{formData.title}</span>
+            ویرایش: <span className="text-primary fw-bold">{formData.title}</span>
           </p>
         </div>
-        <Link
-          to="/blog/list"
-          className="btn btn-outline-secondary rounded-pill px-4"
-        >
+        <Link to="/blog/list" className="btn btn-outline-secondary rounded-pill px-4">
           بازگشت
         </Link>
       </div>
@@ -197,9 +182,7 @@ const BlogEdit: React.FC = () => {
             <div className="card border-0 shadow-sm rounded-4 p-4 mb-4 bg-white">
               {/* ردیف اول: عنوان */}
               <div className="mb-4">
-                <label className="form-label fw-bold text-secondary">
-                  عنوان مقاله
-                </label>
+                <label className="form-label fw-bold text-secondary">عنوان مقاله</label>
                 <input
                   type="text"
                   name="title"
@@ -212,9 +195,7 @@ const BlogEdit: React.FC = () => {
 
               {/* ردیف دوم: دسته‌بندی */}
               <div className="mb-4">
-                <label className="form-label fw-bold text-secondary">
-                  دسته‌بندی
-                </label>
+                <label className="form-label fw-bold text-secondary">دسته‌بندی</label>
                 <select
                   name="categoryId"
                   className="form-select bg-light border-0 py-3"
@@ -232,17 +213,13 @@ const BlogEdit: React.FC = () => {
                   ))}
                 </select>
                 {categories.length === 0 && (
-                  <div className="text-danger small mt-1">
-                    دسته‌بندی‌ها یافت نشدند.
-                  </div>
+                  <div className="text-danger small mt-1">دسته‌بندی‌ها یافت نشدند.</div>
                 )}
               </div>
 
               {/* ردیف سوم: توضیحات کوتاه */}
               <div className="mb-4">
-                <label className="form-label fw-bold text-secondary">
-                  خلاصه (توضیحات کوتاه)
-                </label>
+                <label className="form-label fw-bold text-secondary">خلاصه (توضیحات کوتاه)</label>
                 <textarea
                   name="shortDescription"
                   className="form-control bg-light border-0"
@@ -262,9 +239,9 @@ const BlogEdit: React.FC = () => {
                   name="description"
                   className="form-control bg-light border-0 editor-textarea"
                   style={{
-                    minHeight: "450px",
-                    fontSize: "1.05rem",
-                    lineHeight: "1.8",
+                    minHeight: '450px',
+                    fontSize: '1.05rem',
+                    lineHeight: '1.8',
                   }}
                   value={formData.description}
                   onChange={handleInputChange}
@@ -281,7 +258,7 @@ const BlogEdit: React.FC = () => {
           <div className="col-lg-4">
             <div
               className="card border-0 shadow-sm rounded-4 p-4 sticky-top"
-              style={{ top: "20px" }}
+              style={{ top: '20px' }}
             >
               <h5 className="fw-bold mb-3">تصویر شاخص</h5>
 
@@ -333,7 +310,7 @@ const BlogEdit: React.FC = () => {
                 className="btn btn-success w-100 py-3 rounded-3 fw-bold shadow-lg btn-animate"
                 disabled={isSubmitting}
               >
-                {isSubmitting ? "در حال ذخیره..." : "ذخیره تغییرات"}
+                {isSubmitting ? 'در حال ذخیره...' : 'ذخیره تغییرات'}
               </button>
             </div>
           </div>

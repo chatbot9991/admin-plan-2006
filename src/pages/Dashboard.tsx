@@ -1,6 +1,6 @@
 // src/pages/dashboard/Dashboard.tsx
 
-import React, { useEffect, useState, useMemo } from "react";
+import React, { useEffect, useState, useMemo } from 'react';
 import {
   XAxis,
   YAxis,
@@ -14,8 +14,8 @@ import {
   Cell,
   AreaChart,
   Area,
-} from "recharts";
-import { motion } from "framer-motion";
+} from 'recharts';
+import { motion } from 'framer-motion';
 import {
   Users,
   Activity,
@@ -27,8 +27,8 @@ import {
   Wallet,
   Crown,
   MoreHorizontal,
-} from "lucide-react";
-import Cookies from "js-cookie";
+} from 'lucide-react';
+import Cookies from 'js-cookie';
 
 // --- Interfaces ---
 
@@ -78,10 +78,10 @@ interface PortalReportData {
 }
 
 // --- Constants ---
-const COLORS = ["#6366f1", "#0ea5e9", "#10b981", "#f59e0b", "#ef4444", "#8b5cf6"];
-const PLAN_COLORS = ["#e2e8f0", "#f59e0b"]; // Gray for Free, Amber for VIP
-const BASE_API_URL = "https://dev.backend.mobo.land/api/v1";
-const BASE_IMG_URL = "https://dev.backend.mobo.land/";
+const COLORS = ['#6366f1', '#0ea5e9', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6'];
+const PLAN_COLORS = ['#e2e8f0', '#f59e0b']; // Gray for Free, Amber for VIP
+const BASE_API_URL = 'https://dev.backend.mobo.land/api/v1';
+const BASE_IMG_URL = 'https://dev.backend.mobo.land/';
 
 // --- Helper Component for Stable Images ---
 const ModelIcon = React.memo(({ url, alt }: { url?: string; alt: string }) => {
@@ -107,7 +107,7 @@ const ModelIcon = React.memo(({ url, alt }: { url?: string; alt: string }) => {
       src={`${BASE_IMG_URL}${url}`}
       alt={alt}
       className="rounded-circle"
-      style={{ width: 36, height: 36, objectFit: "cover" }}
+      style={{ width: 36, height: 36, objectFit: 'cover' }}
       onError={() => setHasError(true)}
     />
   );
@@ -120,23 +120,23 @@ const Dashboard: React.FC = () => {
   const [loading, setLoading] = useState(true);
 
   // View States
-  const [modelView, setModelView] = useState<"daily" | "monthly">("monthly");
-  const [revenueView, setRevenueView] = useState<"daily" | "monthly">("monthly"); // اضافه شده برای نمودار درآمد
+  const [modelView, setModelView] = useState<'daily' | 'monthly'>('monthly');
+  const [revenueView, setRevenueView] = useState<'daily' | 'monthly'>('monthly'); // اضافه شده برای نمودار درآمد
 
   // --- Fetch Data ---
   useEffect(() => {
     const fetchData = async () => {
       try {
-        let token = localStorage.getItem("token");
-        if (!token) token = Cookies.get("adminJwt");
-        if (!token) token = Cookies.get("token");
+        let token: any = localStorage.getItem('token');
+        if (!token) token = Cookies.get('adminJwt');
+        if (!token) token = Cookies.get('token');
 
-        const headers: HeadersInit = { "Content-Type": "application/json" };
-        if (token) headers["Authorization"] = `Bearer ${token}`;
+        const headers: HeadersInit = { 'Content-Type': 'application/json' };
+        if (token) headers['Authorization'] = `Bearer ${token}`;
 
         const [appRes, portalRes] = await Promise.all([
-          fetch(`${BASE_API_URL}/app/report/dashboard`, { method: "GET", headers }),
-          fetch(`${BASE_API_URL}/portal/report/dashboard`, { method: "GET", headers }),
+          fetch(`${BASE_API_URL}/app/report/dashboard`, { method: 'GET', headers }),
+          fetch(`${BASE_API_URL}/portal/report/dashboard`, { method: 'GET', headers }),
         ]);
 
         if (appRes.ok) {
@@ -149,7 +149,7 @@ const Dashboard: React.FC = () => {
           setPortalData(portalJson);
         }
       } catch (error) {
-        console.error("Dashboard Fetch Error:", error);
+        console.error('Dashboard Fetch Error:', error);
       } finally {
         setLoading(false);
       }
@@ -165,7 +165,7 @@ const Dashboard: React.FC = () => {
     return appData.modelStatus
       .map((item) => ({
         name: item.aiOptionName,
-        count: modelView === "daily" ? item.dailyCount : item.monthlyCount,
+        count: modelView === 'daily' ? item.dailyCount : item.monthlyCount,
         icon: item.aiOptionImage,
         fullData: item,
       }))
@@ -176,19 +176,22 @@ const Dashboard: React.FC = () => {
   const currentRevenueData = useMemo(() => {
     if (!portalData) return [];
 
-    if (revenueView === "monthly") {
-        return (portalData.last12MonthsTransaction || []).map((item) => ({
-            name: item.month,
-            amount: item.totalAmount,
-            count: item.count,
-        }));
+    if (revenueView === 'monthly') {
+      return (portalData.last12MonthsTransaction || []).map((item) => ({
+        name: item.month,
+        amount: item.totalAmount,
+        count: item.count,
+      }));
     } else {
-        // حالت روزانه
-        return (portalData.dailyTransaction || []).map((item) => ({
-            name: new Date(item.date || item._id || "").toLocaleDateString("fa-IR", { month: "short", day: "numeric" }),
-            amount: item.totalAmount || 0,
-            count: item.count || 0,
-        }));
+      // حالت روزانه
+      return (portalData.dailyTransaction || []).map((item) => ({
+        name: new Date(item.date || item._id || '').toLocaleDateString('fa-IR', {
+          month: 'short',
+          day: 'numeric',
+        }),
+        amount: item.totalAmount || 0,
+        count: item.count || 0,
+      }));
     }
   }, [portalData, revenueView]);
   // ------------------------------------------------------------------
@@ -200,8 +203,8 @@ const Dashboard: React.FC = () => {
       freeUsers: free,
       paidUsers: paid,
       planChartData: [
-        { name: "کاربران رایگان", value: free },
-        { name: "کاربران ویژه (VIP)", value: paid },
+        { name: 'کاربران رایگان', value: free },
+        { name: 'کاربران ویژه (VIP)', value: paid },
       ],
     };
   }, [portalData]);
@@ -244,14 +247,19 @@ const Dashboard: React.FC = () => {
           <h2 className="fw-bolder text-dark mb-1 ls-tight">{value}</h2>
           <p className="text-muted small fw-medium mb-0">{title}</p>
           {subText && (
-            <div className="mt-3 text-muted" style={{ fontSize: "0.75rem" }}>
+            <div className="mt-3 text-muted" style={{ fontSize: '0.75rem' }}>
               {subText}
             </div>
           )}
         </div>
         <div
           className={`position-absolute top-0 end-0 rounded-circle opacity-10 bg-${color}`}
-          style={{ width: 140, height: 140, transform: "translate(30%, -30%)", filter: "blur(40px)" }}
+          style={{
+            width: 140,
+            height: 140,
+            transform: 'translate(30%, -30%)',
+            filter: 'blur(40px)',
+          }}
         />
       </div>
     </motion.div>
@@ -268,7 +276,7 @@ const Dashboard: React.FC = () => {
   return (
     <div
       className="container-fluid p-4 dashboard-container"
-      style={{ minHeight: "100vh", backgroundColor: "#f8fafc" }}
+      style={{ minHeight: '100vh', backgroundColor: '#f8fafc' }}
     >
       {/* Header */}
       <div className="d-flex flex-column flex-md-row justify-content-between align-items-md-center mb-5 gap-3 fade-in-down">
@@ -279,7 +287,11 @@ const Dashboard: React.FC = () => {
         <div className="d-flex gap-2">
           <span className="bg-white border shadow-sm px-3 py-2 rounded-pill text-muted small fw-bold d-flex align-items-center gap-2">
             <Calendar size={16} />
-            {new Date().toLocaleDateString("fa-IR", { year: "numeric", month: "long", day: "numeric" })}
+            {new Date().toLocaleDateString('fa-IR', {
+              year: 'numeric',
+              month: 'long',
+              day: 'numeric',
+            })}
           </span>
         </div>
       </div>
@@ -341,36 +353,44 @@ const Dashboard: React.FC = () => {
               <div>
                 <h5 className="fw-bold text-dark mb-1 d-flex align-items-center gap-2">
                   <TrendingUp className="text-success" size={20} />
-                  {revenueView === "monthly" ? "نمودار درآمد (۱۲ ماه اخیر)" : "نمودار درآمد (۳۰ روز اخیر)"}
+                  {revenueView === 'monthly'
+                    ? 'نمودار درآمد (۱۲ ماه اخیر)'
+                    : 'نمودار درآمد (۳۰ روز اخیر)'}
                 </h5>
                 <p className="text-muted small mb-0">روند فروش و تراکنش‌های موفق</p>
               </div>
-              
+
               {/* Toggle Buttons for Revenue Chart */}
               <div className="bg-light p-1 rounded-pill d-flex border">
                 <button
                   className={`btn btn-sm rounded-pill px-4 transition-all ${
-                    revenueView === "daily" ? "bg-white text-success shadow-sm fw-bold" : "text-muted"
+                    revenueView === 'daily'
+                      ? 'bg-white text-success shadow-sm fw-bold'
+                      : 'text-muted'
                   }`}
-                  onClick={() => setRevenueView("daily")}
+                  onClick={() => setRevenueView('daily')}
                 >
                   روزانه
                 </button>
                 <button
                   className={`btn btn-sm rounded-pill px-4 transition-all ${
-                    revenueView === "monthly" ? "bg-white text-success shadow-sm fw-bold" : "text-muted"
+                    revenueView === 'monthly'
+                      ? 'bg-white text-success shadow-sm fw-bold'
+                      : 'text-muted'
                   }`}
-                  onClick={() => setRevenueView("monthly")}
+                  onClick={() => setRevenueView('monthly')}
                 >
                   ماهانه
                 </button>
               </div>
-
             </div>
             <div className="card-body">
-              <div style={{ width: "100%", height: 320 }}>
+              <div style={{ width: '100%', height: 320 }}>
                 <ResponsiveContainer>
-                  <AreaChart data={currentRevenueData} margin={{ top: 10, right: 30, left: 0, bottom: 0 }}>
+                  <AreaChart
+                    data={currentRevenueData}
+                    margin={{ top: 10, right: 30, left: 0, bottom: 0 }}
+                  >
                     <defs>
                       <linearGradient id="colorRevenue" x1="0" y1="0" x2="0" y2="1">
                         <stop offset="5%" stopColor="#10b981" stopOpacity={0.2} />
@@ -381,22 +401,26 @@ const Dashboard: React.FC = () => {
                       dataKey="name"
                       axisLine={false}
                       tickLine={false}
-                      tick={{ fill: "#94a3b8", fontSize: 12 }}
+                      tick={{ fill: '#94a3b8', fontSize: 12 }}
                       interval={revenueView === 'daily' ? 2 : 0} // Show fewer ticks on daily view
                     />
                     <YAxis
                       axisLine={false}
                       tickLine={false}
-                      tick={{ fill: "#94a3b8", fontSize: 12 }}
-                      tickFormatter={(value) => value >= 1000000 ? `${(value/1000000).toFixed(1)}M` : `${(value/1000).toFixed(0)}k`}
+                      tick={{ fill: '#94a3b8', fontSize: 12 }}
+                      tickFormatter={(value) =>
+                        value >= 1000000
+                          ? `${(value / 1000000).toFixed(1)}M`
+                          : `${(value / 1000).toFixed(0)}k`
+                      }
                     />
                     <Tooltip
                       contentStyle={{
-                        borderRadius: "12px",
-                        border: "none",
-                        boxShadow: "0 5px 15px rgba(0,0,0,0.1)",
+                        borderRadius: '12px',
+                        border: 'none',
+                        boxShadow: '0 5px 15px rgba(0,0,0,0.1)',
                       }}
-                      formatter={(value: number) => [`${value.toLocaleString()} تومان`, "درآمد"]}
+                      formatter={(value: any) => [`${value.toLocaleString()} تومان`, 'درآمد']}
                     />
                     <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f1f5f9" />
                     <Area
@@ -430,7 +454,7 @@ const Dashboard: React.FC = () => {
               </h5>
             </div>
             <div className="card-body d-flex flex-column align-items-center justify-content-center">
-              <div style={{ width: "100%", height: 220 }} className="position-relative">
+              <div style={{ width: '100%', height: 220 }} className="position-relative">
                 <ResponsiveContainer>
                   <PieChart>
                     <Pie
@@ -443,7 +467,10 @@ const Dashboard: React.FC = () => {
                       dataKey="value"
                     >
                       {planChartData.map((entry, index) => (
-                        <Cell key={`cell-${index}`} fill={PLAN_COLORS[index % PLAN_COLORS.length]} />
+                        <Cell
+                          key={`cell-${index}`}
+                          fill={PLAN_COLORS[index % PLAN_COLORS.length]}
+                        />
                       ))}
                     </Pie>
                     <Tooltip />
@@ -459,7 +486,12 @@ const Dashboard: React.FC = () => {
                 <div className="text-center">
                   <div className="d-flex align-items-center gap-1 justify-content-center text-muted mb-1">
                     <div
-                      style={{ width: 10, height: 10, borderRadius: "50%", backgroundColor: PLAN_COLORS[0] }}
+                      style={{
+                        width: 10,
+                        height: 10,
+                        borderRadius: '50%',
+                        backgroundColor: PLAN_COLORS[0],
+                      }}
                     ></div>
                     <span className="small">رایگان</span>
                   </div>
@@ -468,7 +500,12 @@ const Dashboard: React.FC = () => {
                 <div className="text-center">
                   <div className="d-flex align-items-center gap-1 justify-content-center text-muted mb-1">
                     <div
-                      style={{ width: 10, height: 10, borderRadius: "50%", backgroundColor: PLAN_COLORS[1] }}
+                      style={{
+                        width: 10,
+                        height: 10,
+                        borderRadius: '50%',
+                        backgroundColor: PLAN_COLORS[1],
+                      }}
                     ></div>
                     <span className="small">ویژه (VIP)</span>
                   </div>
@@ -501,24 +538,26 @@ const Dashboard: React.FC = () => {
               <div className="bg-light p-1 rounded-pill d-flex border">
                 <button
                   className={`btn btn-sm rounded-pill px-4 transition-all ${
-                    modelView === "daily" ? "bg-white text-primary shadow-sm fw-bold" : "text-muted"
+                    modelView === 'daily' ? 'bg-white text-primary shadow-sm fw-bold' : 'text-muted'
                   }`}
-                  onClick={() => setModelView("daily")}
+                  onClick={() => setModelView('daily')}
                 >
                   روزانه
                 </button>
                 <button
                   className={`btn btn-sm rounded-pill px-4 transition-all ${
-                    modelView === "monthly" ? "bg-white text-primary shadow-sm fw-bold" : "text-muted"
+                    modelView === 'monthly'
+                      ? 'bg-white text-primary shadow-sm fw-bold'
+                      : 'text-muted'
                   }`}
-                  onClick={() => setModelView("monthly")}
+                  onClick={() => setModelView('monthly')}
                 >
                   ماهانه
                 </button>
               </div>
             </div>
             <div className="card-body px-2 pb-2">
-              <div style={{ width: "100%", height: 350 }}>
+              <div style={{ width: '100%', height: 350 }}>
                 <ResponsiveContainer>
                   <BarChart data={aiChartData} margin={{ top: 20, right: 30, left: 20, bottom: 5 }}>
                     <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f1f5f9" />
@@ -526,19 +565,23 @@ const Dashboard: React.FC = () => {
                       dataKey="name"
                       axisLine={false}
                       tickLine={false}
-                      tick={{ fill: "#64748b", fontSize: 11, fontWeight: 500 }}
+                      tick={{ fill: '#64748b', fontSize: 11, fontWeight: 500 }}
                       interval={0}
                       angle={-20}
                       textAnchor="end"
                       height={60}
                     />
-                    <YAxis axisLine={false} tickLine={false} tick={{ fill: "#64748b", fontSize: 12 }} />
+                    <YAxis
+                      axisLine={false}
+                      tickLine={false}
+                      tick={{ fill: '#64748b', fontSize: 12 }}
+                    />
                     <Tooltip
-                      cursor={{ fill: "rgba(99, 102, 241, 0.05)" }}
+                      cursor={{ fill: 'rgba(99, 102, 241, 0.05)' }}
                       contentStyle={{
-                        borderRadius: "12px",
-                        border: "none",
-                        boxShadow: "0 10px 25px rgba(0,0,0,0.1)",
+                        borderRadius: '12px',
+                        border: 'none',
+                        boxShadow: '0 10px 25px rgba(0,0,0,0.1)',
                       }}
                     />
                     <defs>
@@ -581,7 +624,7 @@ const Dashboard: React.FC = () => {
             <div className="card-body p-0">
               <div
                 className="d-flex flex-column p-3 gap-2 overflow-auto custom-scrollbar"
-                style={{ maxHeight: "380px" }}
+                style={{ maxHeight: '380px' }}
               >
                 {aiChartData.slice(0, 6).map((model, idx) => (
                   <div
@@ -596,7 +639,7 @@ const Dashboard: React.FC = () => {
                         <h6 className="mb-1 fw-bold text-dark small">{model.name}</h6>
                         <div
                           className="progress"
-                          style={{ height: 4, width: 80, backgroundColor: "#f1f5f9" }}
+                          style={{ height: 4, width: 80, backgroundColor: '#f1f5f9' }}
                         >
                           <div
                             className="progress-bar rounded-pill"
@@ -610,8 +653,10 @@ const Dashboard: React.FC = () => {
                       </div>
                     </div>
                     <div className="text-end">
-                      <span className="fw-bold text-dark d-block small">{model.count.toLocaleString()}</span>
-                      <small className="text-muted" style={{ fontSize: "0.65rem" }}>
+                      <span className="fw-bold text-dark d-block small">
+                        {model.count.toLocaleString()}
+                      </span>
+                      <small className="text-muted" style={{ fontSize: '0.65rem' }}>
                         درخواست
                       </small>
                     </div>

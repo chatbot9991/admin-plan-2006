@@ -1,9 +1,9 @@
 // src/pages/blog/CategoryCreate.tsx
 
-import React, { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
-import { api } from "../../services/api";
-import { toast } from "react-toastify";
+import React, { useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
+import { api } from '../../services/api';
+import { toast } from 'react-toastify';
 
 const CategoryCreate: React.FC = () => {
   const navigate = useNavigate();
@@ -13,54 +13,49 @@ const CategoryCreate: React.FC = () => {
 
   // داده‌های فرم (فقط عنوان و توضیحات طبق درخواست)
   const [formData, setFormData] = useState({
-    title: "",
-    description: "",
+    title: '',
+    description: '',
   });
 
   // --- هندلرها ---
 
-  const handleInputChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
-  ) => {
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     // اعتبارسنجی ساده
     if (!formData.title.trim()) {
-        toast.warning("وارد کردن عنوان الزامی است");
-        return;
+      toast.warning('وارد کردن عنوان الزامی است');
+      return;
     }
 
     setIsSubmitting(true);
 
     try {
       // ارسال درخواست دقیقا با فرمت { title, description }
-      await api.post("/blog-category/create", formData);
+      await api.post('/blog-category/create', formData);
 
-      toast.success("دسته‌بندی با موفقیت ایجاد شد");
-      navigate("/blog-category/list");
-
+      toast.success('دسته‌بندی با موفقیت ایجاد شد');
+      navigate('/blog-category/list');
     } catch (error) {
-      console.error("Error creating category:", error);
-      toast.error("خطا در ایجاد دسته‌بندی. لطفا مجددا تلاش کنید.");
+      console.error('Error creating category:', error);
+      toast.error('خطا در ایجاد دسته‌بندی. لطفا مجددا تلاش کنید.');
     } finally {
       setIsSubmitting(false);
     }
   };
 
   return (
-    <div className="container-fluid p-4 fade-in" style={{ maxWidth: "1400px" }}>
+    <div className="container-fluid p-4 fade-in" style={{ maxWidth: '1400px' }}>
       {/* Header */}
       <div className="d-flex justify-content-between align-items-center mb-4">
         <div>
           <h3 className="fw-bold text-dark mb-1">ایجاد دسته‌بندی جدید</h3>
-          <p className="text-muted small">
-            تعریف دسته‌بندی جدید برای مقالات بلاگ
-          </p>
+          <p className="text-muted small">تعریف دسته‌بندی جدید برای مقالات بلاگ</p>
         </div>
         <Link to="/blog-category/list" className="btn btn-outline-secondary rounded-pill px-4">
           بازگشت
@@ -72,7 +67,6 @@ const CategoryCreate: React.FC = () => {
           {/* ستون اصلی (فرم‌ها) */}
           <div className="col-lg-8">
             <div className="card border-0 shadow-sm rounded-4 p-4 mb-4 bg-white">
-              
               {/* ردیف اول: عنوان */}
               <div className="mb-4">
                 <label className="form-label fw-bold text-secondary">عنوان دسته‌بندی</label>
@@ -96,26 +90,28 @@ const CategoryCreate: React.FC = () => {
                 <textarea
                   name="description"
                   className="form-control bg-light border-0 editor-textarea"
-                  style={{ minHeight: "250px", fontSize: "1rem", lineHeight: "1.6" }}
+                  style={{ minHeight: '250px', fontSize: '1rem', lineHeight: '1.6' }}
                   value={formData.description}
                   onChange={handleInputChange}
                   placeholder="توضیحات مختصری در مورد این دسته‌بندی بنویسید..."
                 ></textarea>
                 <div className="form-text text-end mt-1">
-                   تعداد کاراکتر: {formData.description.length}
+                  تعداد کاراکتر: {formData.description.length}
                 </div>
               </div>
-
             </div>
           </div>
 
           {/* ستون کناری (دکمه عملیات) */}
           <div className="col-lg-4">
-            <div className="card border-0 shadow-sm rounded-4 p-4 sticky-top" style={{ top: "20px" }}>
-              
+            <div
+              className="card border-0 shadow-sm rounded-4 p-4 sticky-top"
+              style={{ top: '20px' }}
+            >
               <h5 className="fw-bold mb-3">انتشار</h5>
               <p className="text-muted small mb-4">
-                پس از بررسی صحت اطلاعات، بر روی دکمه زیر کلیک کنید تا دسته‌بندی جدید به سیستم اضافه شود.
+                پس از بررسی صحت اطلاعات، بر روی دکمه زیر کلیک کنید تا دسته‌بندی جدید به سیستم اضافه
+                شود.
               </p>
 
               <button
@@ -124,11 +120,17 @@ const CategoryCreate: React.FC = () => {
                 disabled={isSubmitting}
               >
                 {isSubmitting ? (
-                    <>
-                        <span className="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
-                        در حال ذخیره...
-                    </>
-                ) : "ایجاد دسته‌بندی"}
+                  <>
+                    <span
+                      className="spinner-border spinner-border-sm me-2"
+                      role="status"
+                      aria-hidden="true"
+                    ></span>
+                    در حال ذخیره...
+                  </>
+                ) : (
+                  'ایجاد دسته‌بندی'
+                )}
               </button>
             </div>
           </div>

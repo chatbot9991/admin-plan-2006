@@ -1,20 +1,20 @@
 // src/services/api.ts
-import axios from "axios";
-import Cookies from "js-cookie"; // <--- ایمپورت کوکی
+import axios from 'axios';
+import Cookies from 'js-cookie'; // <--- ایمپورت کوکی
 
 // این Instance برای درخواست‌های عمومی است
 export const api = axios.create({
-  baseURL: "https://dev.backend.mobo.land/api/v1/portal",
+  baseURL: 'https://dev.backend.mobo.land/api/v1/portal',
   headers: {
-    "Content-Type": "application/json",
+    'Content-Type': 'application/json',
   },
 });
 
 // این Instance برای درخواست‌های مربوط به احراز هویت است
 export const api_auth = axios.create({
-  baseURL: "https://dev.backend.mobo.land/api/v1/auth",
+  baseURL: 'https://dev.backend.mobo.land/api/v1/auth',
   headers: {
-    "Content-Type": "application/json",
+    'Content-Type': 'application/json',
   },
 });
 
@@ -23,7 +23,7 @@ export const api_auth = axios.create({
 // ============================================================
 const authInterceptor = (config: any) => {
   // به جای خواندن از استور، مستقیم از کوکی می‌خوانیم
-  const token = Cookies.get("adminJwt");
+  const token = Cookies.get('adminJwt');
 
   if (token) {
     config.headers.Authorization = `Bearer ${token}`;
@@ -41,15 +41,15 @@ api_auth.interceptors.request.use(authInterceptor, (error) => Promise.reject(err
 // ============================================================
 const errorInterceptor = (error: any) => {
   if (error.response && error.response.status === 401) {
-    const isLoginRequest = error.config.url.includes("/login");
+    const isLoginRequest = error.config.url.includes('/login');
 
     if (!isLoginRequest) {
       // حذف کوکی و استوریج
-      Cookies.remove("adminJwt");
-      localStorage.removeItem("auth-storage");
-      
+      Cookies.remove('adminJwt');
+      localStorage.removeItem('auth-storage');
+
       // ریدایرکت به صفحه لاگین
-      window.location.href = "/login";
+      window.location.href = '/login';
     }
   }
   return Promise.reject(error);
@@ -66,5 +66,5 @@ api_auth.interceptors.response.use((response) => response, errorInterceptor);
 // اگر روت وریفای شما زیرمجموعه auth است، بهتر است از api_auth استفاده کنید
 export const verifyTokenService = async () => {
   // این درخواست به https://dev.backend.mobo.land/api/v1/auth/verify ارسال می‌شود
-  return await api.get("/setting/read"); 
+  return await api.get('/setting/read');
 };

@@ -1,25 +1,25 @@
 // src/pages/blog/BlogList.tsx
 
-import React, { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
-import { toast } from "react-toastify";
-import { 
-  Eye, 
-  Filter as FilterIcon, 
-  ChevronDown, 
-  ChevronUp, 
+import React, { useEffect, useState } from 'react';
+import { Link } from 'react-router-dom';
+import { toast } from 'react-toastify';
+import {
+  Eye,
+  Filter as FilterIcon,
+  ChevronDown,
+  ChevronUp,
   RefreshCcw,
   Search,
   Edit,
-  RotateCw
-} from "lucide-react";
-import { DateObject } from "react-multi-date-picker";
-import gregorian from "react-date-object/calendars/gregorian";
-import gregorian_en from "react-date-object/locales/gregorian_en";
+  RotateCw,
+} from 'lucide-react';
+import { DateObject } from 'react-multi-date-picker';
+import gregorian from 'react-date-object/calendars/gregorian';
+import gregorian_en from 'react-date-object/locales/gregorian_en';
 
-import { api } from "../../services/api";
-import Filter from "../../components/common/Filter";
-import Pagination from "../../components/common/Pagination"; 
+import { api } from '../../services/api';
+import Filter from '../../components/common/Filter';
+import Pagination from '../../components/common/Pagination';
 
 // --- Interfaces ---
 
@@ -59,41 +59,45 @@ const BlogList: React.FC = () => {
   const [blogs, setBlogs] = useState<Blog[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [total, setTotal] = useState<number>(0);
-  
+
   // --- Pagination ---
   const [currentPage, setCurrentPage] = useState<number>(1);
   const limit = 10;
 
   // --- UI States (Filters) ---
   const [showFilters, setShowFilters] = useState(true);
-  
+
   // استیت‌های موقت (ورودی کاربر)
-  const [tempSearch, setTempSearch] = useState("");
-  const [tempStatus, setTempStatus] = useState("");
+  const [tempSearch, setTempSearch] = useState('');
+  const [tempStatus, setTempStatus] = useState('');
   const [tempDateRange, setTempDateRange] = useState<DateObject[]>([]);
-  
+
   // استیت‌های نهایی (ارسال به API)
   const [appliedFilters, setAppliedFilters] = useState({
-    search: "",
-    status: "",
+    search: '',
+    status: '',
     dateRange: [] as DateObject[],
   });
 
   // --- Status Change Modal State ---
-  const [targetBlog, setTargetBlog] = useState<{ id: string; status: string; title: string } | null>(null);
+  const [targetBlog, setTargetBlog] = useState<{
+    id: string;
+    status: string;
+    title: string;
+  } | null>(null);
   const [isProcessing, setIsProcessing] = useState<boolean>(false);
 
   // --- Helpers ---
   const formatDate = (isoString: string) => {
-    if (!isoString) return { date: "-", time: "-" };
+    if (!isoString) return { date: '-', time: '-' };
     try {
       const dateObj = new Date(isoString);
       return {
-        date: dateObj.toLocaleDateString("fa-IR"),
-        time: dateObj.toLocaleTimeString("fa-IR", { hour: "2-digit", minute: "2-digit" }),
+        date: dateObj.toLocaleDateString('fa-IR'),
+        time: dateObj.toLocaleTimeString('fa-IR', { hour: '2-digit', minute: '2-digit' }),
       };
     } catch (e) {
-      return { date: "-", time: "-" };
+      return { date: '-', time: '-' };
     }
   };
 
@@ -104,8 +108,8 @@ const BlogList: React.FC = () => {
 
       const params = new URLSearchParams();
       // صفحه‌بندی
-      params.append("page", currentPage.toString());
-      params.append("limit", limit.toString());
+      params.append('page', currentPage.toString());
+      params.append('limit', limit.toString());
 
       // ساخت آبجکت where
       const where: any = {};
@@ -117,7 +121,7 @@ const BlogList: React.FC = () => {
 
       // 2. فیلتر جستجو (روی عنوان)
       if (appliedFilters.search) {
-        where.title = appliedFilters.search; 
+        where.title = appliedFilters.search;
       }
 
       // 3. فیلتر تاریخ (createdAt)
@@ -134,14 +138,14 @@ const BlogList: React.FC = () => {
 
         where.createdAt = {
           from: fromDate.toDate().toISOString(),
-          to: toDate.toDate().toISOString()
+          to: toDate.toDate().toISOString(),
         };
       }
 
       // تبدیل where به JSON String
       if (Object.keys(where).length > 0) {
         const filterJson = JSON.stringify({ where });
-        params.append("filter", filterJson);
+        params.append('filter', filterJson);
       }
 
       const response = await api.get<ApiResponse>(`/blog/list?${params.toString()}`);
@@ -149,24 +153,22 @@ const BlogList: React.FC = () => {
       // --- اصلاح شده برای ساختار جدید ---
       if (response.data && response.data.result && response.data.result.length > 0) {
         const resultData = response.data.result[0];
-        
+
         // دریافت لیست بلاگ‌ها
         setBlogs(resultData.data || []);
-        
+
         // دریافت تعداد کل از آرایه total
-        const totalCount = (resultData.total && resultData.total.length > 0) 
-          ? resultData.total[0].count 
-          : 0;
-          
+        const totalCount =
+          resultData.total && resultData.total.length > 0 ? resultData.total[0].count : 0;
+
         setTotal(totalCount);
       } else {
         setBlogs([]);
         setTotal(0);
       }
-
     } catch (error) {
-      console.error("Error fetching blogs:", error);
-      toast.error("خطا در دریافت لیست بلاگ‌ها");
+      console.error('Error fetching blogs:', error);
+      toast.error('خطا در دریافت لیست بلاگ‌ها');
       setBlogs([]);
     } finally {
       setLoading(false);
@@ -184,11 +186,11 @@ const BlogList: React.FC = () => {
   };
 
   const handleResetFilters = () => {
-    setTempSearch("");
-    setTempStatus("");
+    setTempSearch('');
+    setTempStatus('');
     setTempDateRange([]);
     setCurrentPage(1);
-    setAppliedFilters({ search: "", status: "", dateRange: [] });
+    setAppliedFilters({ search: '', status: '', dateRange: [] });
   };
 
   // تغییر وضعیت (Modal Logic)
@@ -204,17 +206,19 @@ const BlogList: React.FC = () => {
     if (!targetBlog) return;
     setIsProcessing(true);
     try {
-      const newStatus = targetBlog.status === "active" ? "deactive" : "active";
+      const newStatus = targetBlog.status === 'active' ? 'deactive' : 'active';
       await api.put(`/blog/changeStatus`, { id: targetBlog.id, status: newStatus });
-      
+
       // آپدیت لوکال برای سرعت بیشتر UI
-      setBlogs(prev => prev.map(b => b._id === targetBlog.id ? { ...b, status: newStatus } : b));
-      
-      toast.success("وضعیت تغییر کرد");
+      setBlogs((prev) =>
+        prev.map((b) => (b._id === targetBlog.id ? { ...b, status: newStatus } : b))
+      );
+
+      toast.success('وضعیت تغییر کرد');
       closeStatusModal();
     } catch (error) {
       console.error(error);
-      toast.error("خطا در تغییر وضعیت");
+      toast.error('خطا در تغییر وضعیت');
     } finally {
       setIsProcessing(false);
     }
@@ -228,8 +232,7 @@ const BlogList: React.FC = () => {
 
   // --- Render ---
   return (
-    <div className="container-fluid p-4 fade-in position-relative" style={{ minHeight: "100vh" }}>
-      
+    <div className="container-fluid p-4 fade-in position-relative" style={{ minHeight: '100vh' }}>
       {/* Modal تغییر وضعیت */}
       {targetBlog && (
         <div className="custom-modal-overlay">
@@ -239,18 +242,28 @@ const BlogList: React.FC = () => {
             </div>
             <h4 className="fw-bold text-dark mt-3">تغییر وضعیت بلاگ</h4>
             <p className="text-muted text-center mt-2 mb-4 px-3">
-              وضعیت مقاله <strong>"{targetBlog.title}"</strong> به 
-              <span className={`fw-bold mx-1 ${targetBlog.status === "active" ? "text-danger" : "text-success"}`}>
-                {targetBlog.status === "active" ? "غیرفعال" : "فعال"}
+              وضعیت مقاله <strong>"{targetBlog.title}"</strong> به
+              <span
+                className={`fw-bold mx-1 ${targetBlog.status === 'active' ? 'text-danger' : 'text-success'}`}
+              >
+                {targetBlog.status === 'active' ? 'غیرفعال' : 'فعال'}
               </span>
               تغییر کند؟
             </p>
             <div className="d-flex gap-2 w-100 justify-content-center">
-              <button className="btn btn-light flex-grow-1 py-2 rounded-pill fw-bold" onClick={closeStatusModal} disabled={isProcessing}>
+              <button
+                className="btn btn-light flex-grow-1 py-2 rounded-pill fw-bold"
+                onClick={closeStatusModal}
+                disabled={isProcessing}
+              >
                 انصراف
               </button>
-              <button className="btn btn-warning text-white flex-grow-1 py-2 rounded-pill fw-bold" onClick={confirmStatusChange} disabled={isProcessing}>
-                {isProcessing ? "..." : "بله، تغییر بده"}
+              <button
+                className="btn btn-warning text-white flex-grow-1 py-2 rounded-pill fw-bold"
+                onClick={confirmStatusChange}
+                disabled={isProcessing}
+              >
+                {isProcessing ? '...' : 'بله، تغییر بده'}
               </button>
             </div>
           </div>
@@ -264,22 +277,22 @@ const BlogList: React.FC = () => {
           <p className="text-muted small mb-0">لیست مقالات و اخبار منتشر شده</p>
         </div>
         <div className="d-flex gap-2">
-            <Link to="/blog/create" className="btn-shine-effect">
-                <span className="mx-2 fs-5">+</span> ایجاد بلاگ جدید
-            </Link>
-            <button 
-            onClick={fetchBlogs} 
+          <Link to="/blog/create" className="btn-shine-effect">
+            <span className="mx-2 fs-5">+</span> ایجاد بلاگ جدید
+          </Link>
+          <button
+            onClick={fetchBlogs}
             className="btn btn-light rounded-pill p-2 shadow-sm border"
             title="بروزرسانی لیست"
-            >
-            <RefreshCcw size={20} className={loading ? "spin-anim" : ""} />
-            </button>
+          >
+            <RefreshCcw size={20} className={loading ? 'spin-anim' : ''} />
+          </button>
         </div>
       </div>
 
       {/* Filters */}
       <div className="card border-0 shadow-sm rounded-4 mb-4 overflow-hidden">
-        <div 
+        <div
           className="card-header bg-white border-0 p-3 d-flex justify-content-between align-items-center cursor-pointer user-select-none"
           onClick={() => setShowFilters(!showFilters)}
         >
@@ -290,7 +303,7 @@ const BlogList: React.FC = () => {
           {showFilters ? <ChevronUp size={20} /> : <ChevronDown size={20} />}
         </div>
 
-        <div className={`collapse ${showFilters ? "show" : ""}`}>
+        <div className={`collapse ${showFilters ? 'show' : ''}`}>
           <div className="card-body bg-light border-top p-4">
             <div className="row g-3 align-items-end">
               <div className="col-12 col-md-3">
@@ -308,8 +321,8 @@ const BlogList: React.FC = () => {
                   label="وضعیت"
                   placeholder="همه"
                   options={[
-                    { id: "active", name: "فعال" },
-                    { id: "deactive", name: "غیرفعال" },
+                    { id: 'active', name: 'فعال' },
+                    { id: 'deactive', name: 'غیرفعال' },
                   ]}
                   value={tempStatus}
                   onChange={setTempStatus}
@@ -325,23 +338,23 @@ const BlogList: React.FC = () => {
                 />
               </div>
               <div className="col-12 col-md-3 d-flex gap-2">
-                <button 
+                <button
                   className="btn btn-primary w-100 d-flex align-items-center justify-content-center gap-2"
                   onClick={handleApplyFilters}
-                  style={{ height: "48px", borderRadius: "12px" }}
+                  style={{ height: '48px', borderRadius: '12px' }}
                 >
                   <Search size={18} />
                   <span>اعمال فیلتر</span>
                 </button>
                 {(tempSearch || tempStatus || tempDateRange.length > 0) && (
-                   <button 
-                   className="btn btn-danger-soft px-3"
-                   onClick={handleResetFilters}
-                   title="حذف فیلترها"
-                   style={{ height: "48px", borderRadius: "12px" }}
-                 >
-                   ×
-                 </button>
+                  <button
+                    className="btn btn-danger-soft px-3"
+                    onClick={handleResetFilters}
+                    title="حذف فیلترها"
+                    style={{ height: '48px', borderRadius: '12px' }}
+                  >
+                    ×
+                  </button>
                 )}
               </div>
             </div>
@@ -350,16 +363,22 @@ const BlogList: React.FC = () => {
       </div>
 
       {/* Table */}
-      <div className="table-responsive" style={{ overflowX: "visible" }}>
+      <div className="table-responsive" style={{ overflowX: 'visible' }}>
         <table className="table modern-table">
           <thead>
             <tr>
-              <th style={{ width: "5%", borderRadius: "0 15px 15px 0" }}>#</th>
-              <th style={{ width: "25%" }}>عنوان و دسته‌بندی</th>
-              <th style={{ width: "30%" }}>توضیحات کوتاه</th>
-              <th className="text-center" style={{ width: "15%" }}>تاریخ ایجاد</th>
-              <th className="text-center" style={{ width: "10%" }}>وضعیت</th>
-              <th className="text-center" style={{ width: "15%", borderRadius: "15px 0 0 15px" }}>عملیات</th>
+              <th style={{ width: '5%', borderRadius: '0 15px 15px 0' }}>#</th>
+              <th style={{ width: '25%' }}>عنوان و دسته‌بندی</th>
+              <th style={{ width: '30%' }}>توضیحات کوتاه</th>
+              <th className="text-center" style={{ width: '15%' }}>
+                تاریخ ایجاد
+              </th>
+              <th className="text-center" style={{ width: '10%' }}>
+                وضعیت
+              </th>
+              <th className="text-center" style={{ width: '15%', borderRadius: '15px 0 0 15px' }}>
+                عملیات
+              </th>
             </tr>
           </thead>
           <tbody>
@@ -379,17 +398,21 @@ const BlogList: React.FC = () => {
             ) : (
               blogs.map((blog, index) => {
                 const { date, time } = formatDate(blog.createdAt);
-                const isActive = blog.status === "active";
+                const isActive = blog.status === 'active';
 
                 return (
                   <tr key={blog._id} className="align-middle">
                     <td className="fw-bold text-secondary ps-3">
                       {(currentPage - 1) * limit + index + 1}
                     </td>
-                    
+
                     <td>
                       <div className="d-flex flex-column">
-                        <span className="fw-bold text-dark mb-1 text-truncate" style={{maxWidth: '250px'}} title={blog.title}>
+                        <span
+                          className="fw-bold text-dark mb-1 text-truncate"
+                          style={{ maxWidth: '250px' }}
+                          title={blog.title}
+                        >
                           {blog.title}
                         </span>
                         {blog.categoryId && (
@@ -401,35 +424,46 @@ const BlogList: React.FC = () => {
                     </td>
 
                     <td>
-                      <p className="text-muted small mb-0 description-truncate" style={{maxWidth: '300px'}}>
-                        {blog.shortDescription || "-"}
+                      <p
+                        className="text-muted small mb-0 description-truncate"
+                        style={{ maxWidth: '300px' }}
+                      >
+                        {blog.shortDescription || '-'}
                       </p>
                     </td>
 
                     <td className="text-center">
-                       <div className="d-flex flex-column">
-                         <span className="fw-bold text-dark">{date}</span>
-                         <span className="text-muted small">{time}</span>
-                       </div>
+                      <div className="d-flex flex-column">
+                        <span className="fw-bold text-dark">{date}</span>
+                        <span className="text-muted small">{time}</span>
+                      </div>
                     </td>
 
                     <td className="text-center">
-                      <div className={`status-pill ${isActive ? "active" : "inactive"}`}>
+                      <div className={`status-pill ${isActive ? 'active' : 'inactive'}`}>
                         <span className="dot"></span>
-                        {isActive ? "فعال" : "غیرفعال"}
+                        {isActive ? 'فعال' : 'غیرفعال'}
                       </div>
                     </td>
 
                     <td>
                       <div className="d-flex gap-2 justify-content-center">
-                        <Link to={`/blog/details/${blog._id}`} className="btn-action btn-soft-info" title="مشاهده">
+                        <Link
+                          to={`/blog/details/${blog._id}`}
+                          className="btn-action btn-soft-info"
+                          title="مشاهده"
+                        >
                           <Eye size={18} />
                         </Link>
-                        <Link to={`/blog/edit/${blog._id}`} className="btn-action btn-soft-primary" title="ویرایش">
+                        <Link
+                          to={`/blog/edit/${blog._id}`}
+                          className="btn-action btn-soft-primary"
+                          title="ویرایش"
+                        >
                           <Edit size={18} />
                         </Link>
-                        <button 
-                          className="btn-action btn-soft-warning" 
+                        <button
+                          className="btn-action btn-soft-warning"
                           title="تغییر وضعیت"
                           onClick={() => openStatusModal(blog)}
                         >

@@ -1,18 +1,13 @@
 // src/pages/notify/NotifyList.tsx
 
-import React, { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
-import { api } from "../../services/api";
-import { toast } from "react-toastify";
-import {
-  Bell,
-  Eye,
-  Users,
-  RefreshCw
-} from "lucide-react";
+import React, { useEffect, useState } from 'react';
+import { Link } from 'react-router-dom';
+import { api } from '../../services/api';
+import { toast } from 'react-toastify';
+import { Bell, Eye, Users, RefreshCw } from 'lucide-react';
 
 // ایمپورت کامپوننت صفحه‌بندی
-import Pagination from "../../components/common/Pagination";
+import Pagination from '../../components/common/Pagination';
 
 // --- Interfaces ---
 
@@ -55,15 +50,15 @@ const NotifyList: React.FC = () => {
 
   // --- Helpers ---
   const formatDate = (isoString: string) => {
-    if (!isoString) return { date: "-", time: "-" };
+    if (!isoString) return { date: '-', time: '-' };
     try {
       const date = new Date(isoString);
       return {
-        date: date.toLocaleDateString("fa-IR"),
-        time: date.toLocaleTimeString("fa-IR", { hour: "2-digit", minute: "2-digit" }),
+        date: date.toLocaleDateString('fa-IR'),
+        time: date.toLocaleTimeString('fa-IR', { hour: '2-digit', minute: '2-digit' }),
       };
     } catch (e) {
-      return { date: "-", time: "-" };
+      return { date: '-', time: '-' };
     }
   };
 
@@ -76,12 +71,12 @@ const NotifyList: React.FC = () => {
         limit: pageSize,
       };
 
-      const response = await api.get<ApiResponse>("/notify/list", { params });
+      const response = await api.get<ApiResponse>('/notify/list', { params });
 
       // لاجیک جدید استخراج داده‌ها
       if (response.data && response.data.result && response.data.result.length > 0) {
         const resultData = response.data.result[0];
-        
+
         setNotifies(resultData.data || []);
         // استخراج تعداد کل از داخل آرایه total
         setTotalItems(resultData.total?.[0]?.count || 0);
@@ -90,8 +85,8 @@ const NotifyList: React.FC = () => {
         setTotalItems(0);
       }
     } catch (error) {
-      console.error("Error fetching notifies:", error);
-      toast.error("خطا در دریافت لیست اعلانات");
+      console.error('Error fetching notifies:', error);
+      toast.error('خطا در دریافت لیست اعلانات');
       setNotifies([]);
     } finally {
       setLoading(false);
@@ -104,34 +99,32 @@ const NotifyList: React.FC = () => {
   }, [currentPage]);
 
   return (
-    <div className="container-fluid p-4 fade-in" style={{ maxWidth: "1600px" }}>
-
+    <div className="container-fluid p-4 fade-in" style={{ maxWidth: '1600px' }}>
       {/* --- Header Section --- */}
       <div className="d-flex flex-column flex-md-row justify-content-between align-items-md-center mb-5 gap-3">
-
         {/* Title (Right Side) */}
         <div>
           <h2 className="fw-bolder text-dark mb-1">مدیریت اعلانات</h2>
-          <p className="text-muted mb-0" style={{ fontSize: "0.95rem" }}>
+          <p className="text-muted mb-0" style={{ fontSize: '0.95rem' }}>
             مشاهده و پیگیری تمام اعلان‌های ارسال شده سیستم
           </p>
         </div>
 
         {/* Actions (Left Side) */}
         <div className="d-flex align-items-center gap-3">
-           {/* دکمه ایجاد اعلان جدید */}
-           <Link to="/notifications/create" className="btn-shine-effect">
-              <span className="mx-2 fs-5">+</span> ایجاد اعلان جدید
-           </Link>
+          {/* دکمه ایجاد اعلان جدید */}
+          <Link to="/notifications/create" className="btn-shine-effect">
+            <span className="mx-2 fs-5">+</span> ایجاد اعلان جدید
+          </Link>
 
-           {/* دکمه رفرش دایره‌ای */}
-           <button
-              onClick={fetchNotifies}
-              className="btn btn-refresh shadow-sm"
-              title="بروزرسانی لیست"
-            >
-              <RefreshCw size={20} className={loading ? "spin-anim" : ""} />
-           </button>
+          {/* دکمه رفرش دایره‌ای */}
+          <button
+            onClick={fetchNotifies}
+            className="btn btn-refresh shadow-sm"
+            title="بروزرسانی لیست"
+          >
+            <RefreshCw size={20} className={loading ? 'spin-anim' : ''} />
+          </button>
         </div>
       </div>
 
@@ -141,12 +134,24 @@ const NotifyList: React.FC = () => {
           <table className="table custom-table align-middle mb-0">
             <thead>
               <tr>
-                <th className="text-secondary small fw-bold text-center" style={{ width: "60px" }}>#</th>
-                <th className="text-secondary small fw-bold text-start" style={{ width: "20%" }}>عنوان اعلان</th>
-                <th className="text-secondary small fw-bold text-start" style={{ width: "30%" }}>متن پیام</th>
-                <th className="text-secondary small fw-bold text-center" style={{ width: "15%" }}>گیرندگان</th>
-                <th className="text-secondary small fw-bold text-center" style={{ width: "15%" }}>تاریخ ارسال</th>
-                <th className="text-secondary small fw-bold text-center" style={{ width: "10%" }}>عملیات</th>
+                <th className="text-secondary small fw-bold text-center" style={{ width: '60px' }}>
+                  #
+                </th>
+                <th className="text-secondary small fw-bold text-start" style={{ width: '20%' }}>
+                  عنوان اعلان
+                </th>
+                <th className="text-secondary small fw-bold text-start" style={{ width: '30%' }}>
+                  متن پیام
+                </th>
+                <th className="text-secondary small fw-bold text-center" style={{ width: '15%' }}>
+                  گیرندگان
+                </th>
+                <th className="text-secondary small fw-bold text-center" style={{ width: '15%' }}>
+                  تاریخ ارسال
+                </th>
+                <th className="text-secondary small fw-bold text-center" style={{ width: '10%' }}>
+                  عملیات
+                </th>
               </tr>
             </thead>
             <tbody>
@@ -160,7 +165,7 @@ const NotifyList: React.FC = () => {
                 <tr>
                   <td colSpan={6} className="text-center py-5">
                     <div className="opacity-50 mb-3">
-                        <Bell size={40} className="text-secondary" />
+                      <Bell size={40} className="text-secondary" />
                     </div>
                     <h6 className="text-muted fw-bold">هیچ اعلانی یافت نشد!</h6>
                   </td>
@@ -170,48 +175,58 @@ const NotifyList: React.FC = () => {
                   const { date, time } = formatDate(notify.createdAt);
 
                   return (
-                    <tr key={notify._id} className="bg-white rounded-3 shadow-sm my-2 border-bottom-0">
-
+                    <tr
+                      key={notify._id}
+                      className="bg-white rounded-3 shadow-sm my-2 border-bottom-0"
+                    >
                       {/* Index */}
                       <td className="text-center text-muted fw-bold">
-                          {(currentPage - 1) * pageSize + (index + 1)}
+                        {(currentPage - 1) * pageSize + (index + 1)}
                       </td>
 
                       {/* Title */}
                       <td className="text-start">
                         <div className="d-flex align-items-center gap-2">
-                            <span className="fw-bold text-dark text-truncate" style={{ maxWidth: "200px" }} title={notify.title}>
-                                {notify.title}
-                            </span>
+                          <span
+                            className="fw-bold text-dark text-truncate"
+                            style={{ maxWidth: '200px' }}
+                            title={notify.title}
+                          >
+                            {notify.title}
+                          </span>
                         </div>
                       </td>
 
                       {/* Body */}
                       <td className="text-start">
-                        <span className="text-muted small text-truncate d-inline-block" style={{ maxWidth: "300px" }} title={notify.body}>
-                            {notify.body}
+                        <span
+                          className="text-muted small text-truncate d-inline-block"
+                          style={{ maxWidth: '300px' }}
+                          title={notify.body}
+                        >
+                          {notify.body}
                         </span>
                       </td>
 
                       {/* Users Count */}
                       <td className="text-center">
-                         {notify.users && notify.users.length > 0 ? (
-                             <span className="badge bg-light text-dark border px-3 py-2 rounded-pill fw-normal">
-                                <Users size={14} className="me-1 text-primary" />
-                                {notify.users.length} کاربر
-                             </span>
-                         ) : (
-                             <span className="badge bg-success-subtle text-success border-0 px-3 py-2 rounded-pill fw-normal">
-                                عمومی
-                             </span>
-                         )}
+                        {notify.users && notify.users.length > 0 ? (
+                          <span className="badge bg-light text-dark border px-3 py-2 rounded-pill fw-normal">
+                            <Users size={14} className="me-1 text-primary" />
+                            {notify.users.length} کاربر
+                          </span>
+                        ) : (
+                          <span className="badge bg-success-subtle text-success border-0 px-3 py-2 rounded-pill fw-normal">
+                            عمومی
+                          </span>
+                        )}
                       </td>
 
                       {/* Date */}
                       <td className="text-center">
                         <div className="d-flex flex-column align-items-center justify-content-center">
-                            <span className="fw-bold text-dark fs-6 dir-ltr">{date}</span>
-                            <span className="text-muted extra-small">{time}</span>
+                          <span className="fw-bold text-dark fs-6 dir-ltr">{date}</span>
+                          <span className="text-muted extra-small">{time}</span>
                         </div>
                       </td>
 
@@ -235,13 +250,13 @@ const NotifyList: React.FC = () => {
 
         {/* --- Pagination --- */}
         <div className="py-3">
-             <Pagination
-                currentPage={currentPage}
-                totalItems={totalItems}
-                pageSize={pageSize}
-                onPageChange={(page) => setCurrentPage(page)}
-                showInfo={true}
-             />
+          <Pagination
+            currentPage={currentPage}
+            totalItems={totalItems}
+            pageSize={pageSize}
+            onPageChange={(page) => setCurrentPage(page)}
+            showInfo={true}
+          />
         </div>
       </div>
 

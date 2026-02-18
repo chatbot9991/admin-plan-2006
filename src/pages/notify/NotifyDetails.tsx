@@ -1,8 +1,8 @@
 // src/pages/notify/NotifyDetails.tsx
 
-import React, { useEffect, useState } from "react";
-import { useParams, useNavigate } from "react-router-dom";
-import { toast } from "react-toastify";
+import React, { useEffect, useState } from 'react';
+import { useParams, useNavigate } from 'react-router-dom';
+import { toast } from 'react-toastify';
 import {
   Bell,
   Calendar,
@@ -19,8 +19,8 @@ import {
   ExternalLink,
   CheckCircle,
   XCircle,
-} from "lucide-react";
-import { api } from "../../services/api";
+} from 'lucide-react';
+import { api } from '../../services/api';
 
 // --- Interfaces ---
 
@@ -56,50 +56,48 @@ const NotifyDetails: React.FC = () => {
 
   // --- Helpers ---
   const formatDate = (isoString: string) => {
-    if (!isoString) return { date: "-", time: "-" };
+    if (!isoString) return { date: '-', time: '-' };
     const date = new Date(isoString);
     return {
-      date: date.toLocaleDateString("fa-IR"),
-      time: date.toLocaleTimeString("fa-IR", {
-        hour: "2-digit",
-        minute: "2-digit",
+      date: date.toLocaleDateString('fa-IR'),
+      time: date.toLocaleTimeString('fa-IR', {
+        hour: '2-digit',
+        minute: '2-digit',
       }),
     };
   };
 
-  const handleCopy = (text: string, label: string = "متن") => {
+  const handleCopy = (text: string, label: string = 'متن') => {
     if (!text) return;
     navigator.clipboard.writeText(text);
     toast.success(`${label} کپی شد`, {
-      position: "bottom-center",
+      position: 'bottom-center',
       autoClose: 2000,
     });
   };
 
   const extractUserInfo = (userItem: string | UserObj) => {
-    if (typeof userItem === "string") {
+    if (typeof userItem === 'string') {
       return {
         id: userItem,
-        displayName: "کاربر (بدون جزئیات)",
+        displayName: 'کاربر (بدون جزئیات)',
         detailsAvailable: false,
-        mobile: "-",
-        email: "-",
-        plan: "-",
+        mobile: '-',
+        email: '-',
+        plan: '-',
         isActive: null,
       };
     }
 
-    const fullName = [userItem.firstName, userItem.lastName]
-      .filter(Boolean)
-      .join(" ");
+    const fullName = [userItem.firstName, userItem.lastName].filter(Boolean).join(' ');
     return {
       id: userItem._id,
-      displayName: fullName || userItem.username || "کاربر بی نام",
+      displayName: fullName || userItem.username || 'کاربر بی نام',
       detailsAvailable: true,
-      mobile: userItem.mobile || "-",
-      email: userItem.email || "-",
-      plan: userItem.planName || "پایه (Free)",
-      isActive: userItem.status === "active" ? true : false,
+      mobile: userItem.mobile || '-',
+      email: userItem.email || '-',
+      plan: userItem.planName || 'پایه (Free)',
+      isActive: userItem.status === 'active' ? true : false,
     };
   };
 
@@ -115,11 +113,11 @@ const NotifyDetails: React.FC = () => {
         if (data) {
           setNotify(data);
         } else {
-          toast.error("اطلاعات اعلان یافت نشد.");
+          toast.error('اطلاعات اعلان یافت نشد.');
         }
       } catch (error) {
-        console.error("Error fetching notify:", error);
-        toast.error("خطا در دریافت جزئیات اعلان.");
+        console.error('Error fetching notify:', error);
+        toast.error('خطا در دریافت جزئیات اعلان.');
       } finally {
         setLoading(false);
       }
@@ -154,16 +152,13 @@ const NotifyDetails: React.FC = () => {
   const isPublic = usersList.length === 0;
 
   return (
-    <div className="container-fluid p-4 fade-in" style={{ maxWidth: "1400px" }}>
+    <div className="container-fluid p-4 fade-in" style={{ maxWidth: '1400px' }}>
       {/* --- Header --- */}
       <div className="d-flex justify-content-between align-items-center mb-4">
         <div>
           <h3 className="fw-bold text-dark mb-1">جزئیات اعلان</h3>
           <p className="text-muted small">
-            شناسه:{" "}
-            <span className="dir-ltr d-inline-block text-navy fw-bold">
-              {notify._id}
-            </span>
+            شناسه: <span className="dir-ltr d-inline-block text-navy fw-bold">{notify._id}</span>
           </p>
         </div>
         <button
@@ -186,9 +181,7 @@ const NotifyDetails: React.FC = () => {
             </div>
             <div className="card-body p-4">
               <div className="mb-4">
-                <label className="text-muted small fw-bold mb-1 d-block">
-                  عنوان اعلان
-                </label>
+                <label className="text-muted small fw-bold mb-1 d-block">عنوان اعلان</label>
                 <h4 className="fw-bold text-dark">{notify.title}</h4>
               </div>
 
@@ -196,10 +189,7 @@ const NotifyDetails: React.FC = () => {
                 <label className="text-muted small fw-bold mb-2 d-flex align-items-center gap-1">
                   <AlignLeft size={16} /> متن پیام:
                 </label>
-                <p
-                  className="mb-0 text-dark"
-                  style={{ lineHeight: "1.8", whiteSpace: "pre-wrap" }}
-                >
+                <p className="mb-0 text-dark" style={{ lineHeight: '1.8', whiteSpace: 'pre-wrap' }}>
                   {notify.body}
                 </p>
               </div>
@@ -214,7 +204,7 @@ const NotifyDetails: React.FC = () => {
                 دیتای ضمیمه (Payload)
               </h5>
               <button
-                onClick={() => handleCopy(notify.data, "دیتا")}
+                onClick={() => handleCopy(notify.data, 'دیتا')}
                 className="btn btn-sm btn-outline-secondary rounded-pill d-flex align-items-center gap-1"
               >
                 <Copy size={14} /> کپی
@@ -224,7 +214,7 @@ const NotifyDetails: React.FC = () => {
               {notify.data ? (
                 <div
                   className="bg-dark text-light p-3 rounded-3  font-monospace position-relative"
-                  style={{ minHeight: "60px", wordBreak: "break-all" }}
+                  style={{ minHeight: '60px', wordBreak: 'break-all' }}
                 >
                   {notify.data}
                 </div>
@@ -242,9 +232,7 @@ const NotifyDetails: React.FC = () => {
                 <h5 className="mb-0 fw-bold text-dark">گیرندگان</h5>
               </div>
               {!isPublic && (
-                <span className="badge bg-navy rounded-pill px-3">
-                  {usersList.length} کاربر
-                </span>
+                <span className="badge bg-navy rounded-pill px-3">{usersList.length} کاربر</span>
               )}
             </div>
 
@@ -256,17 +244,15 @@ const NotifyDetails: React.FC = () => {
                   </div>
                   <div>
                     <h6 className="fw-bold mb-1">اعلان عمومی</h6>
-                    <p className="mb-0 small">
-                      این پیام برای تمام کاربران ارسال شده است.
-                    </p>
+                    <p className="mb-0 small">این پیام برای تمام کاربران ارسال شده است.</p>
                   </div>
                 </div>
               ) : (
                 <div
                   style={{
-                    maxHeight: "500px",
-                    overflowY: "auto",
-                    paddingRight: "5px",
+                    maxHeight: '500px',
+                    overflowY: 'auto',
+                    paddingRight: '5px',
                   }}
                 >
                   <div className="d-flex flex-column gap-3">
@@ -297,23 +283,17 @@ const NotifyDetails: React.FC = () => {
                                       <span
                                         title="فعال"
                                         className="d-flex align-items-center"
-                                        style={{ cursor: "help" }}
+                                        style={{ cursor: 'help' }}
                                       >
-                                        <CheckCircle
-                                          size={14}
-                                          className="text-success"
-                                        />
+                                        <CheckCircle size={14} className="text-success" />
                                       </span>
                                     ) : (
                                       <span
                                         title="غیرفعال"
                                         className="d-flex align-items-center"
-                                        style={{ cursor: "help" }}
+                                        style={{ cursor: 'help' }}
                                       >
-                                        <XCircle
-                                          size={14}
-                                          className="text-danger"
-                                        />
+                                        <XCircle size={14} className="text-danger" />
                                       </span>
                                     ))}
                                 </h6>
@@ -323,7 +303,7 @@ const NotifyDetails: React.FC = () => {
                                   </code>
                                   <button
                                     className="btn btn-link p-0 text-muted"
-                                    onClick={() => handleCopy(info.id, "ID")}
+                                    onClick={() => handleCopy(info.id, 'ID')}
                                   >
                                     <Copy size={12} />
                                   </button>
@@ -340,38 +320,27 @@ const NotifyDetails: React.FC = () => {
                               {info.detailsAvailable && (
                                 <div className="d-flex flex-wrap gap-3 text-muted small align-items-center justify-content-end">
                                   <div className="d-flex align-items-center gap-1 bg-light px-2 py-1 rounded">
-                                    <CreditCard
-                                      size={14}
-                                      className="text-navy"
-                                    />
+                                    <CreditCard size={14} className="text-navy" />
                                     <span
                                       className="d-inline-block text-truncate "
-                                      style={{ maxWidth: "150px" }}
+                                      style={{ maxWidth: '150px' }}
                                     >
-                                      پلن:{" "}
-                                      <span className="fw-bold text-dark">
-                                        {info.plan}
-                                      </span>
+                                      پلن: <span className="fw-bold text-dark">{info.plan}</span>
                                     </span>
                                   </div>
                                   <div className="d-flex align-items-center gap-1 bg-light px-2 py-1 rounded">
                                     <Phone size={14} className="text-navy" />
-                                    <span className="dir-ltr">
-                                      {info.mobile}
-                                    </span>
+                                    <span className="dir-ltr">{info.mobile}</span>
                                   </div>
-                                  {info.email && info.email !== "-" && (
+                                  {info.email && info.email !== '-' && (
                                     <div
                                       className="d-flex align-items-center gap-1 bg-light px-2 py-1 rounded d-none d-md-flex"
                                       title={info.email}
                                     >
-                                      <Mail
-                                        size={14}
-                                        className="text-navy flex-shrink-0"
-                                      />
+                                      <Mail size={14} className="text-navy flex-shrink-0" />
                                       <span
                                         className="d-inline-block text-truncate dir-ltr"
-                                        style={{ maxWidth: "150px" }}
+                                        style={{ maxWidth: '150px' }}
                                       >
                                         {info.email}
                                       </span>
@@ -383,9 +352,7 @@ const NotifyDetails: React.FC = () => {
                               {/* Action Button */}
                               <div>
                                 <button
-                                  onClick={() =>
-                                    navigate(`/users/details/${info.id}`)
-                                  }
+                                  onClick={() => navigate(`/users/details/${info.id}`)}
                                   className="btn btn-outline-navy btn-sm rounded-pill d-flex align-items-center gap-2"
                                   title="مشاهده پروفایل کامل"
                                 >
@@ -409,7 +376,7 @@ const NotifyDetails: React.FC = () => {
         <div className="col-lg-4">
           <div
             className="card border-0 shadow-sm rounded-4 p-4 sticky-top bg-white"
-            style={{ top: "20px" }}
+            style={{ top: '20px' }}
           >
             <h5 className="fw-bold mb-4 border-bottom pb-3">اطلاعات سیستمی</h5>
 
@@ -441,9 +408,7 @@ const NotifyDetails: React.FC = () => {
             <div className="mb-4">
               <div className="d-flex align-items-between justify-content-between">
                 <span className="text-muted small">نسخه رکورد:</span>
-                <span className="badge bg-secondary rounded-pill px-3">
-                  {notify.version}
-                </span>
+                <span className="badge bg-secondary rounded-pill px-3">{notify.version}</span>
               </div>
             </div>
 
@@ -455,7 +420,7 @@ const NotifyDetails: React.FC = () => {
                   {notify._id}
                 </code>
                 <button
-                  onClick={() => handleCopy(notify._id, "شناسه اعلان")}
+                  onClick={() => handleCopy(notify._id, 'شناسه اعلان')}
                   className="btn btn-sm btn-link p-0 text-secondary hover-navy"
                   title="کپی شناسه"
                 >
