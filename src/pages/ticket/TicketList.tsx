@@ -1,4 +1,4 @@
-// src/pages/blog/CategoryList.tsx
+// src/pages/ticket/TicketList.tsx
 
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
@@ -10,35 +10,48 @@ import {
   ChevronUp,
   RefreshCcw,
   Search,
-  Edit,
-  RotateCw,
+  MessageSquare,
+  Copy,
+  User,
 } from 'lucide-react';
 import { DateObject } from 'react-multi-date-picker';
 import gregorian from 'react-date-object/calendars/gregorian';
 import gregorian_en from 'react-date-object/locales/gregorian_en';
 
 import { api } from '../../services/api';
-import Filter from '../../components/common/Filter';
+import Filter from '../../components/common/Filter'; // استفاده از همان کامپوننت فیلتر بلاگ
 import Pagination from '../../components/common/Pagination';
 
 // --- Interfaces ---
-interface BlogCategory {
+
+interface TicketMessage {
   _id: string;
+  message: string;
+  typeMessage: 'user' | 'admin' | 'system';
+  createdAt: string;
+}
+
+interface Ticket {
+  _id: string;
+  userId: string;
   title: string;
-  description: string;
-  status: string; // "active" | "inactive" | "deactive"
+  type: string; // "Technical", "Financial", etc.
+  messages: TicketMessage[];
+  status: string; // "done", "waiting-response", "pending", "open"
   createdAt: string;
   updatedAt: string;
 }
 
 interface ApiResponse {
-  blogCategories: BlogCategory[];
-  total: number;
+  result: {
+    data: Ticket[];
+    total: { count: number }[];
+  }[];
 }
 
-const CategoryList: React.FC = () => {
-  // --- Data States ---
-  const [categories, setCategories] = useState<BlogCategory[]>([]);
+const TicketList: React.FC = () => {
+  // --- States for Data ---
+  const [tickets, setTickets] = useState<Ticket[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [total, setTotal] = useState<number>(0);
 
@@ -46,28 +59,22 @@ const CategoryList: React.FC = () => {
   const [currentPage, setCurrentPage] = useState<number>(1);
   const limit = 10;
 
-  // --- UI Filters States (Inputs) ---
+  // --- UI States (Filters) ---
   const [showFilters, setShowFilters] = useState(true);
 
-  // مقادیر موقت (آنچه کاربر تایپ می‌کند)
+  // استیت‌های موقت (ورودی کاربر - دقیقاً مثل بلاگ)
   const [tempSearch, setTempSearch] = useState('');
   const [tempStatus, setTempStatus] = useState('');
+  const [tempType, setTempType] = useState(''); // اضافه شده برای دپارتمان
   const [tempDateRange, setTempDateRange] = useState<DateObject[]>([]);
 
-  // مقادیر نهایی (آنچه به API ارسال می‌شود)
+  // استیت‌های نهایی (ارسال به API)
   const [appliedFilters, setAppliedFilters] = useState({
     search: '',
     status: '',
+    type: '',
     dateRange: [] as DateObject[],
   });
-
-  // --- Modal State ---
-  const [targetCategory, setTargetCategory] = useState<{
-    id: string;
-    status: string;
-    title: string;
-  } | null>(null);
-  const [isProcessing, setIsProcessing] = useState<boolean>(false);
 
   // --- Helpers ---
   const formatDate = (isoString: string) => {
@@ -83,8 +90,19 @@ const CategoryList: React.FC = () => {
     }
   };
 
-  // --- Core API Fetch ---
-  const fetchCategories = async () => {
+  const handleCopyUserId = (userId: string) => {
+    navigator.clipboard.writeText(userId);
+    toast.success('آیدی کاربر کپی شد', {
+      position: 'bottom-center',
+      theme: 'colored',
+      autoClose: 1500,
+      hideProgressBar: true,
+      style: { fontSize: '13px' },
+    });
+  };
+
+  // --- Core API Fetch Function ---
+  const fetchTickets = async () => {
     try {
       setLoading(true);
 
@@ -92,7 +110,6 @@ const CategoryList: React.FC = () => {
       params.append('page', currentPage.toString());
       params.append('limit', limit.toString());
 
-      // ساخت آبجکت where برای فیلتر
       const where: any = {};
 
       // 1. فیلتر وضعیت
@@ -100,12 +117,17 @@ const CategoryList: React.FC = () => {
         where.status = appliedFilters.status;
       }
 
-      // 2. فیلتر جستجو (عنوان)
+      // 2. فیلتر نوع (دپارتمان)
+      if (appliedFilters.type) {
+        where.type = appliedFilters.type;
+      }
+
+      // 3. فیلتر جستجو (عنوان)
       if (appliedFilters.search) {
         where.title = appliedFilters.search;
       }
 
-      // 3. فیلتر تاریخ (createdAt)
+      // 4. فیلتر تاریخ
       if (appliedFilters.dateRange.length > 0) {
         const fromDate = new DateObject(appliedFilters.dateRange[0]);
         fromDate.convert(gregorian, gregorian_en);
@@ -123,37 +145,27 @@ const CategoryList: React.FC = () => {
         };
       }
 
-      // تبدیل به JSON String برای پارامتر filter
       if (Object.keys(where).length > 0) {
         const filterJson = JSON.stringify({ where });
         params.append('filter', filterJson);
       }
 
-      const response = await api.get<ApiResponse>(`/blog-category/list?${params.toString()}`);
+      const response = await api.get<ApiResponse>(`/ticket/list?${params.toString()}`);
 
-      // هندل کردن ساختارهای مختلف پاسخ سرور
-      if (response.data) {
-        if (Array.isArray(response.data.blogCategories)) {
-          setCategories(response.data.blogCategories);
-          setTotal(response.data.total || response.data.blogCategories.length);
-        } else if (Array.isArray((response.data as any).data)) {
-          // پشتیبانی از ساختار جدید تودرتو اگر بکند تغییر کرده باشد
-          setCategories((response.data as any).data);
-          setTotal((response.data as any).total?.[0]?.count || 0);
-        } else if (Array.isArray(response.data)) {
-          // پشتیبانی از آرایه ساده
-          // @ts-ignore
-          setCategories(response.data);
-          setTotal(response.data.length);
-        } else {
-          setCategories([]);
-          setTotal(0);
-        }
+      if (response.data && response.data.result && response.data.result.length > 0) {
+        const resultData = response.data.result[0];
+        setTickets(resultData.data || []);
+        const totalCount =
+          resultData.total && resultData.total.length > 0 ? resultData.total[0].count : 0;
+        setTotal(totalCount);
+      } else {
+        setTickets([]);
+        setTotal(0);
       }
     } catch (error) {
-      console.error('Error fetching categories:', error);
-      toast.error('خطا در دریافت لیست دسته‌بندی‌ها');
-      setCategories([]);
+      console.error('Error fetching tickets:', error);
+      toast.error('خطا در دریافت لیست تیکت‌ها');
+      setTickets([]);
     } finally {
       setLoading(false);
     }
@@ -165,6 +177,7 @@ const CategoryList: React.FC = () => {
     setAppliedFilters({
       search: tempSearch,
       status: tempStatus,
+      type: tempType,
       dateRange: tempDateRange,
     });
   };
@@ -172,100 +185,64 @@ const CategoryList: React.FC = () => {
   const handleResetFilters = () => {
     setTempSearch('');
     setTempStatus('');
+    setTempType('');
     setTempDateRange([]);
     setCurrentPage(1);
-    setAppliedFilters({ search: '', status: '', dateRange: [] });
+    setAppliedFilters({ search: '', status: '', type: '', dateRange: [] });
   };
 
-  // Modal Logic
-  const openStatusModal = (cat: BlogCategory) => {
-    setTargetCategory({ id: cat._id, status: cat.status, title: cat.title });
+  // --- Translate Helpers ---
+  const getStatusLabel = (status: string) => {
+    switch (status) {
+      case 'done':
+        return 'بسته شده';
+      case 'waiting-response':
+        return 'منتظر پاسخ';
+      case 'pending':
+        return 'در حال بررسی';
+      case 'responsedByAdmin':
+        return 'ادمین پاسخ داده';
+      case 'open':
+        return 'باز';
+      default:
+        return status;
+    }
   };
 
-  const closeStatusModal = () => {
-    setTargetCategory(null);
-  };
-
-  const confirmStatusChange = async () => {
-    if (!targetCategory) return;
-    setIsProcessing(true);
-    try {
-      const newStatus = targetCategory.status === 'active' ? 'deactive' : 'active';
-      await api.put(`/blog-category/changeStatus`, { id: targetCategory.id, status: newStatus });
-
-      // Optimistic Update
-      setCategories((prev) =>
-        prev.map((c) => (c._id === targetCategory.id ? { ...c, status: newStatus } : c))
-      );
-
-      toast.success('وضعیت تغییر کرد');
-      closeStatusModal();
-    } catch (error) {
-      console.error(error);
-      toast.error('خطا در تغییر وضعیت');
-    } finally {
-      setIsProcessing(false);
+  const getTypeLabel = (type: string) => {
+    switch (type?.toLowerCase()) {
+      case 'technical':
+        return 'فنی';
+      case 'financial':
+        return 'مالی';
+      case 'general':
+        return 'عمومی';
+      case 'ai':
+        return 'هوش مصنوعی';
+      default:
+        return type;
     }
   };
 
   // --- Effects ---
   useEffect(() => {
-    fetchCategories();
+    fetchTickets();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentPage, appliedFilters]);
 
   // --- Render ---
   return (
     <div className="container-fluid p-4 fade-in position-relative" style={{ minHeight: '100vh' }}>
-      {/* Status Modal */}
-      {targetCategory && (
-        <div className="custom-modal-overlay">
-          <div className="custom-modal-content">
-            <div className="modal-icon-box">
-              <RotateCw className="text-warning" size={32} />
-            </div>
-            <h4 className="fw-bold text-dark mt-3">تغییر وضعیت دسته‌بندی</h4>
-            <p className="text-muted text-center mt-2 mb-4 px-3">
-              وضعیت دسته‌بندی <strong>"{targetCategory.title}"</strong> به
-              <span
-                className={`fw-bold mx-1 ${targetCategory.status === 'active' ? 'text-danger' : 'text-success'}`}
-              >
-                {targetCategory.status === 'active' ? 'غیرفعال' : 'فعال'}
-              </span>
-              تغییر کند؟
-            </p>
-            <div className="d-flex gap-2 w-100 justify-content-center">
-              <button
-                className="btn btn-light flex-grow-1 py-2 rounded-pill fw-bold"
-                onClick={closeStatusModal}
-                disabled={isProcessing}
-              >
-                انصراف
-              </button>
-              <button
-                className="btn btn-warning text-white flex-grow-1 py-2 rounded-pill fw-bold"
-                onClick={confirmStatusChange}
-                disabled={isProcessing}
-              >
-                {isProcessing ? '...' : 'بله، تغییر بده'}
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
-
       {/* Header */}
       <div className="d-flex justify-content-between align-items-center mb-4">
         <div>
-          <h3 className="fw-bolder text-dark mb-1">مدیریت دسته‌بندی‌ها</h3>
-          <p className="text-muted small mb-0">لیست دسته‌بندی‌های بلاگ</p>
+          <h3 className="fw-bolder text-dark mb-1">مدیریت تیکت‌ها</h3>
+          <p className="text-muted small mb-0">لیست درخواست‌های پشتیبانی کاربران</p>
         </div>
         <div className="d-flex gap-2">
-          <Link to="/blog-category/create" className="btn-shine-effect">
-            <span className="mx-2 fs-5">+</span> دسته‌بندی جدید
-          </Link>
+          {/* در تیکت معمولا دکمه ایجاد توسط ادمین کمتر استفاده می‌شود، اما اگر نیاز بود می‌توان اضافه کرد */}
           <button
-            onClick={fetchCategories}
+            onClick={fetchTickets}
             className="btn btn-light rounded-pill p-2 shadow-sm border"
             title="بروزرسانی لیست"
           >
@@ -274,8 +251,8 @@ const CategoryList: React.FC = () => {
         </div>
       </div>
 
-      {/* Filters Section */}
-      <div className="card border-0 shadow-sm rounded-4 mb-4" style={{ overflow: 'visible', zIndex: 10 }}>
+      {/* Filters - EXACTLY like BlogList */}
+      <div className="card border-0 shadow-sm rounded-4 mb-4"  style={{ overflow: 'visible', zIndex: 10 }}>
         <div
           className="card-header bg-white border-0 p-3 d-flex justify-content-between align-items-center cursor-pointer user-select-none"
           onClick={() => setShowFilters(!showFilters)}
@@ -290,29 +267,53 @@ const CategoryList: React.FC = () => {
         <div className={`collapse ${showFilters ? 'show' : ''}`}>
           <div className="card-body bg-light border-top p-4">
             <div className="row g-3 align-items-end">
+              {/* Search */}
               <div className="col-12 col-md-3">
                 <Filter
                   type="text"
                   label="جستجو (عنوان)"
-                  placeholder="عنوان دسته‌بندی..."
+                  placeholder="عنوان تیکت..."
                   value={tempSearch}
                   onChange={setTempSearch}
                 />
               </div>
+
+              {/* Department (New for Ticket) */}
+              <div className="col-12 col-md-2">
+                <Filter
+                  type="dropdown"
+                  label="دپارتمان"
+                  placeholder="همه"
+                  options={[
+                    { id: 'Technical', name: 'فنی' },
+                    { id: 'Financial', name: 'مالی' },
+                    { id: 'General', name: 'عمومی' },
+                    { id: 'ai', name: 'هوش مصنوعی' },
+                  ]}
+                  value={tempType}
+                  onChange={setTempType}
+                />
+              </div>
+
+              {/* Status */}
               <div className="col-12 col-md-2">
                 <Filter
                   type="dropdown"
                   label="وضعیت"
                   placeholder="همه"
                   options={[
-                    { id: 'active', name: 'فعال' },
-                    { id: 'deactive', name: 'غیرفعال' },
+                    { id: 'waiting-response', name: 'منتظر پاسخ' },
+                    { id: 'pending', name: 'در حال بررسی' },
+                    { id: 'done', name: 'بسته شده' },
+                    { id: 'open', name: 'باز' },
                   ]}
                   value={tempStatus}
                   onChange={setTempStatus}
                 />
               </div>
-              <div className="col-12 col-md-4">
+
+              {/* Date */}
+              <div className="col-12 col-md-3">
                 <Filter
                   type="date-range"
                   label="بازه زمانی (تاریخ ایجاد)"
@@ -321,16 +322,18 @@ const CategoryList: React.FC = () => {
                   onChange={setTempDateRange}
                 />
               </div>
-              <div className="col-12 col-md-3 d-flex gap-2">
+
+              {/* Buttons */}
+              <div className="col-12 col-md-2 d-flex gap-2">
                 <button
                   className="btn btn-primary w-100 d-flex align-items-center justify-content-center gap-2"
                   onClick={handleApplyFilters}
                   style={{ height: '48px', borderRadius: '12px' }}
                 >
                   <Search size={18} />
-                  <span>اعمال فیلتر</span>
+                  <span>اعمال</span>
                 </button>
-                {(tempSearch || tempStatus || tempDateRange.length > 0) && (
+                {(tempSearch || tempStatus || tempType || tempDateRange.length > 0) && (
                   <button
                     className="btn btn-danger-soft px-3"
                     onClick={handleResetFilters}
@@ -346,21 +349,26 @@ const CategoryList: React.FC = () => {
         </div>
       </div>
 
-      {/* Table Section */}
+      {/* Table - Modern Style */}
       <div className="table-responsive" style={{ overflowX: 'visible' }}>
         <table className="table modern-table">
           <thead>
             <tr>
               <th style={{ width: '5%', borderRadius: '0 15px 15px 0' }}>#</th>
-              <th style={{ width: '20%' }}>عنوان دسته‌بندی</th>
-              <th style={{ width: '35%' }}>توضیحات</th>
+              <th style={{ width: '30%' }}>عنوان و توضیحات</th>
+              <th className="text-center" style={{ width: '15%' }}>
+                دپارتمان
+              </th>
+              <th className="text-center" style={{ width: '20%' }}>
+                کاربر
+              </th>
               <th className="text-center" style={{ width: '15%' }}>
                 تاریخ ایجاد
               </th>
               <th className="text-center" style={{ width: '10%' }}>
                 وضعیت
               </th>
-              <th className="text-center" style={{ width: '15%', borderRadius: '15px 0 0 15px' }}>
+              <th className="text-center" style={{ width: '5%', borderRadius: '15px 0 0 15px' }}>
                 عملیات
               </th>
             </tr>
@@ -368,47 +376,69 @@ const CategoryList: React.FC = () => {
           <tbody>
             {loading ? (
               <tr>
-                <td colSpan={6} className="text-center py-5">
+                <td colSpan={7} className="text-center py-5">
                   <div className="spinner-border text-primary" role="status"></div>
                   <p className="mt-2 text-muted">در حال دریافت اطلاعات...</p>
                 </td>
               </tr>
-            ) : categories.length === 0 ? (
+            ) : tickets.length === 0 ? (
               <tr>
-                <td colSpan={6} className="text-center py-5 text-muted fw-bold">
-                  هیچ دسته‌بندی یافت نشد!
+                <td colSpan={7} className="text-center py-5 text-muted fw-bold">
+                  هیچ تیکتی یافت نشد!
                 </td>
               </tr>
             ) : (
-              categories.map((cat, index) => {
-                const { date, time } = formatDate(cat.createdAt);
-                const isActive = cat.status === 'active';
+              tickets.map((ticket, index) => {
+                const { date, time } = formatDate(ticket.createdAt);
+                const lastMessage = ticket.messages?.[ticket.messages.length - 1]?.message || '';
 
                 return (
-                  <tr key={cat._id} className="align-middle">
+                  <tr key={ticket._id} className="align-middle">
                     <td className="fw-bold text-secondary ps-3">
                       {(currentPage - 1) * limit + index + 1}
                     </td>
 
                     <td>
-                      <span
-                        className="fw-bold text-dark mb-1 text-truncate d-block"
-                        style={{ maxWidth: '200px' }}
-                        title={cat.title}
-                      >
-                        {cat.title}
+                      <div className="d-flex flex-column">
+                        <span
+                          className="fw-bold text-dark mb-1 text-truncate"
+                          style={{ maxWidth: '250px' }}
+                          title={ticket.title}
+                        >
+                          {ticket.title}
+                        </span>
+                        <p
+                          className="text-muted small mb-0 description-truncate"
+                          style={{ maxWidth: '300px' }}
+                        >
+                          {lastMessage || 'بدون پیام'}
+                        </p>
+                      </div>
+                    </td>
+
+                    {/* Department */}
+                    <td className="text-center">
+                      <span className="badge bg-light text-secondary border rounded-pill fw-normal">
+                        {getTypeLabel(ticket.type)}
                       </span>
                     </td>
 
-                    <td>
-                      <p
-                        className="text-muted small mb-0 description-truncate"
-                        style={{ maxWidth: '300px' }}
+                    {/* User */}
+                    <td className="text-center">
+                      <div
+                        className="d-inline-flex align-items-center gap-2 px-2 py-1 rounded bg-light border cursor-pointer"
+                        onClick={() => handleCopyUserId(ticket.userId)}
+                        title="کپی شناسه"
                       >
-                        {cat.description || '-'}
-                      </p>
+                        <User size={14} className="text-muted" />
+                        <span className="small text-muted font-monospace">
+                          {ticket.userId.substring(0, 6)}...
+                        </span>
+                        <Copy size={12} className="text-muted opacity-50" />
+                      </div>
                     </td>
 
+                    {/* Date */}
                     <td className="text-center">
                       <div className="d-flex flex-column">
                         <span className="fw-bold text-dark">{date}</span>
@@ -416,36 +446,24 @@ const CategoryList: React.FC = () => {
                       </div>
                     </td>
 
+                    {/* Status Pill (Customized for tickets) */}
                     <td className="text-center">
-                      <div className={`status-pill ${isActive ? 'active' : 'inactive'}`}>
+                      <div className={`status-pill ${ticket.status}`}>
                         <span className="dot"></span>
-                        {isActive ? 'فعال' : 'غیرفعال'}
+                        {getStatusLabel(ticket.status)}
                       </div>
                     </td>
 
+                    {/* Actions */}
                     <td>
                       <div className="d-flex gap-2 justify-content-center">
                         <Link
-                          to={`/blog-category/details/${cat._id}`}
+                          to={`/ticket/details/${ticket._id}`}
                           className="btn-action btn-soft-info"
                           title="مشاهده"
                         >
                           <Eye size={18} />
                         </Link>
-                        <Link
-                          to={`/blog-category/edit/${cat._id}`}
-                          className="btn-action btn-soft-primary"
-                          title="ویرایش"
-                        >
-                          <Edit size={18} />
-                        </Link>
-                        <button
-                          className="btn-action btn-soft-warning"
-                          title="تغییر وضعیت"
-                          onClick={() => openStatusModal(cat)}
-                        >
-                          <RotateCw size={18} />
-                        </button>
                       </div>
                     </td>
                   </tr>
@@ -468,17 +486,12 @@ const CategoryList: React.FC = () => {
         </div>
       )}
 
-      {/* Styles */}
+      {/* CSS Styles - Exactly from BlogList + Extra Ticket Status Colors */}
       <style>{`
         .fade-in { animation: fadeIn 0.6s ease-out; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
         .spin-anim { animation: spin 1s linear infinite; }
         @keyframes spin { 100% { transform: rotate(360deg); } }
-        
-        .custom-modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.4); z-index: 1050; display: flex; align-items: center; justify-content: center; backdrop-filter: blur(4px); }
-        .custom-modal-content { background: white; padding: 30px; border-radius: 20px; width: 90%; max-width: 400px; display: flex; flex-direction: column; align-items: center; box-shadow: 0 20px 60px rgba(0,0,0,0.2); animation: scaleIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
-        .modal-icon-box { width: 70px; height: 70px; background-color: #fff3cd; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin-bottom: 10px; }
-        @keyframes scaleIn { from { transform: scale(0.8); opacity: 0; } to { transform: scale(1); opacity: 1; } }
 
         .btn-shine-effect { background: linear-gradient(45deg, #099773, #20c997); color: white; padding: 8px 20px; border-radius: 12px; border: none; box-shadow: 0 4px 15px rgba(32, 201, 151, 0.4); transition: all 0.3s ease; text-decoration: none; display: inline-flex; align-items: center; font-weight: 600; }
         .btn-shine-effect:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(32, 201, 151, 0.6); color: white; }
@@ -495,22 +508,24 @@ const CategoryList: React.FC = () => {
         .modern-table td { border: none; padding: 20px 15px; }
 
         .description-truncate { display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
-        
-        .status-pill { display: inline-flex; align-items: center; padding: 6px 12px; border-radius: 20px; font-size: 0.8rem; font-weight: 600; }
-        .status-pill.active { background-color: #e6fffa; color: #20c997; }
-        .status-pill.inactive { background-color: #f1f3f5; color: #868e96; }
+
+        /* Status Pills - Adapted for Tickets */
+        .status-pill { display: inline-flex; align-items: center; padding: 6px 12px; border-radius: 20px; font-size: 0.8rem; font-weight: 600; white-space: nowrap; }
         .dot { width: 8px; height: 8px; border-radius: 50%; background-color: currentColor; margin-left: 6px; }
+        
+        /* Status Colors */
+        .status-pill.done { background-color: #e6fffa; color: #20c997; } /* Green */
+        .status-pill.waiting-response { background-color: #fff9db; color: #fcc419; } /* Yellow */
+        .status-pill.pending { background-color: #e7f5ff; color: #339af0; } /* Blue */
+        .status-pill.open { background-color: #fff5f5; color: #ff6b6b; } /* Red */
+        .status-pill.default { background-color: #f1f3f5; color: #868e96; }
 
         .btn-action { width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; border-radius: 10px; border: none; transition: all 0.2s; cursor: pointer; }
         .btn-soft-info { background-color: #e3f2fd; color: #0dcaf0; }
         .btn-soft-info:hover { background-color: #0dcaf0; color: white; }
-        .btn-soft-primary { background-color: #e7f5ff; color: #4dabf7; }
-        .btn-soft-primary:hover { background-color: #4dabf7; color: white; }
-        .btn-soft-warning { background-color: #fff3cd; color: #ffc107; }
-        .btn-soft-warning:hover { background-color: #ffc107; color: white; }
       `}</style>
     </div>
   );
 };
 
-export default CategoryList;
+export default TicketList;

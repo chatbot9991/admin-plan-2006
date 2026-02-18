@@ -466,7 +466,7 @@ const Dashboard: React.FC = () => {
                       paddingAngle={5}
                       dataKey="value"
                     >
-                      {planChartData.map((entry, index) => (
+                      {planChartData.map((index: any) => (
                         <Cell
                           key={`cell-${index}`}
                           fill={PLAN_COLORS[index % PLAN_COLORS.length]}

@@ -38,6 +38,12 @@ const DiscountCreate = lazy(() => import('../pages/discount/DiscountCreate'));
 const DiscountDetails = lazy(() => import('../pages/discount/DiscountDetails'));
 const DiscountEdite = lazy(() => import('../pages/discount/DiscountEdite'));
 
+const TicketList = lazy(() => import('../pages/ticket/TicketList'));
+const TicketDetails = lazy(() => import('../pages/ticket/TicketDetails'));
+
+const RateList = lazy(() => import('../pages/rate/RateList'));
+const FeedbackList = lazy(() => import('../pages/feedback/FeedbackList'));
+
 // یک لودینگ ساده
 const PageLoader = () => (
   <div
@@ -60,7 +66,7 @@ export const router = createBrowserRouter([
         children: [
           {
             index: true,
-            path: 'dashboard',
+            path: '/',
             element: (
               <Suspense fallback={<PageLoader />}>
                 <Dashboard />
@@ -331,6 +337,68 @@ export const router = createBrowserRouter([
                 element: (
                   <Suspense fallback={<PageLoader />}>
                     <DiscountEdite />
+                  </Suspense>
+                ),
+              },
+            ],
+          },
+
+          {
+            path: 'ticket',
+            children: [
+              {
+                index: true,
+                element: <Navigate to="list" replace />,
+              },
+              {
+                path: 'list',
+                element: (
+                  <Suspense fallback={<PageLoader />}>
+                    <TicketList />
+                  </Suspense>
+                ),
+              },
+              {
+                path: 'details/:id',
+                element: (
+                  <Suspense fallback={<PageLoader />}>
+                    <TicketDetails />
+                  </Suspense>
+                ),
+              },
+            ],
+          },
+
+          {
+            path: 'rate',
+            children: [
+              {
+                index: true,
+                element: <Navigate to="list" replace />,
+              },
+              {
+                path: 'list',
+                element: (
+                  <Suspense fallback={<PageLoader />}>
+                    <RateList />
+                  </Suspense>
+                ),
+              },
+            ],
+          },
+
+          {
+            path: 'feedback',
+            children: [
+              {
+                index: true,
+                element: <Navigate to="list" replace />,
+              },
+              {
+                path: 'list',
+                element: (
+                  <Suspense fallback={<PageLoader />}>
+                    <FeedbackList />
                   </Suspense>
                 ),
               },

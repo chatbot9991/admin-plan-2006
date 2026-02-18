@@ -218,7 +218,7 @@ const TransactionList: React.FC = () => {
       </div>
 
       {/* Filters */}
-      <div className="card border-0 shadow-sm rounded-4 mb-4 overflow-hidden">
+      <div className="card border-0 shadow-sm rounded-4 mb-4" style={{ overflow: 'visible', zIndex: 10 }}>
         <div
           className="card-header bg-white border-0 p-3 d-flex justify-content-between align-items-center cursor-pointer user-select-none"
           onClick={() => setShowFilters(!showFilters)}

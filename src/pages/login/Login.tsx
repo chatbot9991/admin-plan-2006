@@ -62,7 +62,7 @@ const Login: React.FC = () => {
         loginToStore(token, user);
         toast.success('ورود با موفقیت انجام شد');
         setTimeout(() => {
-          navigate('/dashboard');
+          navigate('/');
         }, 2000);
       }
     } catch (error: any) {

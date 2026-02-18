@@ -28,7 +28,7 @@ interface MenuItem {
 }
 
 const menuItems: MenuItem[] = [
-  { title: 'داشبورد', icon: LayoutGrid, path: '/dashboard' },
+  { title: 'داشبورد', icon: LayoutGrid, path: '/' },
   {
     title: 'بلاگ‌ها',
     icon: Rss,
@@ -40,7 +40,15 @@ const menuItems: MenuItem[] = [
     ],
   },
   // { title: "پشتیبانی", icon: Headset, path: "/support", badge: 5 },
-  { title: 'پشتیبانی', icon: Headset, path: '/support' },
+  {
+    title: 'پشتیبانی',
+    icon: Headset,
+    subItems: [
+      { title: 'لیست تیکت ها', path: '/ticket/list' },
+      { title: ' لیست بازخورد ها', path: '/feedback/list' },
+      { title: ' لیست امتیاز ها', path: '/rate/list' },
+    ],
+  },
 
   { title: 'ادمین‌ها', icon: ShieldCheck, path: '/admins' },
   { title: 'کاربران', icon: Users, path: '/users' },
