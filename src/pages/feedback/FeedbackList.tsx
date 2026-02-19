@@ -8,9 +8,7 @@ import {
   Cpu,
   Star,
   Calendar,
-  RefreshCcw,
-  Trash2,
-  MoreHorizontal
+  RefreshCcw
 } from 'lucide-react';
 
 import { api } from '../../services/api';
@@ -116,11 +114,7 @@ const FeedbackList: React.FC = () => {
     }
   };
 
-  // هندلر حذف (فقط نمایشی - در صورت نیاز API را وصل کنید)
-  const handleDelete = (id: string) => {
-    toast.info('این قابلیت هنوز متصل نشده است');
-    // api.delete(`/feedback/${id}`)...
-  };
+
 
   // --- Effects ---
   useEffect(() => {
@@ -163,7 +157,6 @@ const FeedbackList: React.FC = () => {
                 <th className="text-center" style={{ width: '10%' }}>امتیاز</th>
                 <th className="text-center" style={{ width: '15%' }}>نوع</th>
                 <th className="text-center" style={{ width: '20%' }}>تاریخ ثبت</th>
-                <th className="text-center" style={{ width: '10%', borderRadius: '15px 0 0 15px' }}>عملیات ها</th>
               </tr>
             </thead>
             <tbody>
@@ -233,16 +226,7 @@ const FeedbackList: React.FC = () => {
                         </div>
                       </td>
 
-                      {/* عملیات ها */}
-                      <td className="text-center">
-                        <button 
-                            className="btn btn-sm btn-icon text-danger bg-danger-subtle rounded-circle p-2 transition-all"
-                            onClick={() => handleDelete(item._id)}
-                            title="حذف"
-                        >
-                            <Trash2 size={16} />
-                        </button>
-                      </td>
+
                     </tr>
                   );
                 })

@@ -10,7 +10,6 @@ import {
   ChevronUp,
   RefreshCcw,
   Search,
-  MessageSquare,
   Copy,
   User,
 } from 'lucide-react';

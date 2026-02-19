@@ -21,7 +21,6 @@ import {
   Download,
   AlertCircle,
   Image as ImageIcon,
-  Quote
 } from 'lucide-react';
 import { api } from '../../services/api';
 
