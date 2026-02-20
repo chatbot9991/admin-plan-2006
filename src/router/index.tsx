@@ -9,7 +9,6 @@ import RouteError from './RouteError';
 
 // لیزی لود صفحات (Lazy Loading)
 const Dashboard = lazy(() => import('../pages/Dashboard'));
-const Users = lazy(() => import('../pages/Users'));
 const Settings = lazy(() => import('../pages/Settings'));
 const Login = lazy(() => import('../pages/login/Login'));
 const NotFound = lazy(() => import('../pages/NotFound'));
@@ -20,7 +19,6 @@ const BlogDetails = lazy(() => import('../pages/blog/BlogDetails'));
 const BlogEdit = lazy(() => import('../pages/blog/BlogEdit'));
 
 const TransactionList = lazy(() => import('../pages/transaction/TransactionList'));
-
 const TransactionDetails = lazy(() => import('../pages/transaction/TransactionDetails'));
 
 // اضافه کردن صفحه بلاگ لیست
@@ -43,6 +41,15 @@ const TicketDetails = lazy(() => import('../pages/ticket/TicketDetails'));
 
 const RateList = lazy(() => import('../pages/rate/RateList'));
 const FeedbackList = lazy(() => import('../pages/feedback/FeedbackList'));
+
+const AdminList = lazy(() => import('../pages/admin/AdminList'));
+const AdminEdit = lazy(() => import('../pages/admin/AdminEdit'));
+
+const LogLoginList = lazy(() => import('../pages/user/LogLoginList'));
+const UserList = lazy(() => import('../pages/user/UserList'));
+const UserDetails = lazy(() => import('../pages/user/UserDetails'));
+const UserEdit = lazy(() => import('../pages/user/UserEdit'));
+
 
 // یک لودینگ ساده
 const PageLoader = () => (
@@ -81,14 +88,7 @@ export const router = createBrowserRouter([
               </Suspense>
             ),
           },
-          {
-            path: 'users',
-            element: (
-              <Suspense fallback={<PageLoader />}>
-                <Users />
-              </Suspense>
-            ),
-          },
+
           {
             path: 'settings',
             element: (
@@ -96,6 +96,91 @@ export const router = createBrowserRouter([
                 <Settings />
               </Suspense>
             ),
+          },
+          // admin
+          {
+            path: 'admin',
+            children: [
+              {
+                index: true,
+                element: <Navigate to="list" replace />,
+              },
+              {
+                path: 'list',
+                element: (
+                  <Suspense fallback={<PageLoader />}>
+                    <AdminList />
+                  </Suspense>
+                ),
+              },
+              {
+                path: 'edit/:id',
+                element: (
+                  <Suspense fallback={<PageLoader />}>
+                    <AdminEdit />
+                  </Suspense>
+                ),
+              },
+              {
+                path: 'create',
+                element: (
+                  <Suspense fallback={<PageLoader />}>
+                    <BlogCreate />
+                  </Suspense>
+                ),
+              },
+            ],
+          },
+
+          // user
+          {
+            path: 'user',
+            children: [
+              {
+                index: true,
+                element: <Navigate to="list" replace />,
+              },
+              {
+                path: 'list/log/login',
+                element: (
+                  <Suspense fallback={<PageLoader />}>
+                    <LogLoginList />
+                  </Suspense>
+                ),
+              },
+              {
+                path: 'list',
+                element: (
+                  <Suspense fallback={<PageLoader />}>
+                    <UserList />
+                  </Suspense>
+                ),
+              },
+              {
+                path: 'details/:id',
+                element: (
+                  <Suspense fallback={<PageLoader />}>
+                    <UserDetails />
+                  </Suspense>
+                ),
+              },
+              {
+                path: 'edit/:id',
+                element: (
+                  <Suspense fallback={<PageLoader />}>
+                    <UserEdit />
+                  </Suspense>
+                ),
+              },
+              {
+                path: 'create',
+                element: (
+                  <Suspense fallback={<PageLoader />}>
+                    <BlogCreate />
+                  </Suspense>
+                ),
+              },
+            ],
           },
           // --- بخش بلاگ ---
           {

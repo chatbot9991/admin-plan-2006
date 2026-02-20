@@ -29,6 +29,25 @@ interface MenuItem {
 
 const menuItems: MenuItem[] = [
   { title: 'داشبورد', icon: LayoutGrid, path: '/' },
+
+  { title: 'ادمین‌ها', icon: ShieldCheck, path: '/admin/list' },
+  {
+    title: 'کاربران',
+    icon: Users,
+    subItems: [
+      { title: 'لیست کاربران', path: '/user/list' },
+      { title: 'لیست لاگ کاربران', path: '/user/list/log/login' },
+    ],
+  },
+
+  {
+    title: 'تراکنشات',
+    icon: CircleDollarSign,
+    path: '/transactions',
+  },
+  { title: 'هوش مصنوعی', icon: BrainCircuit, path: '/ai' },
+  { title: 'گزارشات', icon: BarChart3, path: '/reports' },
+  { title: 'لیست تخفیف ها ', icon: Tag, path: '/discount/list' },
   {
     title: 'بلاگ‌ها',
     icon: Rss,
@@ -49,17 +68,6 @@ const menuItems: MenuItem[] = [
       { title: ' لیست امتیاز ها', path: '/rate/list' },
     ],
   },
-
-  { title: 'ادمین‌ها', icon: ShieldCheck, path: '/admins' },
-  { title: 'کاربران', icon: Users, path: '/users' },
-  {
-    title: 'تراکنشات',
-    icon: CircleDollarSign,
-    path: '/transactions',
-  },
-  { title: 'هوش مصنوعی', icon: BrainCircuit, path: '/ai' },
-  { title: 'گزارشات', icon: BarChart3, path: '/reports' },
-  { title: 'لیست تخفیف ها ', icon: Tag, path: '/discount/list' },
 
   {
     title: 'تنظیمات',
