@@ -40,7 +40,7 @@ const UserPasswordModal: React.FC<UserPasswordModalProps> = ({
 
     try {
       setLoading(true);
-      await api.put('/user/change-password', {
+      await api.put('/user/password/update', {
         _id: userId,
         password: password,
       });

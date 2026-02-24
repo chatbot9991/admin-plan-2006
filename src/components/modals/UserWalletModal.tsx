@@ -20,6 +20,7 @@ const UserWalletModal: React.FC<UserWalletModalProps> = ({
   onSuccess,
 }) => {
   const [amount, setAmount] = useState<string>('');
+  const [description, setDescription] = useState<string>('');
   const [type, setType] = useState<'increase' | 'decrease'>('increase');
   const [loading, setLoading] = useState(false);
 
@@ -47,6 +48,7 @@ const UserWalletModal: React.FC<UserWalletModalProps> = ({
       await api.put('/user/wallet/increase-or-decrease', {
         _id: userId,
         amount: finalAmount,
+        description: description.trim(), // ارسال توضیحات به بک‌اند
       });
 
       toast.success(type === 'increase' ? 'افزایش موجودی انجام شد' : 'کاهش موجودی انجام شد');
@@ -97,7 +99,7 @@ const UserWalletModal: React.FC<UserWalletModalProps> = ({
         </div>
 
         {/* Amount Input */}
-        <div className="mb-4">
+        <div className="mb-3">
           <label className="form-label text-muted small fw-bold mb-2">مبلغ تراکنش (تومان)</label>
           <div className="position-relative">
             <input
@@ -124,7 +126,19 @@ const UserWalletModal: React.FC<UserWalletModalProps> = ({
           </div>
         </div>
 
-        {/* Footer */}
+        {/* Description Input */}
+        <div className="mb-4">
+          <label className="form-label text-muted small fw-bold mb-2">توضیحات (اختیاری)</label>
+          <textarea
+            className="form-control bg-light border-0 rounded-4 p-3 custom-scrollbar"
+            placeholder="دلیل تراکنش را بنویسید..."
+            rows={3}
+            value={description}
+            onChange={(e) => setDescription(e.target.value)}
+            style={{ color: '#2d3748', resize: 'none', fontSize: '0.95rem' }}
+          />
+        </div>
+
         {/* Footer */}
         <div className="modal-footer-custom">
           <button type="button" onClick={onClose} className="btn-cancel" disabled={loading}>
@@ -152,12 +166,18 @@ const UserWalletModal: React.FC<UserWalletModalProps> = ({
         .hover-bg-gray:hover { background-color: #e2e8f0; }
         .form-control:focus { box-shadow: 0 0 0 4px rgba(66, 153, 225, 0.15); background-color: #fff; }
         
+        /* Custom Scrollbar for textarea */
+        .custom-scrollbar::-webkit-scrollbar { width: 6px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background-color: #cbd5e1; border-radius: 10px; }
+        
         /* استایل‌های اجباری برای تغییر رنگ دکمه */
         .bg-success { background-color: #198754 !important; }
         .hover-bg-success-dark:hover { background-color: #157347 !important; }
         .bg-danger { background-color: #dc3545 !important; }
         .hover-bg-danger-dark:hover { background-color: #bb2d3b !important; }
-                /* ========== Custom Footer & Button Styles ========== */
+        
+        /* ========== Custom Footer & Button Styles ========== */
         .modal-footer-custom {
           display: flex;
           justify-content: flex-end;

@@ -21,16 +21,16 @@ const UserStatusModal: React.FC<UserStatusModalProps> = ({
   currentStatus,
   onSuccess,
 }) => {
-  const [status, setStatus] = useState<'active' | 'inactive'>(
-    currentStatus === true || currentStatus === 'active' ? 'active' : 'inactive'
+  const [status, setStatus] = useState<'active' | 'deactive'>(
+    currentStatus === true || currentStatus === 'active' ? 'active' : 'deactive'
   );
   const [loading, setLoading] = useState(false);
 
   const handleSubmit = async () => {
     try {
       setLoading(true);
-      await api.put('/user/change-status', {
-        _id: userId,
+      await api.put('/user/changeStatus', {
+        userId : userId,
         status: status,
       });
 
@@ -89,21 +89,21 @@ const UserStatusModal: React.FC<UserStatusModalProps> = ({
           </div>
 
           <div
-            onClick={() => setStatus('inactive')}
+            onClick={() => setStatus('deactive')}
             className={`p-3 rounded-4 cursor-pointer transition-all border d-flex align-items-center gap-3 ${
-              status === 'inactive'
+              status === 'deactive'
                 ? 'bg-danger-subtle border-danger ring-danger'
                 : 'bg-light border-transparent hover-bg-gray'
             }`}
           >
             <div
-              className={`rounded-circle p-2 d-flex align-items-center justify-content-center ${status === 'inactive' ? 'bg-danger text-white' : 'bg-white text-muted'}`}
+              className={`rounded-circle p-2 d-flex align-items-center justify-content-center ${status === 'deactive' ? 'bg-danger text-white' : 'bg-white text-muted'}`}
             >
               <Ban size={24} />
             </div>
             <div>
               <h6
-                className={`fw-bold mb-1 ${status === 'inactive' ? 'text-danger-dark' : 'text-dark'}`}
+                className={`fw-bold mb-1 ${status === 'deactive' ? 'text-danger-dark' : 'text-dark'}`}
               >
                 مسدود (Inactive)
               </h6>
