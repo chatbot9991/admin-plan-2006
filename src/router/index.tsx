@@ -51,6 +51,19 @@ const UserDetails = lazy(() => import('../pages/user/UserDetails'));
 const UserEdit = lazy(() => import('../pages/user/UserEdit'));
 
 
+const OrgList = lazy(() => import('../pages/org/OrgList'));
+const OrgCreate = lazy(() => import('../pages/org/OrgCreate'));
+const OrgDetails = lazy(() => import('../pages/org/OrgDetails'));
+const OrgEdit = lazy(() => import('../pages/org/OrgEdit'));
+
+
+const PromptList = lazy(() => import('../pages/prompt/PromptList'));
+const PromptCreate = lazy(() => import('../pages/prompt/PromptCreate'));
+const PromptDetails = lazy(() => import('../pages/prompt/PromptDetails'));
+const PromptEdit = lazy(() => import('../pages/prompt/PromptEdit'));
+
+
+
 // یک لودینگ ساده
 const PageLoader = () => (
   <div
@@ -141,7 +154,7 @@ export const router = createBrowserRouter([
                 element: <Navigate to="list" replace />,
               },
               {
-                path: 'list/log/login',
+                path: 'logs/login',
                 element: (
                   <Suspense fallback={<PageLoader />}>
                     <LogLoginList />
@@ -182,6 +195,92 @@ export const router = createBrowserRouter([
               },
             ],
           },
+
+          // org
+          {
+            path: 'org',
+            children: [
+              {
+                index: true,
+                element: <Navigate to="list" replace />,
+              },
+              {
+                path: 'list',
+                element: (
+                  <Suspense fallback={<PageLoader />}>
+                    <OrgList />
+                  </Suspense>
+                ),
+              },
+              {
+                path: 'details/:id',
+                element: (
+                  <Suspense fallback={<PageLoader />}>
+                    <OrgDetails />
+                  </Suspense>
+                ),
+              },
+              {
+                path: 'edit/:id',
+                element: (
+                  <Suspense fallback={<PageLoader />}>
+                    <OrgEdit />
+                  </Suspense>
+                ),
+              },
+              {
+                path: 'create',
+                element: (
+                  <Suspense fallback={<PageLoader />}>
+                    <OrgCreate />
+                  </Suspense>
+                ),
+              },
+            ],
+          },
+          // prompt
+          {
+            path: 'prompt',
+            children: [
+              {
+                index: true,
+                element: <Navigate to="list" replace />,
+              },
+              {
+                path: 'list',
+                element: (
+                  <Suspense fallback={<PageLoader />}>
+                    <PromptList  />
+                  </Suspense>
+                ),
+              },
+              {
+                path: 'details/:id',
+                element: (
+                  <Suspense fallback={<PageLoader />}>
+                    <PromptDetails />
+                  </Suspense>
+                ),
+              },
+              {
+                path: 'edit/:id',
+                element: (
+                  <Suspense fallback={<PageLoader />}>
+                    <OrgEdit />
+                  </Suspense>
+                ),
+              },
+              {
+                path: 'create',
+                element: (
+                  <Suspense fallback={<PageLoader />}>
+                    <PromptCreate />
+                  </Suspense>
+                ),
+              },
+            ],
+          },
+
           // --- بخش بلاگ ---
           {
             path: 'blog',

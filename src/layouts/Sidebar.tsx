@@ -16,6 +16,7 @@ import {
   ChevronRight,
   ChevronLeft,
   ChevronDown,
+  Bot,
   Dot,
 } from 'lucide-react';
 
@@ -36,7 +37,25 @@ const menuItems: MenuItem[] = [
     icon: Users,
     subItems: [
       { title: 'لیست کاربران', path: '/user/list' },
-      { title: 'لیست لاگ کاربران', path: '/user/list/log/login' },
+      { title: 'لیست لاگ کاربران', path: '/user/logs/login' },
+    ],
+  },
+
+  {
+    title: 'سازمان',
+    icon: Users,
+    subItems: [
+      { title: 'لیست کاربران ', path: '/org/list' },
+      { title: 'ثبت کاربر جدید', path: '/org/create' },
+    ],
+  },
+
+  {
+    title: 'پرامپت',
+    icon: Bot,
+    subItems: [
+      { title: 'لیست پرامپت ها ', path: '/prompt/list' },
+      { title: 'ثبت پرامپت جدید', path: '/prompt/create' },
     ],
   },
 
@@ -45,6 +64,7 @@ const menuItems: MenuItem[] = [
     icon: CircleDollarSign,
     path: '/transactions',
   },
+
   { title: 'هوش مصنوعی', icon: BrainCircuit, path: '/ai' },
   { title: 'گزارشات', icon: BarChart3, path: '/reports' },
   { title: 'لیست تخفیف ها ', icon: Tag, path: '/discount/list' },
@@ -138,18 +158,18 @@ export default function Sidebar() {
             // استایل مربعی در حالت بسته
             const containerStyle = isCollapsed
               ? {
-                  width: '40px',
-                  height: '40px',
-                  borderRadius: '14px',
-                  cursor: 'pointer',
-                  transition: 'all 0.2s',
-                }
+                width: '40px',
+                height: '40px',
+                borderRadius: '14px',
+                cursor: 'pointer',
+                transition: 'all 0.2s',
+              }
               : {
-                  borderRadius: '12px',
-                  padding: '10px 0',
-                  cursor: 'pointer',
-                  transition: 'all 0.2s',
-                };
+                borderRadius: '12px',
+                padding: '10px 0',
+                cursor: 'pointer',
+                transition: 'all 0.2s',
+              };
 
             return (
               <div key={index}>
@@ -224,8 +244,7 @@ export default function Sidebar() {
                         key={subIndex}
                         to={sub.path}
                         className={({ isActive }) =>
-                          `d-flex align-items-center text-decoration-none rounded-3 px-2 py-2 small submenu-item ${
-                            isActive ? 'submenu-active' : ''
+                          `d-flex align-items-center text-decoration-none rounded-3 px-2 py-2 small submenu-item ${isActive ? 'submenu-active' : ''
                           }`
                         }
                         style={{ fontSize: '0.85rem', transition: 'all 0.2s' }}
