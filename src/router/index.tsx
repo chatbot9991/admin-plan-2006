@@ -60,7 +60,7 @@ const OrgEdit = lazy(() => import('../pages/org/OrgEdit'));
 const PromptList = lazy(() => import('../pages/prompt/PromptList'));
 const PromptCreate = lazy(() => import('../pages/prompt/PromptCreate'));
 const PromptDetails = lazy(() => import('../pages/prompt/PromptDetails'));
-const PromptEdit = lazy(() => import('../pages/prompt/PromptEdit'));
+// const PromptEdit = lazy(() => import('../pages/prompt/PromptEdit'));
 
 
 
