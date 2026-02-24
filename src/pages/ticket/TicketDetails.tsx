@@ -23,9 +23,11 @@ import {
   Image as ImageIcon,
 } from 'lucide-react';
 import { api } from '../../services/api';
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
+
 
 // --- Constants ---
-const FILE_BASE_URL = 'https://dev.backend.mobo.land/api/v1/portal/ticket/image/download?imageFile=';
+const FILE_BASE_URL = `${API_BASE_URL}/api/v1/portal/ticket/image/download?imageFile=`;
 
 // --- Components: Mobo Logo (Cat Planet SVG) ---
 const MoboLogo = ({ size = 24 }: { size?: number }) => (

@@ -29,6 +29,8 @@ import {
   MoreHorizontal,
 } from 'lucide-react';
 import Cookies from 'js-cookie';
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
+
 
 // --- Interfaces ---
 
@@ -80,8 +82,8 @@ interface PortalReportData {
 // --- Constants ---
 const COLORS = ['#6366f1', '#0ea5e9', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6'];
 const PLAN_COLORS = ['#e2e8f0', '#f59e0b']; // Gray for Free, Amber for VIP
-const BASE_API_URL = 'https://dev.backend.mobo.land/api/v1';
-const BASE_IMG_URL = 'https://dev.backend.mobo.land/';
+const BASE_API_URL = `${API_BASE_URL}/api/v1`;
+const BASE_IMG_URL = API_BASE_URL;
 
 // --- Helper Component for Stable Images ---
 const ModelIcon = React.memo(({ url, alt }: { url?: string; alt: string }) => {

@@ -1,9 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import { api } from '../../services/api';
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
+
 
 // --- تنظیمات پایه ---
-const BASE_URL = 'https://dev.backend.mobo.land/api/v1/portal/blog/image/download?imageFile=';
+const BASE_URL = `${API_BASE_URL}/api/v1/portal/blog/image/download?imageFile=`;
 
 interface Category {
   _id: string;
