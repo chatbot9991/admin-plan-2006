@@ -4,6 +4,7 @@ import { toast } from 'react-toastify';
 import { Eye, RefreshCcw, Edit, RotateCw, Image as ImageIcon, Star } from 'lucide-react';
 import { api } from '../../services/api';
 import Pagination from '../../components/common/Pagination';
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
 interface AiModel {
   _id: string;
@@ -28,7 +29,7 @@ const AiList: React.FC = () => {
   // Status Modal States
   const [targetAi, setTargetAi] = useState<AiModel | null>(null);
   const [isProcessing, setIsProcessing] = useState<boolean>(false);
-
+  
   const fetchAis = async () => {
     setLoading(true);
     try {
@@ -193,7 +194,7 @@ const AiList: React.FC = () => {
                           >
                             {ai.image && ai.image !== 'string' ? (
                               <img
-                                src={`https://dev.backend.mobo.land/api/v1/portal/ai/image/download?imageFile=${ai.image}`}
+                                src={`${API_BASE_URL}/api/v1/portal/ai/image/download?imageFile=${ai.image}`}
                                 alt={ai.name}
                                 style={{ width: '100%', height: '100%', objectFit: 'cover' }}
                               />
