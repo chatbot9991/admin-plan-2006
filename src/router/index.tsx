@@ -55,6 +55,13 @@ const AiCreate = lazy(() => import('../pages/ai/AiCreate'));
 const AiEdit = lazy(() => import('../pages/ai/AiEdit'));
 const AiDetails = lazy(() => import('../pages/ai/AiDetails'));
 
+const AiOptionList = lazy(() => import('../pages/aiOption/AiOptionList'));
+const AiOptionCreate = lazy(() => import('../pages/aiOption/AiOptionCreate'));
+const AiOptionDetails = lazy(() => import('../pages/aiOption/AiOptionDetails'));
+const AiOptionEdit = lazy(() => import('../pages/aiOption/AiOptionEdit'));
+
+
+
 const PlanList = lazy(() => import('../pages/plan/PlanList'));
 const PlanCreate = lazy(() => import('../pages/plan/PlanCreate'));
 
@@ -575,6 +582,47 @@ export const router = createBrowserRouter([
                 element: (
                   <Suspense fallback={<PageLoader />}>
                     <AiCreate />
+                  </Suspense>
+                ),
+              },
+            ],
+          },
+          {
+            path: 'ai-option',
+            children: [
+              {
+                index: true,
+                element: <Navigate to="list" replace />,
+              },
+              {
+                path: 'list',
+                element: (
+                  <Suspense fallback={<PageLoader />}>
+                    <AiOptionList />
+                  </Suspense>
+                ),
+              },
+              {
+                path: 'details/:id',
+                element: (
+                  <Suspense fallback={<PageLoader />}>
+                    <AiOptionDetails />
+                  </Suspense>
+                ),
+              },
+              {
+                path: 'edit/:id',
+                element: (
+                  <Suspense fallback={<PageLoader />}>
+                    <AiOptionEdit />
+                  </Suspense>
+                ),
+              },
+              {
+                path: 'create',
+                element: (
+                  <Suspense fallback={<PageLoader />}>
+                    <AiOptionCreate />
                   </Suspense>
                 ),
               },

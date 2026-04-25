@@ -17,7 +17,7 @@ import {
   ChevronLeft,
   ChevronDown,
   NotebookPenIcon,
-  Dot
+  Dot,
 } from 'lucide-react';
 
 interface MenuItem {
@@ -47,6 +47,7 @@ const menuItems: MenuItem[] = [
     path: '/transactions',
   },
   { title: 'هوش مصنوعی', icon: BrainCircuit, path: '/ai' },
+  { title: 'آپشن هوش مصنوعی', icon: BrainCircuit, path: '/ai-option' },
   { title: 'پلن ها', icon: NotebookPenIcon, path: '/plan' },
   { title: 'گزارشات', icon: BarChart3, path: '/reports' },
   { title: 'لیست تخفیف ها ', icon: Tag, path: '/discount/list' },

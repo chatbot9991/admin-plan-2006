@@ -10,7 +10,7 @@ import {
   Search,
   Edit,
   RotateCw,
-  Trash2,
+  Star, // آیکون ستاره برای نمایش پیش‌فرض
 } from 'lucide-react';
 
 // فرض بر این است که api.ts در مسیر مشخص شده وجود دارد
@@ -53,7 +53,7 @@ const AiOptionList: React.FC = () => {
   const [aiOptions, setAiOptions] = useState<AiOption[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [total, setTotal] = useState<number>(0);
-  
+
   // State for AI dropdown list
   const [aiList, setAiList] = useState<AiItem[]>([]);
 
@@ -83,8 +83,10 @@ const AiOptionList: React.FC = () => {
     name: string;
   } | null>(null);
 
-  const [deleteAiOption, setDeleteAiOption] = useState<{
+  // استیت برای مودال نمایش پیش‌فرض
+  const [targetDefaultShow, setTargetDefaultShow] = useState<{
     id: string;
+    isDefaultShow: boolean;
     name: string;
   } | null>(null);
 
@@ -93,10 +95,9 @@ const AiOptionList: React.FC = () => {
   // --- Fetch AI List for Dropdown ---
   const fetchAiList = async () => {
     try {
-      // دریافت لیست AIها. پارامترهای pagination را در صورت نیاز تنظیم کنید یا حذف کنید اگر همه را می‌خواهید.
-      const response = await api.get('/api/v1/portal/ai/list?limit=100'); 
+      const response = await api.get('/ai/list?limit=100');
       if (response.data && response.data.result && response.data.result.length > 0) {
-         setAiList(response.data.result[0].data || []);
+        setAiList(response.data.result[0].data || []);
       }
     } catch (error) {
       console.error('Error fetching AI list:', error);
@@ -130,7 +131,7 @@ const AiOptionList: React.FC = () => {
         params.append('filter', filterJson);
       }
 
-      const response = await api.get<AiOptionApiResponse>(`/api/v1/portal/ai-option/list?${params.toString()}`);
+      const response = await api.get<AiOptionApiResponse>(`/ai-option/list?${params.toString()}`);
 
       if (response.data && response.data.result && response.data.result.length > 0) {
         const resultData = response.data.result[0];
@@ -155,10 +156,10 @@ const AiOptionList: React.FC = () => {
   // --- Handlers ---
   const handleApplyFilters = () => {
     setCurrentPage(1);
-    setAppliedFilters({ 
+    setAppliedFilters({
       search: tempSearch,
       field: tempField,
-      aiId: tempAiId
+      aiId: tempAiId,
     });
   };
 
@@ -183,14 +184,11 @@ const AiOptionList: React.FC = () => {
     if (!targetAiOption) return;
     setIsProcessing(true);
     try {
-      const newStatus = targetAiOption.status === 'active' ? 'inactive' : 'active';
-      // آدرس API برای تغییر وضعیت را بر اساس پروژه خود تنظیم کنید
-      await api.put(`/api/v1/portal/ai-option/change-status`, { id: targetAiOption.id, status: newStatus });
+      const newStatus = targetAiOption.status === 'active' ? 'deactive' : 'active';
+      await api.put(`/ai-option/changeStatus`, { id: targetAiOption.id, status: newStatus });
 
       setAiOptions((prev) =>
-        prev.map((o) =>
-          o._id === targetAiOption.id ? { ...o, status: newStatus } : o
-        )
+        prev.map((o) => (o._id === targetAiOption.id ? { ...o, status: newStatus } : o))
       );
 
       toast.success('وضعیت با موفقیت تغییر کرد');
@@ -203,36 +201,38 @@ const AiOptionList: React.FC = () => {
     }
   };
 
-  // --- Delete Logic ---
-  const openDeleteModal = (option: AiOption) => {
-    setDeleteAiOption({ id: option._id, name: option.name });
+  // --- Default Show Logic ---
+  const openDefaultShowModal = (option: AiOption) => {
+    setTargetDefaultShow({ id: option._id, isDefaultShow: option.defaultShow, name: option.name });
   };
 
-  const closeDeleteModal = () => {
-    setDeleteAiOption(null);
+  const closeDefaultShowModal = () => {
+    setTargetDefaultShow(null);
   };
 
-  const confirmDelete = async () => {
-    if (!deleteAiOption) return;
+  const confirmDefaultShowChange = async () => {
+    if (!targetDefaultShow) return;
     setIsProcessing(true);
     try {
-      // آدرس API برای حذف را بر اساس پروژه خود تنظیم کنید
-      await api.delete('/api/v1/portal/ai-option/delete', {
-        data: { _id: deleteAiOption.id },
-      });
+      const endpoint = targetDefaultShow.isDefaultShow
+        ? `/ai-option/unset/defaultShow`
+        : `/ai-option/set/defaultShow`;
 
-      setAiOptions((prev) => prev.filter((o) => o._id !== deleteAiOption.id));
-      setTotal((prev) => prev - 1);
+      await api.put(endpoint, { id: targetDefaultShow.id });
 
-      toast.success('مورد با موفقیت حذف شد');
-      closeDeleteModal();
+      setAiOptions((prev) =>
+        prev.map((o) =>
+          o._id === targetDefaultShow.id
+            ? { ...o, defaultShow: !targetDefaultShow.isDefaultShow }
+            : o
+        )
+      );
 
-      if (aiOptions.length === 1 && currentPage > 1) {
-        setCurrentPage((prev) => prev - 1);
-      }
+      toast.success('وضعیت نمایش پیش‌فرض با موفقیت تغییر کرد');
+      closeDefaultShowModal();
     } catch (error) {
       console.error(error);
-      toast.error('خطا در حذف');
+      toast.error('خطا در تغییر وضعیت نمایش پیش‌فرض');
     } finally {
       setIsProcessing(false);
     }
@@ -288,31 +288,37 @@ const AiOptionList: React.FC = () => {
         </div>
       )}
 
-      {/* Modal حذف */}
-      {deleteAiOption && (
+      {/* Modal تغییر نمایش پیش‌فرض */}
+      {targetDefaultShow && (
         <div className="custom-modal-overlay">
           <div className="custom-modal-content">
-            <div className="modal-icon-box bg-danger bg-opacity-10">
-              <Trash2 className="text-danger" size={32} />
+            <div className="modal-icon-box bg-info bg-opacity-10">
+              <Star className="text-info" size={32} />
             </div>
-            <h4 className="fw-bold text-dark mt-3">حذف</h4>
+            <h4 className="fw-bold text-dark mt-3">تغییر نمایش پیش‌فرض</h4>
             <p className="text-muted text-center mt-2 mb-4 px-3">
-              آیا از حذف <strong>"{deleteAiOption.name}"</strong> اطمینان دارید؟ این عملیات غیرقابل بازگشت است.
+              آیا می‌خواهید نمایش پیش‌فرض برای <strong>"{targetDefaultShow.name}"</strong> را
+              <span
+                className={`fw-bold mx-1 ${targetDefaultShow.isDefaultShow ? 'text-danger' : 'text-success'}`}
+              >
+                {targetDefaultShow.isDefaultShow ? 'لغو کنید' : 'فعال کنید'}
+              </span>
+              ؟
             </p>
             <div className="d-flex gap-2 w-100 justify-content-center">
               <button
                 className="btn btn-light flex-grow-1 py-2 rounded-pill fw-bold"
-                onClick={closeDeleteModal}
+                onClick={closeDefaultShowModal}
                 disabled={isProcessing}
               >
                 انصراف
               </button>
               <button
-                className="btn btn-danger text-white flex-grow-1 py-2 rounded-pill fw-bold border-0 shadow-sm"
-                onClick={confirmDelete}
+                className="btn btn-info text-white flex-grow-1 py-2 rounded-pill fw-bold"
+                onClick={confirmDefaultShowChange}
                 disabled={isProcessing}
               >
-                {isProcessing ? 'در حال حذف...' : 'بله، حذف کن'}
+                {isProcessing ? '...' : 'بله، تغییر بده'}
               </button>
             </div>
           </div>
@@ -326,7 +332,6 @@ const AiOptionList: React.FC = () => {
           <p className="text-muted small mb-0">لیست آپشن‌های هوش مصنوعی</p>
         </div>
         <div className="d-flex gap-2">
-          {/* مسیر ایجاد رو بر اساس نیازتون تنظیم کنید */}
           <Link to="/ai-option/create" className="btn-shine-effect">
             <span className="mx-2 fs-5">+</span> ایجاد آپشن جدید
           </Link>
@@ -370,7 +375,7 @@ const AiOptionList: React.FC = () => {
               </div>
 
               <div className="col-12 col-md-3">
-                 <Filter
+                <Filter
                   type="text"
                   label="فیلد (field)"
                   placeholder="مثال: chat..."
@@ -380,19 +385,23 @@ const AiOptionList: React.FC = () => {
               </div>
 
               <div className="col-12 col-md-3">
-                 <div className="mb-3">
-                    <label className="form-label text-muted small fw-bold mb-1">هوش مصنوعی (AI)</label>
-                    <select 
-                        className="form-select custom-input" 
-                        value={tempAiId} 
-                        onChange={(e) => setTempAiId(e.target.value)}
-                        style={{ height: '48px', borderRadius: '12px' }}
-                    >
-                        <option value="">همه</option>
-                        {aiList.map(ai => (
-                            <option key={ai._id} value={ai._id}>{ai.name}</option>
-                        ))}
-                    </select>
+                <div className="mb-3">
+                  <label className="form-label text-muted small fw-bold mb-1">
+                    هوش مصنوعی (AI)
+                  </label>
+                  <select
+                    className="form-select custom-input"
+                    value={tempAiId}
+                    onChange={(e) => setTempAiId(e.target.value)}
+                    style={{ height: '48px', borderRadius: '12px' }}
+                  >
+                    <option value="">همه</option>
+                    {aiList.map((ai) => (
+                      <option key={ai._id} value={ai._id}>
+                        {ai.name}
+                      </option>
+                    ))}
+                  </select>
                 </div>
               </div>
 
@@ -428,10 +437,18 @@ const AiOptionList: React.FC = () => {
             <tr>
               <th style={{ width: '5%', borderRadius: '0 15px 15px 0' }}>#</th>
               <th style={{ width: '25%' }}>نام</th>
-              <th className="text-center" style={{ width: '15%' }}>فیلد</th>
-              <th className="text-center" style={{ width: '20%' }}>قیمت‌ها (ورودی/خروجی)</th>
-              <th className="text-center" style={{ width: '15%' }}>وضعیت</th>
-              <th className="text-center" style={{ width: '20%', borderRadius: '15px 0 0 15px' }}>عملیات</th>
+              <th className="text-center" style={{ width: '15%' }}>
+                فیلد
+              </th>
+              <th className="text-center" style={{ width: '20%' }}>
+                قیمت‌ها (ورودی/خروجی)
+              </th>
+              <th className="text-center" style={{ width: '15%' }}>
+                وضعیت
+              </th>
+              <th className="text-center" style={{ width: '20%', borderRadius: '15px 0 0 15px' }}>
+                عملیات
+              </th>
             </tr>
           </thead>
           <tbody>
@@ -468,9 +485,12 @@ const AiOptionList: React.FC = () => {
                           {option.name}
                         </span>
                         {option.defaultShow && (
-                           <span className="badge bg-info text-white border rounded-pill fw-normal align-self-start" style={{fontSize: '0.7rem'}}>
-                               نمایش پیش‌فرض
-                           </span>
+                          <span
+                            className="badge bg-info text-white border rounded-pill fw-normal align-self-start"
+                            style={{ fontSize: '0.7rem' }}
+                          >
+                            نمایش پیش‌فرض
+                          </span>
                         )}
                       </div>
                     </td>
@@ -481,7 +501,9 @@ const AiOptionList: React.FC = () => {
 
                     <td className="text-center">
                       <div className="d-flex flex-column align-items-center">
-                         <span className="text-muted small">In: {option.inputPrice} | Out: {option.outputPrice}</span>
+                        <span className="text-muted small">
+                          In: {option.inputPrice} | Out: {option.outputPrice}
+                        </span>
                       </div>
                     </td>
 
@@ -494,7 +516,16 @@ const AiOptionList: React.FC = () => {
 
                     <td>
                       <div className="d-flex gap-2 justify-content-center">
-                         {/* مسیرها را بر اساس روتر خود تنظیم کنید */}
+                        {/* دکمه تنظیم/لغو نمایش پیش‌فرض */}
+                        <button
+                          className={`btn-action ${option.defaultShow ? 'btn-soft-success' : 'btn-soft-secondary'}`}
+                          title={
+                            option.defaultShow ? 'لغو نمایش پیش‌فرض' : 'تنظیم به عنوان پیش‌فرض'
+                          }
+                          onClick={() => openDefaultShowModal(option)}
+                        >
+                          <Star size={18} fill={option.defaultShow ? 'currentColor' : 'none'} />
+                        </button>
                         <Link
                           to={`/ai-option/details/${option._id}`}
                           className="btn-action btn-soft-info"
@@ -515,13 +546,6 @@ const AiOptionList: React.FC = () => {
                           onClick={() => openStatusModal(option)}
                         >
                           <RotateCw size={18} />
-                        </button>
-                        <button
-                          className="btn-action btn-danger-soft"
-                          title="حذف"
-                          onClick={() => openDeleteModal(option)}
-                        >
-                          <Trash2 size={18} />
                         </button>
                       </div>
                     </td>
@@ -545,7 +569,7 @@ const AiOptionList: React.FC = () => {
         </div>
       )}
 
-      {/* Styles identical to PlanList */}
+      {/* Styles */}
       <style>{`
         .fade-in { animation: fadeIn 0.6s ease-out; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
@@ -585,6 +609,10 @@ const AiOptionList: React.FC = () => {
         .btn-soft-primary:hover { background-color: #4dabf7; color: white; }
         .btn-soft-warning { background-color: #fff3cd; color: #ffc107; }
         .btn-soft-warning:hover { background-color: #ffc107; color: white; }
+        .btn-soft-success { background-color: #d1e7dd; color: #198754; }
+        .btn-soft-success:hover { background-color: #198754; color: white; }
+        .btn-soft-secondary { background-color: #f8f9fa; color: #6c757d; border: 1px solid #dee2e6; }
+        .btn-soft-secondary:hover { background-color: #6c757d; color: white; }
         
         .custom-input { border: 1px solid #dee2e6; border-radius: 12px; padding: 0.5rem 1rem; transition: all 0.2s; }
         .custom-input:focus { border-color: #4dabf7; box-shadow: 0 0 0 0.25rem rgba(77, 171, 247, 0.25); outline: none; }
