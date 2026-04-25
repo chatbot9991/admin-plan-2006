@@ -42,7 +42,7 @@ const BlogEdit: React.FC = () => {
 
         // 1. دریافت لیست دسته‌بندی‌ها
         const catResponse = await api.get('/blog-category/list');
-        const resData = catResponse.data;
+        const resData = catResponse.data.result[0]?.data;
 
         let validCategories: Category[] = [];
 
