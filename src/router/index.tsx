@@ -64,6 +64,8 @@ const AiOptionEdit = lazy(() => import('../pages/aiOption/AiOptionEdit'));
 
 const PlanList = lazy(() => import('../pages/plan/PlanList'));
 const PlanCreate = lazy(() => import('../pages/plan/PlanCreate'));
+const PlanDetails = lazy(() => import('../pages/plan/PlanDetails'));
+const PlanUpdate = lazy(() => import('../pages/plan/PlanUpdate'));
 
 // یک لودینگ ساده
 const PageLoader = () => (
@@ -523,7 +525,7 @@ export const router = createBrowserRouter([
                 path: 'details/:id',
                 element: (
                   <Suspense fallback={<PageLoader />}>
-                    <AiDetails />
+                    <PlanDetails />
                   </Suspense>
                 ),
               },
@@ -531,7 +533,7 @@ export const router = createBrowserRouter([
                 path: 'edit/:id',
                 element: (
                   <Suspense fallback={<PageLoader />}>
-                    <AiEdit />
+                    <PlanUpdate />
                   </Suspense>
                 ),
               },

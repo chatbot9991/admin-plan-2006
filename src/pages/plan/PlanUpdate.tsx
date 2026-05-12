@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useParams } from 'react-router-dom';
 import { api } from '../../services/api';
 import { toast } from 'react-toastify';
 import { Trash2 } from 'lucide-react';
@@ -22,26 +22,16 @@ const CHATGPT_TOOLS = ['web_search', 'file_search', 'code_interpreter', 'image_g
 const GEMINI_TOOLS = ['googleSearch', 'image_generation'];
 const GROK_TOOLS = ['web_search', 'file_search', 'code_interpreter'];
 
-const PlanCreate = () => {
+const PlanEdit = () => {
+  const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
+  const [pageLoading, setPageLoading] = useState(true);
   const [aiList, setAiList] = useState<any[]>([]);
   const [aiOptionList, setAiOptionList] = useState<any[]>([]);
 
-  // برای مدیریت باز و بسته بودن Dropdown ها
   const [openDropdown, setOpenDropdown] = useState<string | null>(null);
   const dropdownRef = useRef<HTMLDivElement>(null);
-
-  // let userOwnId = '';
-  // try {
-  //   const authStorageStr = localStorage.getItem('auth-storage');
-  //   if (authStorageStr) {
-  //     const authData = JSON.parse(authStorageStr);
-  //     userOwnId = authData?.state?.user?._id || '';
-  //   }
-  // } catch (error) {
-  //   console.error('خطا در خواندن اطلاعات کاربر از لوکال استوریج:', error);
-  // }
 
   const [formData, setFormData] = useState({
     name: '',
@@ -49,8 +39,9 @@ const PlanCreate = () => {
     defaultAi: '',
     defaultAiOption: '',
     price: 0,
-    points: 0,
-    duration: 30,
+    duration: 30, // اضافه شد
+    points: 0, // اضافه شد
+    deleteFile: false, // اضافه شد
     limitOfRequest: 0,
     limitUploadFiles: 0,
     ais: [] as string[],
@@ -61,34 +52,68 @@ const PlanCreate = () => {
     descriptionArray: [''],
     numberOfUsers: 1,
     typePay: 'Month',
-    type: 'public',
     highlight: false,
-    // userOwn: userOwnId,
     order: 0,
+    userOwn: '',
   });
 
   useEffect(() => {
-    const fetchAisAndOptions = async () => {
+    const fetchInitialData = async () => {
       try {
-        // دریافت لیست AI
+        setPageLoading(true);
+
         const aiRes = await api.get('/ai/list');
         if (aiRes.data?.result?.[0]?.data) {
           setAiList(aiRes.data.result[0].data);
         }
 
-        // دریافت لیست آپشن‌های AI
         const optRes = await api.get('/ai-option/list');
         if (optRes.data?.result?.[0]?.data) {
           setAiOptionList(optRes.data.result[0].data);
         }
+
+        if (id) {
+          const planRes = await api.get(`/plan/details/${id}`);
+          const planData = planRes.data?.result?.[0];
+
+          if (planData) {
+            setFormData({
+              name: planData.name || planData.title || '',
+              description: planData.description || '',
+              defaultAi: typeof planData.defaultAi === 'object' ? planData.defaultAi?._id : (planData.defaultAi || ''),
+              defaultAiOption: typeof planData.defaultAiOption === 'object' ? planData.defaultAiOption?._id : (planData.defaultAiOption || ''),
+              price: planData.price || 0,
+              duration: planData.duration || 30,
+              points: planData.points || 0,
+              deleteFile: planData.deleteFile || false,
+              limitOfRequest: planData.limitOfRequest || 0,
+              limitUploadFiles: planData.limitUploadFiles || 0,
+              ais: planData.ais?.map((ai: any) => ai._id || ai) || [],
+              toolsChatgpt: planData.toolsChatgpt || [],
+              toolsGemini: planData.toolsGemini || [],
+              toolsGrok: planData.toolsGrok || [],
+              // حل مشکل models: فقط نام مدل‌ها استخراج می‌شود
+              models: planData.models?.map((m: any) => typeof m === 'object' ? m.name : m) || [],
+              descriptionArray: planData.descriptionArray?.length ? planData.descriptionArray : [''],
+              numberOfUsers: planData.numberOfUsers || 1,
+              typePay: planData.typePay || 'Month',
+              highlight: planData.highlight || false,
+              order: planData.order || 0,
+              userOwn: planData.userOwn || '',
+            });
+          }
+        }
       } catch (error) {
-        console.error('خطا در دریافت اطلاعات AI:', error);
+        console.error('خطا در دریافت اطلاعات:', error);
+        toast.error('خطا در دریافت اطلاعات پلن.');
+      } finally {
+        setPageLoading(false);
       }
     };
-    fetchAisAndOptions();
-  }, []);
 
-  // بستن دراپ‌داون هنگام کلیک بیرون از آن
+    fetchInitialData();
+  }, [id]);
+
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
@@ -150,28 +175,63 @@ const PlanCreate = () => {
     setLoading(true);
 
     try {
-      const submitData = {
-        ...formData,
+      // ساختن آبجکت نهایی
+      const submitData: any = {
+        id: id,
+        name: formData.name,
+        description: formData.description,
+        price: formData.price,
+        duration: formData.duration, // اضافه شد
+        points: formData.points, // اضافه شد
+        deleteFile: formData.deleteFile, // اضافه شد
+        limitOfRequest: formData.limitOfRequest,
+        limitUploadFiles: formData.limitUploadFiles,
+        ais: formData.ais,
+        toolsChatgpt: formData.toolsChatgpt,
+        toolsGemini: formData.toolsGemini,
+        toolsGrok: formData.toolsGrok,
+        models: formData.models, 
         descriptionArray: formData.descriptionArray.filter((f) => f.trim() !== ''),
+        numberOfUsers: formData.numberOfUsers,
+        typePay: formData.typePay,
+        defaultAi: formData.defaultAi,
+        defaultAiOption: formData.defaultAiOption,
+        highlight: formData.highlight,
+        order: formData.order,
       };
 
-      await api.post('/plan/create', submitData);
-      toast.success('پلن با موفقیت ایجاد شد!');
+      // حذف userOwn در صورت خالی بودن تا ارور ندهد
+      if (formData.userOwn && formData.userOwn.trim() !== '') {
+        submitData.userOwn = formData.userOwn;
+      }
+
+      await api.put('/plan/update', submitData); 
+      toast.success('پلن با موفقیت به‌روزرسانی شد!');
       navigate('/plan/list');
     } catch (error: any) {
-      console.error('خطا در ایجاد پلن:', error);
-      toast.error(error.response?.data?.message || 'خطای اعتبارسنجی. لطفاً مقادیر را بررسی کنید.');
+      console.error('خطا در به‌روزرسانی پلن:', error);
+      toast.error(error.response?.data?.message || 'خطا در ویرایش پلن. لطفاً مقادیر را بررسی کنید.');
     } finally {
       setLoading(false);
     }
   };
 
+  if (pageLoading) {
+    return (
+      <div className="d-flex justify-content-center align-items-center vh-100">
+        <div className="spinner-border text-primary" role="status">
+          <span className="visually-hidden">در حال بارگذاری...</span>
+        </div>
+      </div>
+    );
+  }
+
   return (
-    <div className="container-fluid p-4 fade-in" style={{ maxWidth: '1400px' }}>
+    <div className="container-fluid p-4 fade-in" style={{ maxWidth: '1400px' }} dir="rtl">
       <div className="d-flex justify-content-between align-items-center mb-4">
         <div>
-          <h2 className="fw-bold text-dark mb-1">ایجاد پلن جدید</h2>
-          <p className="text-secondary mb-0">اطلاعات را بر اساس نیازمندی‌های سیستم وارد کنید</p>
+          <h2 className="fw-bold text-dark mb-1">ویرایش پلن</h2>
+          <p className="text-secondary mb-0">تغییرات مورد نظر را اعمال کرده و ذخیره کنید</p>
         </div>
         <Link to="/plan/list" className="btn btn-outline-secondary rounded-pill px-4">
           <i className="bi bi-arrow-right me-2"></i>
@@ -507,11 +567,13 @@ const PlanCreate = () => {
 
               <div className="row g-2 mb-3">
                 <div className="col-6">
-                  <label className="form-label text-secondary small">قیمت</label>
+                  <label className="form-label text-secondary small">ترتیب (Order)</label>
                   <input
                     type="number"
-                    name="price"
-                    value={formData.price}
+                    name="order"
+                    max={4}
+                    min={1}
+                    value={formData.order}
                     onChange={handleInputChange}
                     className="form-control bg-light border-0"
                     required
@@ -532,7 +594,18 @@ const PlanCreate = () => {
 
               <div className="row g-2 mb-3">
                 <div className="col-6">
-                  <label className="form-label text-secondary small">مدت زمان (Duration)</label>
+                  <label className="form-label text-secondary small">قیمت</label>
+                  <input
+                    type="number"
+                    name="price"
+                    value={formData.price}
+                    onChange={handleInputChange}
+                    className="form-control bg-light border-0"
+                    required
+                  />
+                </div>
+                <div className="col-6">
+                  <label className="form-label text-secondary small">مدت (Duration)</label>
                   <input
                     type="number"
                     name="duration"
@@ -542,23 +615,10 @@ const PlanCreate = () => {
                     required
                   />
                 </div>
-                <div className="col-6">
-                  <label className="form-label text-secondary small">ترتیب (Order)</label>
-                  <input
-                    type="number"
-                    name="order"
-                    max={4}
-                    min={1}
-                    value={formData.order}
-                    onChange={handleInputChange}
-                    className="form-control bg-light border-0"
-                    required
-                  />
-                </div>
               </div>
 
               <div className="row g-2 mb-3">
-                <div className="col-6">
+                <div className="col-12">
                   <label className="form-label text-secondary small">دوره پرداخت</label>
                   <select
                     name="typePay"
@@ -569,19 +629,6 @@ const PlanCreate = () => {
                     <option value="Month">Month</option>
                     <option value="Year">Year</option>
                     <option value="season">season</option>
-                  </select>
-                </div>
-                <div className="col-6">
-                  <label className="form-label text-secondary small">نوع پلن (type)</label>
-                  <select
-                    name="type"
-                    value={formData.type}
-                    onChange={handleInputChange}
-                    className="form-select bg-light border-0"
-                  >
-                    <option value="public">public</option>
-                    <option value="organization">organization</option>
-                    <option value="single">single</option>
                   </select>
                 </div>
               </div>
@@ -597,7 +644,7 @@ const PlanCreate = () => {
                     value={formData.limitOfRequest}
                     onChange={handleInputChange}
                     className="form-control bg-light border-0 px-1 text-center"
-                    min="2"
+                    min="1"
                     required
                   />
                 </div>
@@ -611,7 +658,7 @@ const PlanCreate = () => {
                     value={formData.limitUploadFiles}
                     onChange={handleInputChange}
                     className="form-control bg-light border-0 px-1 text-center"
-                    min="2"
+                    min="1"
                     required
                   />
                 </div>
@@ -629,6 +676,22 @@ const PlanCreate = () => {
                     required
                   />
                 </div>
+              </div>
+
+              <div className="form-check form-switch mb-3 bg-light p-3 rounded-3 d-flex justify-content-between align-items-center">
+                <label className="form-check-label fw-bold mb-0" htmlFor="deleteFile">
+                  اجازه حذف فایل (deleteFile)
+                </label>
+                <input
+                  className="form-check-input m-0"
+                  type="checkbox"
+                  role="switch"
+                  id="deleteFile"
+                  name="deleteFile"
+                  checked={formData.deleteFile}
+                  onChange={handleInputChange}
+                  style={{ cursor: 'pointer', transform: 'scale(1.2)' }}
+                />
               </div>
 
               <div className="form-check form-switch mb-4 bg-light p-3 rounded-3 d-flex justify-content-between align-items-center">
@@ -660,7 +723,7 @@ const PlanCreate = () => {
                   ></span>
                 ) : (
                   <>
-                    <i className="bi bi-check-circle me-2"></i> ذخیره پلن
+                    <i className="bi bi-check-circle me-2"></i> ذخیره تغییرات
                   </>
                 )}
               </button>
@@ -672,4 +735,4 @@ const PlanCreate = () => {
   );
 };
 
-export default PlanCreate;
+export default PlanEdit;

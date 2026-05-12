@@ -8,8 +8,6 @@ import {
   Image as ImageIcon,
   AlignLeft,
   Calendar,
-  CheckCircle,
-  XCircle,
   Tag,
 } from 'lucide-react';
 import { api } from '../../services/api';

@@ -302,7 +302,7 @@ const AiOptionCreate: React.FC = () => {
                       name="inputPrice"
                       value={formData.inputPrice}
                       onChange={handleChange}
-                      min="0"
+                      min="-1000"
                       required
                     />
                   </div>
@@ -314,7 +314,7 @@ const AiOptionCreate: React.FC = () => {
                       name="outputPrice"
                       value={formData.outputPrice}
                       onChange={handleChange}
-                      min="0"
+                      min="-1000"
                       required
                     />
                   </div>
@@ -326,7 +326,7 @@ const AiOptionCreate: React.FC = () => {
                       name="cachePrice"
                       value={formData.cachePrice}
                       onChange={handleChange}
-                      min="0"
+                      min="-1000"
                       required
                     />
                   </div>
