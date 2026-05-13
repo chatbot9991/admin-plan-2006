@@ -38,7 +38,8 @@ const BlogCreate: React.FC = () => {
       try {
         setIsLoading(true);
         const catResponse = await api.get('/blog-category/list');
-        const resData = catResponse.data;
+        console.log(catResponse)
+        const resData = catResponse.data.result[0]?.data;
 
         let validCategories: Category[] = [];
 

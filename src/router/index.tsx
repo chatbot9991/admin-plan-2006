@@ -50,6 +50,22 @@ const UserList = lazy(() => import('../pages/user/UserList'));
 const UserDetails = lazy(() => import('../pages/user/UserDetails'));
 const UserEdit = lazy(() => import('../pages/user/UserEdit'));
 
+const AiList = lazy(() => import('../pages/ai/AiList'));
+const AiCreate = lazy(() => import('../pages/ai/AiCreate'));
+const AiEdit = lazy(() => import('../pages/ai/AiEdit'));
+const AiDetails = lazy(() => import('../pages/ai/AiDetails'));
+
+const AiOptionList = lazy(() => import('../pages/aiOption/AiOptionList'));
+const AiOptionCreate = lazy(() => import('../pages/aiOption/AiOptionCreate'));
+const AiOptionDetails = lazy(() => import('../pages/aiOption/AiOptionDetails'));
+const AiOptionEdit = lazy(() => import('../pages/aiOption/AiOptionEdit'));
+
+
+
+const PlanList = lazy(() => import('../pages/plan/PlanList'));
+const PlanCreate = lazy(() => import('../pages/plan/PlanCreate'));
+const PlanDetails = lazy(() => import('../pages/plan/PlanDetails'));
+const PlanUpdate = lazy(() => import('../pages/plan/PlanUpdate'));
 
 // یک لودینگ ساده
 const PageLoader = () => (
@@ -484,6 +500,131 @@ export const router = createBrowserRouter([
                 element: (
                   <Suspense fallback={<PageLoader />}>
                     <FeedbackList />
+                  </Suspense>
+                ),
+              },
+            ],
+          },
+
+          {
+            path: 'plan',
+            children: [
+              {
+                index: true,
+                element: <Navigate to="list" replace />,
+              },
+              {
+                path: 'list',
+                element: (
+                  <Suspense fallback={<PageLoader />}>
+                    <PlanList />
+                  </Suspense>
+                ),
+              },
+              {
+                path: 'details/:id',
+                element: (
+                  <Suspense fallback={<PageLoader />}>
+                    <PlanDetails />
+                  </Suspense>
+                ),
+              },
+              {
+                path: 'edit/:id',
+                element: (
+                  <Suspense fallback={<PageLoader />}>
+                    <PlanUpdate />
+                  </Suspense>
+                ),
+              },
+              {
+                path: 'create',
+                element: (
+                  <Suspense fallback={<PageLoader />}>
+                    <PlanCreate />
+                  </Suspense>
+                ),
+              },
+            ],
+          },
+
+          {
+            path: 'ai',
+            children: [
+              {
+                index: true,
+                element: <Navigate to="list" replace />,
+              },
+              {
+                path: 'list',
+                element: (
+                  <Suspense fallback={<PageLoader />}>
+                    <AiList />
+                  </Suspense>
+                ),
+              },
+              {
+                path: 'details/:id',
+                element: (
+                  <Suspense fallback={<PageLoader />}>
+                    <AiDetails />
+                  </Suspense>
+                ),
+              },
+              {
+                path: 'edit/:id',
+                element: (
+                  <Suspense fallback={<PageLoader />}>
+                    <AiEdit />
+                  </Suspense>
+                ),
+              },
+              {
+                path: 'create',
+                element: (
+                  <Suspense fallback={<PageLoader />}>
+                    <AiCreate />
+                  </Suspense>
+                ),
+              },
+            ],
+          },
+          {
+            path: 'ai-option',
+            children: [
+              {
+                index: true,
+                element: <Navigate to="list" replace />,
+              },
+              {
+                path: 'list',
+                element: (
+                  <Suspense fallback={<PageLoader />}>
+                    <AiOptionList />
+                  </Suspense>
+                ),
+              },
+              {
+                path: 'details/:id',
+                element: (
+                  <Suspense fallback={<PageLoader />}>
+                    <AiOptionDetails />
+                  </Suspense>
+                ),
+              },
+              {
+                path: 'edit/:id',
+                element: (
+                  <Suspense fallback={<PageLoader />}>
+                    <AiOptionEdit />
+                  </Suspense>
+                ),
+              },
+              {
+                path: 'create',
+                element: (
+                  <Suspense fallback={<PageLoader />}>
+                    <AiOptionCreate />
                   </Suspense>
                 ),
               },
